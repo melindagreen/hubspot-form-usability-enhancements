@@ -22,9 +22,31 @@ npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 **Peer Dependencies:**
 - `tailwindcss`: ^4.0.0
 
+### CSS Styles
+
+The module requires CSS styles to be imported separately for proper styling:
+
+```javascript
+// Always import the CSS styles
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+```
+
+**Important**: The styles import is separate from the JavaScript module import. This allows you to:
+- Import styles once in your main CSS/JS file
+- Customize or replace styles without affecting functionality
+- Optimize bundle splitting in build tools
+
+```javascript
+// Example: Import both module and styles
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+```
+
 ## Quick Start
 
 ### Basic Usage (Auto-initialization)
+
+For environments without React or hydration concerns:
 
 ```javascript
 // Import the module and styles - forms will initialize automatically
@@ -32,7 +54,33 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements';
 import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 ```
 
-### React Usage
+### React/Hydration-Safe Usage
+
+For React applications or environments with hydration (SSR/SSG):
+
+```javascript
+// Import CSS styles first
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// Prevent auto-initialization to avoid React hydration conflicts
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+// Alpine.js or other framework initialization...
+window.Alpine = Alpine;
+Alpine.start();
+
+// Delay HubSpot module import until after React hydration completes
+setTimeout(async () => {
+  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  
+  // Manually trigger initialization after module loads
+  if (module.init) {
+    module.init();
+  }
+}, 500);
+```
+
+### React Component Usage
 
 ```jsx
 import { useEffect } from 'react';
@@ -238,6 +286,88 @@ The module automatically detects React hydration contexts and:
 - Uses `requestIdleCallback` for optimal performance
 - Provides fallbacks for older browsers
 
+### Hydration Error Solutions
+
+If you encounter React hydration errors (like Error #418), use the delayed import pattern:
+
+```javascript
+// ❌ This may cause hydration conflicts
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+
+// ✅ This prevents hydration conflicts
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+setTimeout(async () => {
+  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  if (module.init) {
+    module.init();
+  }
+}, 500); // 500ms delay allows React hydration to complete
+```
+
+### Framework-Specific Integration
+
+#### Statamic with Alpine.js
+```javascript
+// resources/js/site.js
+import Alpine from 'alpinejs';
+
+// Import CSS styles first
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// Prevent auto-initialization
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+// Initialize Alpine first
+window.Alpine = Alpine;
+Alpine.start();
+
+// Then initialize HubSpot forms after hydration
+setTimeout(async () => {
+  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  if (module.init) {
+    module.init();
+  }
+}, 500);
+```
+
+#### Next.js App Router
+```javascript
+// app/layout.js
+'use client';
+import { useEffect } from 'react';
+
+export default function RootLayout({ children }) {
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const { default: hubspotForms } = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+      hubspotForms();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <html>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+#### Nuxt.js
+```javascript
+// plugins/hubspot-forms.client.js
+export default defineNuxtPlugin(() => {
+  if (process.client) {
+    setTimeout(async () => {
+      const { default: hubspotForms } = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+      hubspotForms();
+    }, 500);
+  }
+});
+```
+
 ## API Reference
 
 ### Main Functions
@@ -281,6 +411,49 @@ Remove HubSpot's default form styles.
 
 ## Troubleshooting
 
+### React hydration conflicts (Error #418/#422)
+
+**Problem**: React hydration errors when using immediate import
+```javascript
+// ❌ This can cause React hydration errors
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+```
+
+**Solution**: Use delayed import pattern
+```javascript
+// ✅ This prevents hydration conflicts
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+setTimeout(async () => {
+  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  if (module.init) {
+    module.init(); // Ensures proper positioning and functionality
+  }
+}, 500);
+```
+
+### Progress bars positioning incorrectly
+
+**Problem**: Progress bars appear below forms instead of above
+**Cause**: Module not calling immediate positioning logic
+**Solution**: Ensure `module.init()` is called after delayed import
+
+```javascript
+// ✅ Correct: Manual init() preserves positioning
+setTimeout(async () => {
+  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  if (module.init) {
+    module.init(); // This triggers immediate positioning
+  }
+}, 500);
+
+// ❌ Incorrect: Only importing without initialization
+setTimeout(() => {
+  import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  // Missing init() call - positioning won't work
+}, 500);
+```
+
 ### Forms not initializing
 ```javascript
 // Check if auto-initialization is disabled
@@ -289,17 +462,6 @@ console.log(window.HUBSPOT_FORMS_NO_AUTO_INIT);
 // Manual initialization
 import { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
 HubSpotFormManager.setupAllForms();
-```
-
-### React hydration conflicts
-```javascript
-// Add delay for React hydration
-useEffect(() => {
-  const timer = setTimeout(() => {
-    hubspotForms();
-  }, 250);
-  return () => clearTimeout(timer);
-}, []);
 ```
 
 ### Styling not applied
