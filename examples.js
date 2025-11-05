@@ -229,43 +229,24 @@ document.head.appendChild(styleSheet);
 import hubspotForms, { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
 import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
-// Debug mode
-const debugConfig = {
+// Production configuration
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// Production configuration
+const productionConfig = {
   characterLimit: 500,
   allowedExtensions: ['pdf', 'jpg'],
   maxFileSize: 5 * 1024 * 1024
 };
 
 try {
-  const instance = hubspotForms(debugConfig);
-  console.log('HubSpot forms initialized:', instance);
+  const instance = hubspotForms(productionConfig);
 } catch (error) {
-  console.error('Failed to initialize HubSpot forms:', error);
-  
   // Fallback initialization
   setTimeout(() => {
     HubSpotFormManager.setupAllForms();
   }, 1000);
 }
-
-// Monitor for form loading issues
-const formLoadTimeout = setTimeout(() => {
-  const forms = document.querySelectorAll('.hsfc-Form');
-  if (forms.length === 0) {
-    console.warn('No HubSpot forms found after 10 seconds');
-  }
-}, 10000);
-
-// Clear timeout when forms are found
-const observer = new MutationObserver(() => {
-  const forms = document.querySelectorAll('.hsfc-Form');
-  if (forms.length > 0) {
-    clearTimeout(formLoadTimeout);
-    observer.disconnect();
-  }
-});
-
-observer.observe(document.body, { childList: true, subtree: true });
 
 export {
   HubSpotFormComponent,

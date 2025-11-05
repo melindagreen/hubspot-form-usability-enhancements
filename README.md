@@ -44,6 +44,168 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 ## Quick Start
 
+For most users, this is all you need:
+
+```bash
+# Install the package
+npm install @fahlgren-mortine/hubspot-form-usability-enhancements
+
+# Install Tailwind CSS peer dependency
+npm install tailwindcss@^4.0.0
+```
+
+```javascript
+// Import in your main JavaScript file
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// That's it! The module will auto-initialize when HubSpot forms are detected.
+```
+
+For React/SSR applications, see the [React/Hydration-Safe Usage](#reacthydration-safe-usage) section below.
+
+## Complete Setup Guide
+
+### Step 1: Install the Package
+
+```bash
+npm install @fahlgren-mortine/hubspot-form-usability-enhancements
+```
+
+### Step 2: Install Peer Dependencies
+
+```bash
+npm install tailwindcss@^4.0.0
+```
+
+### Step 3: Configure Tailwind CSS
+
+Add the module to your Tailwind configuration to ensure styles are processed:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [
+    './src/**/*.{html,js,jsx,ts,tsx,vue,svelte}',
+    './node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/**/*.js',
+    // ... your other content paths
+  ],
+  theme: {
+    extend: {
+      // Your custom theme extensions
+    }
+  },
+  plugins: [
+    // Your plugins
+  ]
+};
+```
+
+### Step 4: Import Styles
+
+Import the CSS styles in your main stylesheet or JavaScript entry point:
+
+```javascript
+// Method 1: Import in JavaScript
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// Method 2: Import in CSS
+@import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+```
+
+```html
+<!-- Method 3: Link in HTML -->
+<link rel="stylesheet" href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css">
+```
+
+### Step 5: Add HubSpot Form Embed Code
+
+Add your HubSpot form embed code to your HTML. The module will automatically detect and enhance any forms with the class `.hsfc-Form`.
+
+```html
+<!-- Example HubSpot form embed -->
+<div id="hubspot-form-container">
+  <!-- Your HubSpot form embed script goes here -->
+</div>
+```
+
+### Step 6: Initialize the Module
+
+Choose the initialization method that best fits your platform:
+
+#### Option A: Auto-Initialization (Simplest)
+```javascript
+// Import and let the module initialize automatically
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+```
+
+#### Option B: Manual Initialization (More Control)
+```javascript
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+hubspotForms({
+  characterLimit: 1000,
+  allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+  maxFileSize: 5 * 1024 * 1024 // 5MB
+});
+```
+
+#### Option C: Delayed Initialization (React/SSR Safe)
+```javascript
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// Prevent auto-initialization
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+// Initialize after framework hydration
+setTimeout(async () => {
+  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  if (module.init) {
+    module.init({
+      characterLimit: 1000,
+      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+      maxFileSize: 5 * 1024 * 1024
+    });
+  }
+}, 500);
+```
+
+### Step 7: Test Your Integration
+
+1. **Load your page** with a HubSpot form
+2. **Check that styles are applied** - forms should have enhanced styling
+3. **Test character limits** - type in textarea fields to see character counters
+4. **Test file uploads** - try uploading files to see validation
+5. **Test form validation** - submit incomplete forms to see enhanced error messages
+6. **Check browser console** - should be free of errors
+7. **Test on mobile devices** - ensure responsive behavior works
+
+### Step 8: Customize (Optional)
+
+If needed, override default styles or configuration:
+
+```css
+/* Custom styling */
+.hsfc-Form {
+  --hsfc-primary-color: #your-brand-color;
+  --hsfc-error-color: #your-error-color;
+}
+```
+
+```javascript
+// Custom configuration
+hubspotForms({
+  characterLimit: 750,           // Custom character limit
+  allowedExtensions: [           // Custom file types
+    'pdf', 'doc', 'docx', 
+    'jpg', 'jpeg', 'png', 'gif', 'svg'
+  ],
+  maxFileSize: 20 * 1024 * 1024  // 20MB limit
+});
+```
+
 ### Basic Usage (Auto-initialization)
 
 For environments without React or hydration concerns:
@@ -65,11 +227,7 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 // Prevent auto-initialization to avoid React hydration conflicts
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
-// Alpine.js or other framework initialization...
-window.Alpine = Alpine;
-Alpine.start();
-
-// Delay HubSpot module import until after React hydration completes
+// Initialize after framework hydration completes
 setTimeout(async () => {
   const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
   
@@ -103,23 +261,6 @@ function MyFormComponent() {
     </div>
   );
 }
-```
-
-### Next.js Usage
-
-```javascript
-// pages/_app.js or app/layout.js
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
-
-// For client-side only initialization
-useEffect(() => {
-  if (typeof window !== 'undefined') {
-    import('@fahlgren-mortine/hubspot-form-usability-enhancements').then(({ default: hubspotForms }) => {
-      hubspotForms();
-    });
-  }
-}, []);
 ```
 
 ### Custom Configuration
@@ -177,6 +318,96 @@ setTimeout(() => {
     HubSpotFormManager.setupAllForms();
   });
 }, 1000);
+```
+
+## Build System Integration
+
+### Webpack
+```javascript
+// webpack.config.js
+module.exports = {
+  // ... your config
+  resolve: {
+    alias: {
+      '@hubspot-forms': '@fahlgren-mortine/hubspot-form-usability-enhancements'
+    }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader']
+      }
+    ]
+  }
+};
+```
+
+### Vite
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  // ... your config
+  resolve: {
+    alias: {
+      '@hubspot-forms': '@fahlgren-mortine/hubspot-form-usability-enhancements'
+    }
+  },
+  css: {
+    postcss: './postcss.config.js'
+  }
+});
+```
+
+### Rollup
+```javascript
+// rollup.config.js
+import resolve from '@rollup/plugin-node-resolve';
+import postcss from 'rollup-plugin-postcss';
+
+export default {
+  // ... your config
+  plugins: [
+    resolve(),
+    postcss({
+      extract: true,
+      minimize: true
+    })
+  ]
+};
+```
+
+### Parcel
+```json
+// package.json
+{
+  "browserslist": [
+    "defaults"
+  ],
+  "@parcel/resolver-default": {
+    "packageExports": true
+  }
+}
+```
+
+No additional configuration needed - Parcel handles the module automatically.
+
+### esbuild
+```javascript
+// build.js
+const esbuild = require('esbuild');
+
+esbuild.build({
+  entryPoints: ['src/main.js'],
+  bundle: true,
+  outdir: 'dist',
+  loader: {
+    '.css': 'css'
+  },
+  external: ['@fahlgren-mortine/hubspot-form-usability-enhancements']
+});
 ```
 
 ## Configuration Options
@@ -307,6 +538,112 @@ setTimeout(async () => {
 
 ### Framework-Specific Integration
 
+The module works with any JavaScript framework or vanilla HTML. Here are platform-specific examples:
+
+#### Vanilla HTML/JavaScript
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css">
+</head>
+<body>
+    <!-- Your HubSpot form embed code here -->
+    
+    <script type="module">
+        import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+        
+        // Auto-initialization will occur, or customize:
+        hubspotForms({
+            characterLimit: 1000,
+            allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+            maxFileSize: 5 * 1024 * 1024
+        });
+    </script>
+</body>
+</html>
+```
+
+#### React Applications
+```jsx
+// App.js or main component
+import { useEffect } from 'react';
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+function App() {
+  useEffect(() => {
+    // Initialize after React hydration is complete
+    const timer = setTimeout(() => {
+      hubspotForms({
+        characterLimit: 1000,
+        allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+        maxFileSize: 5 * 1024 * 1024
+      });
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="App">
+      {/* Your HubSpot form component */}
+    </div>
+  );
+}
+```
+
+#### Vue.js Applications
+```vue
+<template>
+  <div id="app">
+    <!-- Your HubSpot form here -->
+  </div>
+</template>
+
+<script>
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+export default {
+  name: 'App',
+  mounted() {
+    // Initialize after Vue component is mounted
+    hubspotForms({
+      characterLimit: 1000,
+      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+      maxFileSize: 5 * 1024 * 1024
+    });
+  }
+}
+</script>
+```
+
+#### Angular Applications
+```typescript
+// app.component.ts
+import { Component, OnInit } from '@angular/core';
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: [
+    './app.component.css',
+    '../node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css'
+  ]
+})
+export class AppComponent implements OnInit {
+  ngOnInit() {
+    hubspotForms({
+      characterLimit: 1000,
+      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+      maxFileSize: 5 * 1024 * 1024
+    });
+  }
+}
+```
+
 #### Statamic with Alpine.js
 ```javascript
 // resources/js/site.js
@@ -366,6 +703,72 @@ export default defineNuxtPlugin(() => {
     }, 500);
   }
 });
+```
+
+#### Svelte/SvelteKit
+```svelte
+<script>
+  import { onMount } from 'svelte';
+  import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+  import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+  onMount(() => {
+    hubspotForms({
+      characterLimit: 1000,
+      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+      maxFileSize: 5 * 1024 * 1024
+    });
+  });
+</script>
+
+<!-- Your HubSpot form here -->
+```
+
+#### WordPress (with build tools)
+```javascript
+// src/js/main.js
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+document.addEventListener('DOMContentLoaded', () => {
+  hubspotForms({
+    characterLimit: 1000,
+    allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+    maxFileSize: 5 * 1024 * 1024
+  });
+});
+```
+
+### Platform-Agnostic Integration
+
+For any platform not listed above, follow this general pattern:
+
+1. **Import the CSS styles** in your main stylesheet or JavaScript entry point
+2. **Import the JavaScript module** in your main JavaScript file
+3. **Initialize after DOM is ready** and any framework hydration is complete
+4. **Use delayed initialization** (500ms timeout) if you encounter hydration conflicts
+
+```javascript
+// Generic platform integration
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+
+// Wait for DOM and framework initialization
+const initializeHubSpotForms = () => {
+  import('@fahlgren-mortine/hubspot-form-usability-enhancements')
+    .then(({ default: hubspotForms }) => {
+      hubspotForms({
+        characterLimit: 1000,
+        allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+        maxFileSize: 5 * 1024 * 1024
+      });
+    });
+};
+
+// Choose appropriate timing for your platform:
+// - Immediate: initializeHubSpotForms();
+// - DOM ready: document.addEventListener('DOMContentLoaded', initializeHubSpotForms);
+// - After hydration: setTimeout(initializeHubSpotForms, 500);
+// - Framework lifecycle: useEffect(), mounted(), ngOnInit(), etc.
 ```
 
 ## API Reference
@@ -457,11 +860,11 @@ setTimeout(() => {
 ### Forms not initializing
 ```javascript
 // Check if auto-initialization is disabled
-console.log(window.HUBSPOT_FORMS_NO_AUTO_INIT);
-
-// Manual initialization
-import { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-HubSpotFormManager.setupAllForms();
+if (window.HUBSPOT_FORMS_NO_AUTO_INIT) {
+  // Manual initialization required
+  import { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+  HubSpotFormManager.setupAllForms();
+}
 ```
 
 ### Styling not applied

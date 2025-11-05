@@ -250,7 +250,7 @@ export const initializeWithTwoPhases = async (options = {}) => {
       }, defaultOptions.cleanupDelay);
 
     } catch (error) {
-      console.error('Failed to initialize HubSpot forms:', error);
+      // Silently fail to avoid console pollution in production
     }
   }, defaultOptions.reactHydrationDelay);
 };
