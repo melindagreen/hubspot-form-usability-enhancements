@@ -1,3 +1,6 @@
+// HubSpot Form Enhancements Module - Build timestamp: November 5, 2025 at 3:45 PM
+console.log('🚀 HubSpot Form Enhancements Module loaded - Build: November 5, 2025 at 3:45 PM');
+
 const removeHubSpotFormStyles = () => {
   // Constants for HubSpot BaseStyle CSS removal
   const HUBSPOT_BASESTYLE_SELECTOR = 'style[data-hsfc-id="BaseStyle"]';
@@ -163,6 +166,9 @@ const CharacterLimitValidator = {
       textarea.setAttribute('data-character-limit', characterLimit);
     }
     
+    // Set the native maxlength attribute for browser enforcement
+    textarea.setAttribute('maxlength', characterLimit);
+    
     // Create or update character counter
     this.createCharacterCounter(textarea, characterLimit);
     
@@ -214,16 +220,13 @@ const CharacterLimitValidator = {
     
     counter.textContent = `${currentLength}/${characterLimit} characters`;
     
-    // Style based on status
-    if (remaining < 0) {
-      counter.style.color = 'red'; // Red for over limit
-      counter.style.fontWeight = 'bold';
+    // Set single class based on status
+    if (remaining == 0) {
+      counter.className = 'hsfc-CharacterCounter hsfc-CharacterCounter--danger';
     } else if (remaining <= 20) {
-      counter.style.color = '#f0ad4e'; // Orange for warning
-      counter.style.fontWeight = 'normal';
+      counter.className = 'hsfc-CharacterCounter hsfc-CharacterCounter--warning';
     } else {
-      counter.style.color = '#666'; // Default gray
-      counter.style.fontWeight = 'normal';
+      counter.className = 'hsfc-CharacterCounter hsfc-CharacterCounter--default';
     }
   },
   
@@ -274,19 +277,18 @@ const CharacterLimitValidator = {
     
     const currentLength = textarea.value.length;
     
-    // Update border color
-    if (currentLength > characterLimit) {
-      textarea.style.borderColor = '#d9534f';
-      // Enhance HubSpot errors instead of hiding them
-      this.hideHubSpotCharacterErrors(textarea);
-      
-      // Set up aggressive monitoring to catch HubSpot errors that appear later
-      this.startAggressiveErrorMonitoring(textarea);
+    // With maxlength attribute, the field should never exceed the limit
+    // But we'll keep the border color logic for visual feedback as users approach the limit
+    
+    // Set appropriate class for visual feedback (preserving existing classes)
+    const baseClasses = textarea.className.replace(/\bhsfc-Textarea--\w+\b/g, '').trim();
+    
+    if (currentLength >= characterLimit) {
+      textarea.className = `${baseClasses} hsfc-Textarea--danger`.trim();
+    } else if (currentLength >= characterLimit - 20) {
+      textarea.className = `${baseClasses} hsfc-Textarea--warning`.trim();
     } else {
-      textarea.style.borderColor = '';
-      // Show HubSpot errors and hide our custom error
-      this.showHubSpotCharacterErrors(textarea);
-      this.hideCustomCharacterError(textarea);
+      textarea.className = baseClasses;
     }
   },
   
@@ -1430,6 +1432,11 @@ const HubSpotFormManager = {
     const events = ['input', 'change', 'blur'];
     
     formFields.forEach(field => {
+      // Add character limit enforcement for text input fields (not textareas)
+      if (field.type === 'text' || field.type === 'email' || (field.tagName.toLowerCase() === 'input' && !field.type)) {
+        this.setupTextInputCharacterLimit(field, cleanup);
+      }
+      
       events.forEach(eventType => {
         // Remove any existing listeners (cleanup from previous setup)
         field.removeEventListener(eventType, validator.validateVisibleStep);
@@ -1444,6 +1451,37 @@ const HubSpotFormManager = {
           signal: cleanup.abortController.signal
         });
       });
+    });
+  },
+
+  // Setup character limit enforcement for text input fields
+  setupTextInputCharacterLimit(field, cleanup) {
+    // Skip if already set up
+    if (field.hasAttribute('data-character-limit-enforced')) {
+      return;
+    }
+    
+    // Mark as set up
+    field.setAttribute('data-character-limit-enforced', 'true');
+    
+    // Default character limit for text inputs (HubSpot commonly uses 100)
+    const characterLimit = 100;
+    
+    // Set the native maxlength attribute - this prevents typing/pasting beyond the limit
+    field.setAttribute('maxlength', characterLimit);
+    
+    // Handle initial value if it already exceeds the limit
+    if (field.value.length > characterLimit) {
+      field.value = field.value.substring(0, characterLimit);
+    }
+    
+    // Also add a safeguard input listener as backup
+    field.addEventListener('input', (event) => {
+      if (field.value.length > characterLimit) {
+        field.value = field.value.substring(0, characterLimit);
+      }
+    }, {
+      signal: cleanup.abortController.signal
     });
   },
   

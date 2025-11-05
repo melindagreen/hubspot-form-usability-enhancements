@@ -208,6 +208,23 @@ div[data-hsfc-id=Renderer] {
       /* Alert Messages */
       & .hsfc-CharacterCounter {
         @apply float-right text-xs text-[gray];
+        &.hsfc-CharacterCounter--default {
+          @apply text-[gray] font-normal;
+        }
+        &.hsfc-CharacterCounter--warning {
+          @apply text-[#f0ad4e] font-bold;
+        }
+        &.hsfc-CharacterCounter--danger {
+          @apply text-[red] font-bold;
+        }
+      }
+      & .hsfc-TextareaInput {
+        &.hsfc-Textarea--warning:focus {
+          @apply !border-[#f0ad4e];
+        }
+        &.hsfc-Textarea--danger:focus {
+          @apply !border-[red];
+        }
       }
       & .hsfc-ErrorAlert {
         @apply flex flex-row items-center my-1 leading-tight text-sm lg:text-xs text-[red] font-bold;
