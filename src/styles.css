@@ -99,6 +99,11 @@ div[data-hsfc-id=Renderer] {
             @apply ml-2 text-xs normal-case text-[gray] font-normal;
           }
         }
+        &+ div.hsfc-CheckboxFieldGroup__Options{
+          & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after {
+            content:'';
+          }
+        }
       }
       & .hsfc-FieldLabel__RequiredIndicator {
           @apply hidden;
