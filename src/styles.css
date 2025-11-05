@@ -1,0 +1,378 @@
+@import "tailwindcss";
+
+/**
+ * HubSpot Form Usability Enhancements - Enhanced Styling
+ * Requires Tailwind CSS v4.0+ for @apply directives
+ * 
+ * This CSS module provides comprehensive styling for HubSpot embedded forms
+ * with enhanced accessibility, validation, and user experience improvements.
+ * 
+ * FLEXBOX ORDERING SYSTEM:
+ * When forms contain validation errors or progress bars, the step content
+ * automatically becomes a flexbox container with the following order:
+ * - order: 0 - Headings, rich text content, images (introductory content)
+ * - order: 1 - Custom validation error boxes 
+ * - order: 2 - Progress bars
+ * - order: 3 - Form fields and input containers
+ * - order: 4 - Navigation buttons (submit/next)
+ * 
+ * This ensures validation errors always appear above progress bars,
+ * both positioned just above the first form field, but below any 
+ * introductory content like headings and paragraphs.
+ */
+
+/* Main form container styling */
+div[data-hsfc-id=Renderer] {
+  form {
+    @apply relative mx-auto;
+    font-family: sans-serif;
+    
+    & .hsfc-Step {
+      @apply border-none;
+      /* Ensure proper flexbox layout when containing both validation errors and progress bars */
+      &:has(.hsfc-CustomValidationError, .hsfc-ProgressBar--repositioned) {
+        @apply flex flex-col;
+      }
+      
+      /* Fallback for browsers that don't support :has() */
+      &.hsfc-step-with-validation-and-progress {
+        @apply flex flex-col;
+      }
+      
+      & .hsfc-Step__Content {
+        @apply p-0;
+        
+        /* Ensure proper flexbox layout when containing both validation errors and progress bars */
+        &:has(.hsfc-CustomValidationError, .hsfc-ProgressBar--repositioned) {
+          @apply flex flex-col;
+        }
+        
+        /* Fallback for browsers that don't support :has() */
+        &.hsfc-content-with-validation-and-progress {
+          @apply flex flex-col;
+        }
+      }
+      & .hsfc-ErrorAlert.hsfc-SimpleNotification {
+        @apply mb-5 py-2 px-3 bg-[#f8d7da] leading-snug text-sm text-[#721c24] border border-[#f1aeb5];
+      }
+      & .hsfc-Step__Banner {
+        @apply hidden;
+      }
+    }
+
+    & .hsfc-Row {
+      /* Content Elements - ensure they appear before validation errors and progress bars */
+      & h1, & h2, & h3 {
+        @apply mt-4 mb-2 !text-2xl text-black font-bold uppercase;
+        order: 0; /* Ensure headings appear first */
+      }
+      & .hsfc-RichText {
+        @apply mb-6 text-sm lg:text-base;
+        order: 0; /* Ensure rich text content appears first */
+        & p {
+          @apply mb-4;
+          &:last-child {
+            @apply mb-0;
+          }
+        }
+        & a {
+          @apply text-[gray] font-bold;
+        }
+        &:last-child {
+          @apply mb-0;
+        }
+      }
+      & .hsfc-LinkImage {
+        @apply mb-6;
+        order: 0; /* Ensure images appear first */
+      }
+
+      /* Form Labels and Descriptions */
+      & label {
+        @apply inline-block max-w-full text-sm lg:text-base text-[black] font-bold;
+        &+ .hsfc-FieldDescription{
+          @apply inline-block !w-[auto] ml-2 pt-2 text-xs text-[gray];
+        }
+        &:not(:has(.hsfc-FieldLabel__RequiredIndicator)) {
+          & > span::after {
+            content:'Optional';
+            @apply ml-2 text-xs normal-case text-[gray] font-normal;
+          }
+        }
+      }
+      & .hsfc-FieldLabel__RequiredIndicator {
+          @apply hidden;
+          /* @apply ml-1 text-[red]; */
+      }
+
+      /* Basic Input Elements */
+      & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
+        @apply block text-left border border-[gray] text-base text-[black] py-2 px-4;
+        &::placeholder {
+          @apply text-[gray];
+        }
+      }
+      & input[type=checkbox]:checked, & input[type=radio]:checked {
+        @apply bg-[gray];
+      }
+      & .hsfc-DropdownInput {
+        @apply relative;
+        & input[type="button"] {
+          @apply pr-8;
+        }
+        & .hsfc-DropdownInput__Caret {
+          @apply absolute top-4 right-4 ;
+          width:12px;
+          height:12px;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          /* border-top: 10px solid black; */
+        }
+      }  
+      & textarea {
+        @apply min-h-16 max-h-32;  /* roughly 500char for limit */
+      }              
+
+      /* Field Container Styles */
+      & .hsfc-CheckboxFieldGroup, & .hsfc-DateField, & .hsfc-DropdownField, & .hsfc-EmailField, & .hsfc-FileField, & .hsfc-NumberField, & .hsfc-PhoneField, & .hsfc-RadioFieldGroup, & .hsfc-TextareaField, & .hsfc-TextField {
+        @apply mb-4;
+        order: 3; /* Ensure form fields appear after validation errors (order: 1) and progress bars (order: 2) */
+      }
+      
+      /* Generic form field containers with inputs should also appear after validation/progress */
+      &:has(input, select, textarea) {
+        order: 3;
+      }
+      
+      /* Fallback for browsers that don't support :has() */
+      &.hsfc-row-with-form-inputs {
+        order: 3;
+      }
+      & .hsfc-DropdownInput, & .hsfc-EmailInput, & .hsfc-FileInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput, & .hsfc-TextInput {
+        @apply flex flex-row relative w-full text-[black];
+      }
+
+      /* Checkbox and Radio Field Styles */
+      & .hsfc-CheckboxField, & .hsfc-CheckboxFieldGroup, & .hsfc-RadioFieldGroup {
+        @apply mb-3;
+        & input[type="checkbox"], & input[type="radio"] {
+          @apply mr-2 mb-1;
+        }
+      }
+      & .hsfc-CheckboxField label, & .hsfc-CheckboxFieldGroup .hsfc-CheckboxFieldGroup__Options label {
+        @apply font-normal;
+      }
+
+      /* Specialized Field Components */
+      & .hsfc-DataPrivacyField {
+        @apply text-xs;
+        & .hsfc-RichText {
+          @apply mb-1 text-xs;
+        }
+      }
+      & .hsfc-DropdownOptions {
+        @apply flex flex-col absolute !top-0 w-full overflow-hidden py-2 bg-white border border-[gray] shadow-lg z-10000;
+        & .hsfc-DropdownOptions__Search {
+          @apply flex-0 px-2;
+        }
+        & .hsfc-DropdownOptions__List {
+          @apply flex-1 py-2 m-0 overflow-y-auto;
+          & .hsfc-DropdownOptions__List__ListItem {
+            @apply p-2 lg:py-1 cursor-pointer hover:bg-[lightgray] focus:bg-[lightgray];
+          }
+        }
+      }
+      & .hsfc-FileInput {
+        @apply flex flex-col text-sm;
+        &::file-selector-button {
+          @apply mr-2 py-1 px-4 rounded bg-[gray] hover:bg-[black] focus:bg-[black] text-white text-sm font-bold transition-colors duration-300;
+        }
+      }
+      & .hsfc-PhoneInput {
+        @apply flex;
+        & .hsfc-PhoneInput__FlagAndCaret {
+          @apply flex flex-row justify-between items-center gap-x-[5px] px-2 border border-[gray] border-r-0 cursor-pointer;
+          & .hsfc-PhoneInput__FlagAndCaret__Caret {
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid black;
+          }
+        }
+      }
+
+      /* Alert Messages */
+      & .hsfc-CharacterCounter {
+        @apply float-right text-xs text-[gray];
+      }
+      & .hsfc-ErrorAlert {
+        @apply flex flex-row items-center my-1 leading-tight text-sm lg:text-xs text-[red] font-bold;
+        &::before {
+          content: '';
+          @apply flex-shrink-0 w-6 h-6 inline-block mr-1 bg-[red] bg-no-repeat bg-center bg-contain;
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
+          -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
+        }
+        
+        /* Hide HubSpot's native character limit error messages immediately */
+        &:has-text("Enter 500 characters or fewer"),
+        &:has-text("enter 500 characters or fewer") {
+          @apply hidden;
+        }
+      }
+      & .hsfc-InfoAlert {
+        @apply text-sm lg:text-xs text-[gray] font-bold;
+      }
+      & .hsfc-AcceptedFiles {
+        @apply mt-2 py-2 px-3 bg-[#d4edda] text-sm text-[#155724] border border-[#c3e6cb] rounded;
+      }
+    }
+    
+    & .hsfc-NavigationRow {
+      @apply text-right mt-4;
+      order: 4; /* Ensure navigation appears after all form content */
+      
+      & button {
+        @apply bg-[black] text-white text-base font-bold py-1 px-6 rounded hover:bg-[darkgray] focus:bg-[darkgray] transition-colors duration-300;
+        &[type="submit"], &[type="button"] {
+          @apply bg-[black] hover:bg-[gray] focus:bg-[gray] focus:outline-2 focus:outline-gray-500;
+        }
+        &:disabled {
+          @apply bg-[lightgray] hover:bg-[lightgray] focus:bg-[lightgray] cursor-not-allowed;
+        }
+        &+ button {
+          @apply ml-4;
+        }
+      }
+      & .hsfc-ErrorAlert {
+        @apply text-base text-[red] font-bold mb-4;
+      }
+    }
+    
+    & .hsfc-ProgressBar {
+      @apply block w-full;
+      & .hsfc-ProgressBar__Text {
+        @apply text-base text-black;
+        &:before {
+          content: 'Form Progress: ';
+        }
+      }
+      & .hsfc-ProgressBar__Progress {
+        @apply w-full h-4 rounded-full bg-white outline outline-black overflow-hidden;
+        & > div {
+          @apply w-full h-4 bg-[gray];
+          border-radius:calc(infinity * 1px);
+        }
+      }
+      
+      /* Specific styling for repositioned progress bars */
+      &.hsfc-ProgressBar--repositioned {
+        @apply mb-4;
+        order: 2; /* Ensure progress bar appears after validation errors (order: 1) but before form fields (order: 3) */
+        flex-shrink: 0;
+      }
+    }
+
+    & .hsfc-CustomValidationError {
+      @apply mt-4 mb-6 py-3 px-4 bg-[#f8d7da] border border-[#f1aeb5] text-sm leading-snug text-[#721c24] rounded;
+      order: 1; /* Ensure validation error appears before progress bar (order: 2) but after intro content (order: 0) */
+      & > div {
+        @apply font-bold mb-2;
+      }
+      & ul  {
+        @apply list-disc pl-5;
+        & li {
+          @apply mb-1 text-[#721c24];
+          & a {
+            @apply text-[#721c24] text-sm underline cursor-pointer;
+          }
+        }
+      }
+      
+      /* Ensure proper spacing when error appears before progress bar */
+      & + .hsfc-ProgressBar--repositioned,
+      & + .hsfc-ProgressBar {
+        @apply mt-0;
+      }
+      
+      /* Ensure proper spacing when error appears before form fields */
+      & + .hs-form-field,
+      & + .hsfc-FormField,
+      & + .hsfc-Row {
+        @apply mt-0;
+      }
+    }
+  }
+
+  /* Reverse theme styles (for dark backgrounds) */
+  .hs-form-reverse & {
+    & form {
+      & .hsfc-Row {
+        & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
+          @apply bg-white;
+        }
+        & input[type=checkbox]:checked, & input[type=radio]:checked {
+          @apply bg-[gray];
+        }
+        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert {
+          @apply text-white;
+        }
+        & .hsfc-PhoneInput {
+          & .hsfc-PhoneInput__FlagAndCaret {
+            background:white;
+          }
+        }
+        & .hsfc-ErrorAlert {
+          &::before {
+            @apply bg-white;
+          }
+        }
+        & .hsfc-CharacterCounter {
+          @apply !text-white;
+        }
+      }
+    }
+  }
+  
+  /* 
+   * Absolute flexbox ordering rules to ensure validation errors always appear above progress bars
+   * regardless of their DOM insertion order. These rules use CSS flexbox order property
+   * to control visual order without changing the actual DOM structure.
+   */
+  .hsfc-ProgressBar--repositioned ~ .hsfc-CustomValidationError {
+    order: 1 !important;
+  }
+  
+  .hsfc-CustomValidationError ~ .hsfc-ProgressBar--repositioned {
+    order: 2 !important;
+  }
+}
+
+/* Utility classes for custom integration */
+.hsfc-enhanced {
+  /* Additional utility class for scoped enhancements */
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  div[data-hsfc-id=Renderer] form {
+    & .hsfc-NavigationRow button,
+    & .hsfc-FileInput::file-selector-button {
+      transition: none;
+    }
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  div[data-hsfc-id=Renderer] form {
+    & .hsfc-Row {
+      & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
+        border-width: 2px;
+      }
+      & .hsfc-ErrorAlert {
+        border-width: 2px;
+        font-weight: 900;
+      }
+    }
+  }
+}

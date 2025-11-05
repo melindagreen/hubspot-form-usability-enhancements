@@ -1,0 +1,63 @@
+{
+  "name": "@fmd/hubspot-form-usability-enhancements",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Enhanced HubSpot form usability, validation and styling with React hydration support",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": {
+      "import": "./dist/styles.css",
+      "require": "./dist/styles.css"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:js && npm run build:css && npm run build:types",
+    "build:js": "rollup -c",
+    "build:css": "postcss src/styles.css -o dist/styles.css",
+    "build:types": "cp src/index.d.ts dist/index.d.ts",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "hubspot",
+    "form-usability",
+    "validation",
+    "accessibility",
+    "react",
+    "tailwind"
+  ],
+  "author": "Fahlgren Mortine Digital",
+  "license": "MIT",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.16",
+    "@tailwindcss/postcss": "^4.1.16",
+    "postcss": "^8.5.0",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^4.1.16"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.21.2",
+    "typescript": "^5.6.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FahlgrenMortineDigital/hubspot-forms.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FahlgrenMortineDigital/hubspot-forms/issues"
+  },
+  "homepage": "https://github.com/FahlgrenMortineDigital/hubspot-forms#readme"
+}

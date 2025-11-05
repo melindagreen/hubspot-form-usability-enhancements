@@ -1,0 +1,262 @@
+/**
+ * @fmd/hubspot-form-usability-enhancements
+ * Enhanced usability, validation, accessibility, and styling for HubSpot forms implemented with the "Developer Code" script block
+ * 
+ * Main entry point for the module
+ */
+
+import { 
+  HubSpotFormManager,
+  HubSpotFormValidator,
+  CharacterLimitValidator,
+  FieldValidator,
+  FileUploadValidator,
+  removeHubSpotFormStyles,
+  setupAllFormsValidation,
+  setupSingleFormValidation,
+  setupFieldValidation
+} from './hubspot-forms.js';
+
+/**
+ * Main initialization function that accepts configuration options
+ */
+const init = (options = {}) => {
+  if (typeof window === 'undefined') {
+    return {
+      HubSpotFormManager: null,
+      HubSpotFormValidator: null,
+      CharacterLimitValidator: null
+    };
+  }
+
+  // Apply configuration if provided
+  if (options.characterLimit) {
+    CharacterLimitValidator.DEFAULT_LIMIT = options.characterLimit;
+  }
+  
+  if (options.allowedExtensions) {
+    FileUploadValidator.allowedExtensions = options.allowedExtensions;
+  }
+  
+  if (options.maxFileSize) {
+    FileUploadValidator.maxFileSize = options.maxFileSize;
+  }
+
+  // Position elements immediately to prevent layout shifts
+  const positionElementsImmediately = () => {
+    // Find and reposition progress bars immediately
+    document.querySelectorAll('.hsfc-ProgressBar').forEach(progressBar => {
+      if (progressBar.hasAttribute('data-repositioned')) return;
+      
+      const step = progressBar.closest('.hsfc-Step');
+      if (!step) return;
+      
+      progressBar.setAttribute('data-repositioned', 'true');
+      progressBar.remove();
+      
+      const stepContent = step.querySelector('.hsfc-Step__Content') || step;
+      const firstFormField = stepContent.querySelector('.hsfc-Row:has(input, select, textarea), .hsfc-FormField, .hs-form-field, input, select, textarea');
+      const existingValidationError = stepContent.querySelector('.hsfc-CustomValidationError');
+      
+      if (existingValidationError) {
+        existingValidationError.insertAdjacentElement('afterend', progressBar);
+      } else if (firstFormField) {
+        stepContent.insertBefore(progressBar, firstFormField);
+      } else if (stepContent.firstChild) {
+        stepContent.insertBefore(progressBar, stepContent.firstChild);
+      } else {
+        stepContent.appendChild(progressBar);
+      }
+      
+      progressBar.classList.add('hsfc-ProgressBar--repositioned');
+    });
+  };
+
+  // Run positioning immediately when module loads
+  positionElementsImmediately();
+  
+  // Set up observer for new elements
+  const positioningObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'childList') {
+        for (const addedNode of mutation.addedNodes) {
+          if (addedNode.nodeType === Node.ELEMENT_NODE) {
+            if (addedNode.classList?.contains('hsfc-ProgressBar')) {
+              positionElementsImmediately();
+            }
+            const progressBars = addedNode.querySelectorAll?.('.hsfc-ProgressBar');
+            if (progressBars?.length > 0) {
+              positionElementsImmediately();
+            }
+          }
+        }
+      }
+    }
+  });
+
+  positioningObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Initialize forms when safe, but positioning happens immediately
+  const whenSafeToInitialize = (callback) => {
+    if (typeof window === 'undefined') return;
+    
+    const executeCallback = () => {
+      // Ensure we don't interfere with any ongoing hydration
+      const isHydrationSafe = () => {
+        // Check that the page is fully loaded
+        if (document.readyState !== 'complete') return false;
+        
+        // Wait for any active React transitions to complete
+        if (document.documentElement.classList.contains('react-hydrating')) return false;
+        
+        // Ensure no React hydration errors are present
+        if (document.querySelector('[data-react-hydration-error]')) return false;
+        
+        return true;
+      };
+      
+      if (isHydrationSafe()) {
+        // Use requestIdleCallback to run during browser idle time
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(() => {
+            // Final safety delay
+            setTimeout(callback, 50);
+          });
+        } else {
+          setTimeout(callback, 100);
+        }
+      } else {
+        // Re-check in 100ms
+        setTimeout(executeCallback, 100);
+      }
+    };
+    
+    executeCallback();
+  };
+
+  whenSafeToInitialize(() => {
+    // Try to find and setup forms immediately
+    const hubspotForms = document.querySelectorAll('.hsfc-Form');
+    
+    if (hubspotForms.length > 0) {
+      HubSpotFormManager.setupAllForms();
+      return;
+    }
+
+    // If no forms found immediately, set up observer for dynamic forms
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type !== 'childList') continue;
+        
+        for (const addedNode of mutation.addedNodes) {
+          if (addedNode.nodeType === Node.ELEMENT_NODE) {
+            // Check if added node is a form or contains forms
+            const newForms = addedNode.classList?.contains('hsfc-Form') ? 
+              [addedNode] : 
+              addedNode.querySelectorAll?.('.hsfc-Form') || [];
+            
+            if (newForms.length > 0) {
+              observer.disconnect();
+              HubSpotFormManager.setupAllForms();
+              return;
+            }
+          }
+        }
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    // Cleanup observer after timeout
+    setTimeout(() => {
+      observer.disconnect();
+    }, 10000);
+  });
+
+  // Return the managers and validators for advanced usage
+  return {
+    HubSpotFormManager,
+    HubSpotFormValidator,
+    CharacterLimitValidator,
+    FileUploadValidator,
+    FieldValidator,
+    removeHubSpotFormStyles
+  };
+};
+
+// Auto-initialization is completely disabled to prevent React hydration conflicts
+// Users must explicitly call init() to initialize the module
+// This ensures no interference with React hydration or other frameworks
+
+// Named exports for granular control
+export {
+  // Main initialization function
+  init,
+  
+  // Core managers and validators
+  HubSpotFormManager,
+  HubSpotFormValidator,
+  CharacterLimitValidator,
+  FieldValidator,
+  FileUploadValidator,
+  
+  // Utility functions
+  removeHubSpotFormStyles,
+  
+  // Legacy compatibility functions
+  setupAllFormsValidation,
+  setupSingleFormValidation,
+  setupFieldValidation
+};
+
+// Default export for simple usage
+export default init;
+
+/**
+ * Usage Examples:
+ * 
+ * // Simple auto-initialization (happens automatically)
+ * import '@fmd/hubspot-form-usability-enhancements';
+ * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * 
+ * // Custom configuration
+ * import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
+ * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * 
+ * hubspotForms({
+ *   characterLimit: 1000,
+ *   allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
+ *   maxFileSize: 5 * 1024 * 1024 // 5MB
+ * });
+ * 
+ * // Granular control
+ * import { HubSpotFormManager, CharacterLimitValidator } from '@fmd/hubspot-form-usability-enhancements';
+ * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * 
+ * // Prevent auto-initialization
+ * window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+ * import '@fmd/hubspot-form-usability-enhancements';
+ * 
+ * // Manual initialization with custom settings
+ * HubSpotFormManager.setupAllForms();
+ * 
+ * // React usage
+ * import { useEffect } from 'react';
+ * import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
+ * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * 
+ * function MyComponent() {
+ *   useEffect(() => {
+ *     // Initialize forms after component mounts
+ *     hubspotForms();
+ *   }, []);
+ *   
+ *   return <div id="hubspot-form-container"></div>;
+ * }
+ */
