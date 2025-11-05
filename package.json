@@ -51,10 +51,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/FahlgrenMortineDigital/hubspot-forms.git"
+    "url": "https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements.git"
   },
   "bugs": {
-    "url": "https://github.com/FahlgrenMortineDigital/hubspot-forms/issues"
+    "url": "https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements/issues"
   },
-  "homepage": "https://github.com/FahlgrenMortineDigital/hubspot-forms#readme"
+  "homepage": "https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements#readme"
 }

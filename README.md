@@ -1,4 +1,4 @@
-# @fmd/hubspot-form-usability-enhancements
+# @fahlgren-mortine/hubspot-form-usability-enhancements
 
 Enhanced HubSpot form usability, validation and styling with React hydration support, accessibility improvements, and Tailwind CSS integration.
 
@@ -16,7 +16,7 @@ Enhanced HubSpot form usability, validation and styling with React hydration sup
 ## Installation
 
 ```bash
-npm install @fmd/hubspot-form-usability-enhancements
+npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
 **Peer Dependencies:**
@@ -28,16 +28,16 @@ npm install @fmd/hubspot-form-usability-enhancements
 
 ```javascript
 // Import the module and styles - forms will initialize automatically
-import '@fmd/hubspot-form-usability-enhancements';
-import '@fmd/hubspot-form-usability-enhancements/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 ```
 
 ### React Usage
 
 ```jsx
 import { useEffect } from 'react';
-import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
-import '@fmd/hubspot-form-usability-enhancements/styles';
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 function MyFormComponent() {
   useEffect(() => {
@@ -61,13 +61,13 @@ function MyFormComponent() {
 
 ```javascript
 // pages/_app.js or app/layout.js
-import '@fmd/hubspot-form-usability-enhancements';
-import '@fmd/hubspot-form-usability-enhancements/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // For client-side only initialization
 useEffect(() => {
   if (typeof window !== 'undefined') {
-    import('@fmd/hubspot-form-usability-enhancements').then(({ default: hubspotForms }) => {
+    import('@fahlgren-mortine/hubspot-form-usability-enhancements').then(({ default: hubspotForms }) => {
       hubspotForms();
     });
   }
@@ -77,8 +77,8 @@ useEffect(() => {
 ### Custom Configuration
 
 ```javascript
-import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
-import '@fmd/hubspot-form-usability-enhancements/styles';
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 hubspotForms({
   characterLimit: 1000,           // Custom character limit for textareas
@@ -99,8 +99,8 @@ import {
   HubSpotFormManager, 
   CharacterLimitValidator,
   FileUploadValidator 
-} from '@fmd/hubspot-form-usability-enhancements';
-import '@fmd/hubspot-form-usability-enhancements/styles';
+} from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Manual form setup
 HubSpotFormManager.setupAllForms();
@@ -120,12 +120,12 @@ CharacterLimitValidator.setupSingleTextarea(textarea, cleanupController);
 // Set flag before importing to prevent auto-initialization
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
-import '@fmd/hubspot-form-usability-enhancements';
-import '@fmd/hubspot-form-usability-enhancements/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Manual initialization with custom timing
 setTimeout(() => {
-  import('@fmd/hubspot-form-usability-enhancements').then(({ HubSpotFormManager }) => {
+  import('@fahlgren-mortine/hubspot-form-usability-enhancements').then(({ HubSpotFormManager }) => {
     HubSpotFormManager.setupAllForms();
   });
 }, 1000);
@@ -167,8 +167,8 @@ div[data-hsfc-id=Renderer] {
 
 ```javascript
 // Import without styles and add your own
-import '@fmd/hubspot-form-usability-enhancements';
-// Don't import '@fmd/hubspot-form-usability-enhancements/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+// Don't import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Add your custom CSS file with Tailwind classes
 import './my-custom-hubspot-styles.css';
@@ -202,7 +202,7 @@ import hubspotForms, {
   HubSpotFormsConfig,
   HubSpotFormManager,
   ValidationResult 
-} from '@fmd/hubspot-form-usability-enhancements';
+} from '@fahlgren-mortine/hubspot-form-usability-enhancements';
 
 const config: HubSpotFormsConfig = {
   characterLimit: 1000,
@@ -246,7 +246,7 @@ The module automatically detects React hydration contexts and:
 Main initialization function.
 
 ```javascript
-import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
 
 const instance = hubspotForms({
   characterLimit: 750
@@ -287,7 +287,7 @@ Remove HubSpot's default form styles.
 console.log(window.HUBSPOT_FORMS_NO_AUTO_INIT);
 
 // Manual initialization
-import { HubSpotFormManager } from '@fmd/hubspot-form-usability-enhancements';
+import { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
 HubSpotFormManager.setupAllForms();
 ```
 
@@ -308,7 +308,7 @@ useEffect(() => {
 // tailwind.config.js
 module.exports = {
   content: [
-    './node_modules/@fmd/hubspot-form-usability-enhancements/dist/**/*.js',
+    './node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/**/*.js',
     // ... your other content paths
   ],
   // ... rest of config

@@ -1,5 +1,5 @@
 /**
- * Example usage of @fmd/hubspot-forms module
+ * Example usage of @fahlgren-mortine/hubspot-form-usability-enhancements module
  * This file demonstrates various ways to integrate the module
  */
 
@@ -8,16 +8,16 @@
 // ========================================
 
 // Just import the module and styles - forms will work automatically
-import '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // ========================================
 // 2. REACT COMPONENT USAGE
 // ========================================
 
 import { useEffect, useState } from 'react';
-import hubspotForms from '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 function HubSpotFormComponent() {
   const [formLoaded, setFormLoaded] = useState(false);
@@ -64,13 +64,13 @@ function HubSpotFormComponent() {
 
 // pages/_app.js or app/layout.js
 import { useEffect } from 'react';
-import '@fmd/hubspot-forms/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
     // Client-side only initialization
     if (typeof window !== 'undefined') {
-      import('@fmd/hubspot-forms').then(({ default: hubspotForms }) => {
+      import('@fahlgren-mortine/hubspot-form-usability-enhancements').then(({ default: hubspotForms }) => {
         hubspotForms({
           characterLimit: 750,
           allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
@@ -90,8 +90,8 @@ function MyApp({ Component, pageProps }) {
 import hubspotForms, { 
   HubSpotFormManager, 
   CharacterLimitValidator 
-} from '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+} from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Custom initialization with specific settings
 hubspotForms({
@@ -115,14 +115,14 @@ const initializeSpecificForm = (formSelector) => {
 // Set flag before importing
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
-import '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Manual initialization with custom timing
 const initializeWhenReady = () => {
   // Wait for specific conditions
   if (document.querySelector('#my-form-container')) {
-    import('@fmd/hubspot-forms').then(({ HubSpotFormManager }) => {
+    import('@fahlgren-mortine/hubspot-form-usability-enhancements').then(({ HubSpotFormManager }) => {
       HubSpotFormManager.setupAllForms();
     });
   } else {
@@ -139,8 +139,8 @@ initializeWhenReady();
 import hubspotForms, { 
   HubSpotFormManager,
   ValidationResult 
-} from '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+} from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 const config = {
   characterLimit: 1500,
@@ -164,15 +164,15 @@ const setupFormWithTypes = (formContainer) => {
 // VITE_UPLOAD_MAX_SIZE=10MB
 
 // The module will automatically use these environment variables
-import '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // ========================================
 // 8. DYNAMIC FORM LOADING
 // ========================================
 
-import { HubSpotFormManager } from '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+import { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 const loadHubSpotForm = async (portalId, formId, targetSelector) => {
   const target = document.querySelector(targetSelector);
@@ -201,8 +201,8 @@ loadHubSpotForm('YOUR_PORTAL_ID', 'YOUR_FORM_ID', '#hubspot-form-1');
 // ========================================
 
 // Import without default styles
-import '@fmd/hubspot-forms';
-// Don't import '@fmd/hubspot-forms/styles';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+// Don't import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Use your own CSS with Tailwind classes
 import './custom-hubspot-styles.css';
@@ -226,8 +226,8 @@ document.head.appendChild(styleSheet);
 // 10. ERROR HANDLING AND DEBUGGING
 // ========================================
 
-import hubspotForms, { HubSpotFormManager } from '@fmd/hubspot-forms';
-import '@fmd/hubspot-forms/styles';
+import hubspotForms, { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // Debug mode
 const debugConfig = {

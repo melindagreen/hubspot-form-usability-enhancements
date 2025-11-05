@@ -1,5 +1,5 @@
 /**
- * Type definitions for @fmd/hubspot-form-usability-enhancements
+ * Type definitions for @fahlgren-mortine/hubspot-form-usability-enhancements
  * Enhanced HubSpot form usability, validation and styling with React hydration support
  */
 
