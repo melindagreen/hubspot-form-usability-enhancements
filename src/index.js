@@ -1,5 +1,5 @@
 /**
- * @fmd/hubspot-form-usability-enhancements
+ * @fahlgren-mortine/hubspot-form-usability-enhancements
  * Enhanced usability, validation, accessibility, and styling for HubSpot forms implemented with the "Developer Code" script block
  * 
  * Main entry point for the module
@@ -193,6 +193,74 @@ const init = (options = {}) => {
 // Auto-initialization is completely disabled to prevent React hydration conflicts
 // Users must explicitly call init() to initialize the module
 // This ensures no interference with React hydration or other frameworks
+// Export the initialization function for manual use
+export const initializeWithTwoPhases = async (options = {}) => {
+  const defaultOptions = {
+    characterLimit: 500,
+    allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif'],
+    maxFileSize: 10 * 1024 * 1024,
+    autoInit: true,
+    delay: 1000,
+    reactHydrationDelay: 500,
+    cleanupDelay: 1000,
+    ...options
+  };
+
+  // Phase 1: Apply CSS-only positioning to prevent layout shifts
+  const applyImmediateCSS = () => {
+    const style = document.createElement('style');
+    style.id = 'hubspot-forms-immediate-positioning';
+    style.textContent = `
+      /* Hide progress bars temporarily to prevent flashing */
+      .hsfc-ProgressBar:not([data-repositioned]) {
+        position: absolute;
+        top: -9999px;
+        opacity: 0;
+      }
+      
+      /* Ensure validation errors appear in correct position */
+      .hsfc-CustomValidationError {
+        order: -2;
+      }
+      
+      /* Ensure progress bars appear after validation errors */
+      .hsfc-ProgressBar[data-repositioned] {
+        order: -1;
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  // Apply immediate CSS
+  applyImmediateCSS();
+
+  // Phase 2: Wait for React hydration, then do proper DOM positioning
+  setTimeout(async () => {
+    try {
+      init({
+        characterLimit: defaultOptions.characterLimit,
+        allowedExtensions: defaultOptions.allowedExtensions,
+        maxFileSize: defaultOptions.maxFileSize,
+      });
+
+      // Remove temporary CSS after proper positioning is done
+      setTimeout(() => {
+        const tempStyle = document.getElementById('hubspot-forms-immediate-positioning');
+        if (tempStyle) tempStyle.remove();
+      }, defaultOptions.cleanupDelay);
+
+    } catch (error) {
+      console.error('Failed to initialize HubSpot forms:', error);
+    }
+  }, defaultOptions.reactHydrationDelay);
+};
+
+// Auto-initialization (unless disabled)
+if (typeof window !== 'undefined' && !window.HUBSPOT_FORMS_NO_AUTO_INIT) {
+  window.addEventListener('load', () => {
+    setTimeout(initializeWithTwoPhases, 1000);
+  });
+}
 
 // Named exports for granular control
 export {
@@ -222,12 +290,12 @@ export default init;
  * Usage Examples:
  * 
  * // Simple auto-initialization (happens automatically)
- * import '@fmd/hubspot-form-usability-enhancements';
- * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+ * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
  * 
  * // Custom configuration
- * import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
- * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+ * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
  * 
  * hubspotForms({
  *   characterLimit: 1000,
@@ -236,20 +304,20 @@ export default init;
  * });
  * 
  * // Granular control
- * import { HubSpotFormManager, CharacterLimitValidator } from '@fmd/hubspot-form-usability-enhancements';
- * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * import { HubSpotFormManager, CharacterLimitValidator } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+ * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
  * 
  * // Prevent auto-initialization
  * window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
- * import '@fmd/hubspot-form-usability-enhancements';
+ * import '@fahlgren-mortine/hubspot-form-usability-enhancements';
  * 
  * // Manual initialization with custom settings
  * HubSpotFormManager.setupAllForms();
  * 
  * // React usage
  * import { useEffect } from 'react';
- * import hubspotForms from '@fmd/hubspot-form-usability-enhancements';
- * import '@fmd/hubspot-form-usability-enhancements/styles';
+ * import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+ * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
  * 
  * function MyComponent() {
  *   useEffect(() => {

@@ -1,5 +1,5 @@
 {
-  "name": "@fmd/hubspot-form-usability-enhancements",
+  "name": "@fahlgren-mortine/hubspot-form-usability-enhancements",
   "version": "1.0.0",
   "type": "module",
   "description": "Enhanced HubSpot form usability, validation and styling with React hydration support",
@@ -12,10 +12,7 @@
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles": {
-      "import": "./dist/styles.css",
-      "require": "./dist/styles.css"
-    }
+    "./styles": "./dist/styles.css"
   },
   "files": [
     "dist/**/*",
@@ -37,7 +34,7 @@
     "react",
     "tailwind"
   ],
-  "author": "Fahlgren Mortine Digital",
+  "author": "Fahlgren Mortine",
   "license": "MIT",
   "dependencies": {
     "@tailwindcss/cli": "^4.1.16",
