@@ -1,6 +1,3 @@
-// HubSpot Form Enhancements Module - Build timestamp: November 5, 2025 at 3:45 PM
-console.log('🚀 HubSpot Form Enhancements Module loaded - Build: November 5, 2025 at 3:45 PM');
-
 const removeHubSpotFormStyles = () => {
   // Constants for HubSpot BaseStyle CSS removal
   const HUBSPOT_BASESTYLE_SELECTOR = 'style[data-hsfc-id="BaseStyle"]';
