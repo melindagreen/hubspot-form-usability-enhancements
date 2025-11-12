@@ -21,10 +21,167 @@
  * introductory content like headings and paragraphs.
  */
 
+/* 
+ * CSS Custom Properties (Variables) - Default Values
+ * 
+ * To override these in your Tailwind CSS project, define them in your own @theme block:
+ * 
+ * Example override in your CSS (with Tailwind CSS):
+ * @theme {
+ *   --color-primary: oklch(0.55 0.20 340);
+ *   --color-primary-lt: oklch(0.92 0.08 340);
+ * }
+ * 
+ * Or if not using Tailwind CSS, override in :root:
+ * :root {
+ *   --color-primary: oklch(0.55 0.20 340);
+ *   --color-primary-lt: oklch(0.92 0.08 340);
+ * }
+ * 
+ * Because these variables use var() references, you often only need to override
+ * the base colors (--color-primary, --color-secondary, etc.) and the rest will
+ * automatically update.
+ */
+
+@theme {
+  /* Base Color Palette */
+  --color-primary: oklch(0.5835 0.1505 250.88);
+  --color-primary-lt: oklch(0.9200 0.0800 250.88);
+  --color-primary-dk: oklch(0.3835 0.1705 250.88);
+  --color-secondary: oklch(0.6500 0.1400 195.00);
+  --color-secondary-lt: oklch(0.9200 0.0600 195.00);
+  --color-secondary-dk: oklch(0.4500 0.1600 195.00);
+  --color-neutral: oklch(0.5500 0.0050 250.00);
+  --color-neutral-hlt: oklch(0.9700 0.0020 250.00);
+  --color-neutral-lt: oklch(0.7000 0.0040 250.00);
+  --color-neutral-dk: oklch(0.2500 0.0070 250.00);
+  --color-focus-ring: oklch(0.6000 0.2000 250.88);
+  --color-error: oklch(0.6463 0.2409 29.23);
+  --color-error-lt: oklch(0.9700 0.0200 29.23);
+  --color-error-dk: oklch(0.4500 0.2200 29.23);
+  --color-warning: oklch(0.7800 0.1500 75.00);
+  --color-success: oklch(0.6500 0.1700 145.00);
+  --color-success-lt: oklch(0.9700 0.0225 145.00);
+  --color-success-dk: oklch(0.4500 0.1900 145.00);
+  --color-white: oklch(1 0 0);
+  --color-black: oklch(0 0 0);
+  
+  /* HubSpot Form Specific Colors */
+  --color-hs-form-bg: var(--color-white);
+  --color-hs-form-border: var(--color-neutral-lt);
+
+  /* Primary Buttons */
+  --color-hs-form-btn-primary-bg: var(--color-primary);
+  --color-hs-form-btn-primary-border: var(--color-primary);
+  --color-hs-form-btn-primary-text: var(--color-white);
+  --color-hs-form-btn-primary-hover-bg: var(--color-primary-dk);
+  --color-hs-form-btn-primary-hover-border: var(--color-primary-dk);
+  --color-hs-form-btn-primary-hover-text: var(--color-white);
+  --color-hs-form-btn-primary-focus-bg: var(--color-primary-dk);
+  --color-hs-form-btn-primary-focus-border: var(--color-primary-dk);
+  --color-hs-form-btn-primary-focus-text: var(--color-white);
+
+  /* Ancillary Buttons */
+  --color-hs-form-btn-ancillary-bg: var(--color-secondary);
+  --color-hs-form-btn-ancillary-text: var(--color-white);
+  --color-hs-form-btn-ancillary-border: var(--color-secondary);
+  --color-hs-form-btn-ancillary-hover-bg: var(--color-secondary-dk);
+  --color-hs-form-btn-ancillary-hover-border: var(--color-secondary-dk);
+  --color-hs-form-btn-ancillary-hover-text: var(--color-white);
+  --color-hs-form-btn-ancillary-focus-bg: var(--color-secondary-dk);
+  --color-hs-form-btn-ancillary-focus-border: var(--color-secondary-dk);
+  --color-hs-form-btn-ancillary-focus-text: var(--color-white);
+
+  /* Disabled Buttons */
+  --color-hs-form-btn-disabled-bg: var(--color-neutral-lt);
+  --color-hs-form-btn-disabled-border: var(--color-neutral-lt);
+  --color-hs-form-btn-disabled-text: var(--color-neutral-dk);
+
+  /* Form Fields */
+  --color-hs-form-field-bg: var(--color-black);
+  --color-hs-form-field-border: var(--color-neutral-lt);
+  --color-hs-form-field-border-hover: var(--color-neutral-lt);
+  --color-hs-form-field-border-focus: var(--color-primary);
+  --color-hs-form-field-text: var(--color-neutral);
+  --color-hs-form-field-checked-bg: var(--color-primary);
+  --color-hs-form-placeholder-text: var(--color-neutral-lt);
+
+  /* Dropdown Lists */
+  --color-hs-form-selectlist-bg: var(--color-white);
+  --color-hs-form-selectlist-border: var(--color-neutral-lt);
+  --color-hs-form-selectlist-item-bg: var(--color-white);
+  --color-hs-form-selectlist-item-hover-bg: var(--color-neutral-hlt);
+  --color-hs-form-selectlist-item-text: var(--color-neutral);
+  --color-hs-form-selectlist-caret-color: var(--color-neutral-dk);
+
+  /* Focus Ring */
+  --color-hs-form-focus-ring: var(--color-focus-ring);
+
+  /* Typography */
+  --color-hs-form-headings: var(--color-black);
+  --color-hs-form-text: var(--color-neutral);
+  --color-hs-form-link: var(--color-primary);
+
+  /* Labels */
+  --color-hs-form-label-text: var(--color-neutral);
+  --color-hs-form-label-description-text: var(--color-neutral-lt);
+  --color-hs-form-label-optional-text: var(--color-neutral-lt);
+
+  /* Progress Bars */
+  --color-hs-form-progress-bar-bg: var(--color-white);
+  --color-hs-form-progress-bar-border: var(--color-neutral);
+  --color-hs-form-progress-bar-fill: var(--color-primary);
+
+  /* Validation Messages */
+  --color-hs-form-required-indicator: var(--color-error);
+  --color-hs-form-error-message: var(--color-error);
+  --color-hs-form-error-box-bg: var(--color-error-lt);
+  --color-hs-form-error-border: var(--color-error-dk);
+  --color-hs-form-error-box-text: var(--color-error);
+  --color-hs-form-error-box-border: var(--color-error);
+  --color-hs-form-warning-message: var(--color-warning);
+  --color-hs-form-success-message: var(--color-success);
+  --color-hs-form-success-box-bg: var(--color-success-lt);
+  --color-hs-form-success-box-border: var(--color-success-dk);
+  --color-hs-form-success-box-text: var(--color-success);
+
+  /* Reverse Theme (for dark backgrounds) */
+  --color-hs-form-reverse-btn-primary-bg: var(--color-white);
+  --color-hs-form-reverse-btn-primary-border: var(--color-white);
+  --color-hs-form-reverse-btn-primary-text: var(--color-primary);
+  --color-hs-form-reverse-btn-primary-hover-bg: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-hover-border: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-hover-text: var(--color-neutral-dk);
+  --color-hs-form-reverse-btn-primary-focus-bg: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-border: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-text: var(--color-neutral-dk);
+
+  --color-hs-form-reverse-btn-ancillary-bg: var(--color-white);
+  --color-hs-form-reverse-btn-ancillary-border: var(--color-white);
+  --color-hs-form-reverse-btn-ancillary-text: var(--color-secondary);
+  --color-hs-form-reverse-btn-ancillary-hover-bg: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-hover-border: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-hover-text: var(--color-neutral-dk);
+  --color-hs-form-reverse-btn-ancillary-focus-bg: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-border: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-text: var(--color-neutral-dk);
+
+  --color-hs-form-reverse-bg: var(--color-primary);
+  --color-hs-form-reverse-text: var(--color-white);
+  --color-hs-form-reverse-link: var(--color-white);
+  --color-hs-form-reverse-field-bg: var(--color-white);
+  --color-hs-form-reverse-field-checked-bg: var(--color-neutral-lt);
+  --color-hs-form-reverse-focus-ring: var(--color-focus-ring);
+  --color-hs-form-reverse-progress-bar-bg: var(--color-white);
+  --color-hs-form-reverse-progress-bar-border: var(--color-neutral-lt);
+  --color-hs-form-reverse-progress-bar-fill: var(--color-neutral-lt);
+}
+
+
 /* Main form container styling */
 div[data-hsfc-id=Renderer] {
   form {
-    @apply relative mx-auto;
+    @apply relative mx-auto bg-hs-form-bg text-hs-form-text;
     font-family: sans-serif;
     
     & .hsfc-Step {
@@ -53,7 +210,7 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-ErrorAlert.hsfc-SimpleNotification {
-        @apply mb-5 py-2 px-3 bg-[#f8d7da] leading-snug text-sm text-[#721c24] border border-[#f1aeb5];
+        @apply mb-5 py-2 px-3 bg-hs-form-error-message leading-snug text-sm text-hs-form-error-message border border-hs-form-error-border;
       }
       & .hsfc-Step__Banner {
         @apply hidden;
@@ -62,8 +219,12 @@ div[data-hsfc-id=Renderer] {
 
     & .hsfc-Row {
       /* Content Elements - ensure they appear before validation errors and progress bars */
+      @apply flex flex-row justify-stretch items-start flex-nowrap gap-6;
+      & > div {
+        @apply flex-1;
+      }
       & h1, & h2, & h3 {
-        @apply mt-4 mb-2 !text-2xl text-black font-bold uppercase;
+        @apply mt-4 mb-2 !text-2xl text-hs-form-headings font-bold uppercase;
         order: 0; /* Ensure headings appear first */
       }
       & .hsfc-RichText {
@@ -76,7 +237,7 @@ div[data-hsfc-id=Renderer] {
           }
         }
         & a {
-          @apply text-[gray] font-bold;
+          @apply text-hs-form-link font-bold;
         }
         &:last-child {
           @apply mb-0;
@@ -89,14 +250,17 @@ div[data-hsfc-id=Renderer] {
 
       /* Form Labels and Descriptions */
       & label {
-        @apply inline-block max-w-full text-sm lg:text-base text-[black] font-bold;
+        @apply inline-block max-w-full text-sm lg:text-base text-hs-form-label-text font-bold;
         &+ .hsfc-FieldDescription{
-          @apply inline-block !w-[auto] ml-2 pt-2 text-xs text-[gray];
+          @apply inline-block !w-[auto] ml-2 text-xs text-hs-form-label-description-text font-normal;
+          & span {
+            color: var(--color-hs-form-label-description-text) !important;
+          }
         }
         &:not(:has(.hsfc-FieldLabel__RequiredIndicator)) {
           & > span::after {
             content:'Optional';
-            @apply ml-2 text-xs normal-case text-[gray] font-normal;
+            @apply ml-2 text-xs normal-case text-hs-form-label-description-text font-normal;
           }
         }
         &+ div.hsfc-CheckboxFieldGroup__Options{
@@ -107,31 +271,31 @@ div[data-hsfc-id=Renderer] {
       }
       & .hsfc-FieldLabel__RequiredIndicator {
           @apply hidden;
-          /* @apply ml-1 text-[red]; */
+          /* @apply ml-1 text-hs-form-error-message; */
       }
 
       /* Basic Input Elements */
       & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
-        @apply block text-left border border-[gray] text-base text-[black] py-2 px-4;
+        @apply block text-left border border-hs-form-field-border text-base text-hs-form-field-text py-2 px-4;
         &::placeholder {
-          @apply text-[gray];
+          @apply text-hs-form-placeholder-text;
         }
       }
       & input[type=checkbox]:checked, & input[type=radio]:checked {
-        @apply bg-[gray];
+        @apply bg-hs-form-field-checked-bg;
       }
       & .hsfc-DropdownInput {
         @apply relative;
         & input[type="button"] {
           @apply pr-8;
         }
-        & .hsfc-DropdownInput__Caret {
-          @apply absolute top-4 right-4 ;
+        & .hsfc-DropdownInput__Caret > span {
+          @apply absolute top-4 right-4;
           width:12px;
           height:12px;
           border-left: 10px solid transparent;
           border-right: 10px solid transparent;
-          /* border-top: 10px solid black; */
+          border-top: 10px solid var(--color-hs-form-selectlist-caret-color);
         }
       }  
       & textarea {
@@ -154,7 +318,7 @@ div[data-hsfc-id=Renderer] {
         order: 3;
       }
       & .hsfc-DropdownInput, & .hsfc-EmailInput, & .hsfc-FileInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput, & .hsfc-TextInput {
-        @apply flex flex-row relative w-full text-[black];
+        @apply flex flex-row relative w-full text-hs-form-field-text;
       }
 
       /* Checkbox and Radio Field Styles */
@@ -176,61 +340,65 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-DropdownOptions {
-        @apply flex flex-col absolute !top-0 w-full overflow-hidden py-2 bg-white border border-[gray] shadow-lg z-10000;
+        @apply flex flex-col absolute !top-0 w-full overflow-hidden py-2 bg-hs-form-selectlist-bg border border-hs-form-selectlist-border shadow-lg z-10000;
         & .hsfc-DropdownOptions__Search {
           @apply flex-0 px-2;
         }
         & .hsfc-DropdownOptions__List {
           @apply flex-1 py-2 m-0 overflow-y-auto;
           & .hsfc-DropdownOptions__List__ListItem {
-            @apply p-2 lg:py-1 cursor-pointer hover:bg-[lightgray] focus:bg-[lightgray];
+            @apply p-2 lg:py-1 cursor-pointer bg-hs-form-selectlist-item-bg hover:bg-hs-form-selectlist-item-hover-bg focus:bg-hs-form-selectlist-item-hover-bg text-hs-form-selectlist-item-text;
+            filter:none;
           }
         }
       }
       & .hsfc-FileInput {
         @apply flex flex-col text-sm;
         &::file-selector-button {
-          @apply mr-2 py-1 px-4 rounded bg-[gray] hover:bg-[black] focus:bg-[black] text-white text-sm font-bold transition-colors duration-300;
+          @apply mr-2 py-1 px-4 rounded bg-hs-form-btn-ancillary-bg hover:bg-hs-form-btn-ancillary-hover-bg focus:bg-hs-form-btn-ancillary-hover-bg text-hs-form-btn-ancillary-text text-sm font-bold transition-colors duration-300;
         }
       }
       & .hsfc-PhoneInput {
         @apply flex;
         & .hsfc-PhoneInput__FlagAndCaret {
-          @apply flex flex-row justify-between items-center gap-x-[5px] px-2 border border-[gray] border-r-0 cursor-pointer;
+          @apply flex flex-row justify-between items-center gap-x-[5px] px-2 border border-hs-form-field-border border-r-0 cursor-pointer;
           & .hsfc-PhoneInput__FlagAndCaret__Caret {
             border-left: 6px solid transparent;
             border-right: 6px solid transparent;
-            border-top: 6px solid black;
+            border-top: 6px solid var(--color-hs-form-selectlist-caret-color);
+            
           }
         }
       }
 
       /* Alert Messages */
       & .hsfc-CharacterCounter {
-        @apply float-right text-xs text-[gray];
+        @apply float-right text-xs text-hs-form-label-description-text;
         &.hsfc-CharacterCounter--default {
-          @apply text-[gray] font-normal;
+          @apply text-hs-form-label-description-text font-normal;
         }
         &.hsfc-CharacterCounter--warning {
-          @apply text-[#f0ad4e] font-bold;
+          @apply text-warning font-bold;
         }
         &.hsfc-CharacterCounter--danger {
-          @apply text-[red] font-bold;
+          @apply text-hs-form-error-message font-bold;
         }
       }
       & .hsfc-TextareaInput {
         &.hsfc-Textarea--warning:focus {
-          @apply !border-[#f0ad4e];
+          @apply border-warning;
+          border-color: var(--color-warning) !important;
         }
         &.hsfc-Textarea--danger:focus {
-          @apply !border-[red];
+          @apply border-hs-form-error-border;
+          border-color: var(--color-hs-form-error-border) !important;
         }
       }
       & .hsfc-ErrorAlert {
-        @apply flex flex-row items-center my-1 leading-tight text-sm lg:text-xs text-[red] font-bold;
+        @apply flex flex-row items-center my-1 leading-tight text-sm lg:text-xs text-hs-form-error-message font-bold;
         &::before {
           content: '';
-          @apply flex-shrink-0 w-6 h-6 inline-block mr-1 bg-[red] bg-no-repeat bg-center bg-contain;
+          @apply flex-shrink-0 w-6 h-6 inline-block mr-1 bg-hs-form-error-message bg-no-repeat bg-center bg-contain;
           mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
           -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
         }
@@ -242,10 +410,10 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-InfoAlert {
-        @apply text-sm lg:text-xs text-[gray] font-bold;
+        @apply text-sm lg:text-xs text-hs-form-label-description-text font-bold;
       }
       & .hsfc-AcceptedFiles {
-        @apply mt-2 py-2 px-3 bg-[#d4edda] text-sm text-[#155724] border border-[#c3e6cb] rounded;
+        @apply mt-2 py-2 px-3 bg-hs-form-success-box-bg text-sm text-hs-form-success-box-text border border-hs-form-success-box-border rounded;
       }
     }
     
@@ -254,48 +422,48 @@ div[data-hsfc-id=Renderer] {
       order: 4; /* Ensure navigation appears after all form content */
       
       & button {
-        @apply bg-[black] text-white text-base font-bold py-1 px-6 rounded hover:bg-[darkgray] focus:bg-[darkgray] transition-colors duration-300;
+        @apply bg-hs-form-btn-primary-bg text-hs-form-btn-primary-text text-base font-bold py-1 px-6 rounded hover:bg-hs-form-btn-primary-hover-bg focus:bg-hs-form-btn-primary-focus-bg transition-colors duration-300;
         &[type="submit"], &[type="button"] {
-          @apply bg-[black] hover:bg-[gray] focus:bg-[gray] focus:outline-2 focus:outline-gray-500;
+          @apply bg-hs-form-btn-primary-bg hover:bg-hs-form-btn-primary-hover-bg  focus:bg-hs-form-btn-primary-focus-bg focus:outline-2 focus:outline-hs-form-focus-ring;
         }
         &:disabled {
-          @apply bg-[lightgray] hover:bg-[lightgray] focus:bg-[lightgray] cursor-not-allowed;
+          @apply bg-hs-form-btn-disabled-bg hover:bg-hs-form-btn-disabled-bg focus:bg-hs-form-btn-disabled-bg cursor-not-allowed;
         }
         &+ button {
           @apply ml-4;
         }
       }
       & .hsfc-ErrorAlert {
-        @apply text-base text-[red] font-bold mb-4;
+        @apply text-base text-hs-form-error-message font-bold mb-4;
       }
     }
     
     & .hsfc-ProgressBar {
       @apply block w-full;
       & .hsfc-ProgressBar__Text {
-        @apply text-base text-black;
+        @apply text-base text-hs-form-label-text;
         &:before {
           content: 'Form Progress: ';
         }
       }
       & .hsfc-ProgressBar__Progress {
-        @apply w-full h-4 rounded-full bg-white outline outline-black overflow-hidden;
+        @apply w-full h-4 rounded-full bg-hs-form-progress-bar-bg outline outline-hs-form-progress-bar-border overflow-hidden;
         & > div {
-          @apply w-full h-4 bg-[gray];
+          @apply w-full h-4 bg-hs-form-progress-bar-fill;
           border-radius:calc(infinity * 1px);
         }
       }
       
       /* Specific styling for repositioned progress bars */
       &.hsfc-ProgressBar--repositioned {
-        @apply mb-4;
+        @apply my-4;
         order: 2; /* Ensure progress bar appears after validation errors (order: 1) but before form fields (order: 3) */
         flex-shrink: 0;
       }
     }
 
     & .hsfc-CustomValidationError {
-      @apply mt-4 mb-6 py-3 px-4 bg-[#f8d7da] border border-[#f1aeb5] text-sm leading-snug text-[#721c24] rounded;
+      @apply mt-4 mb-6 py-3 px-4 bg-hs-form-error-box-bg border border-hs-form-error-box-border text-sm leading-snug text-hs-form-error-box-text rounded;
       order: 1; /* Ensure validation error appears before progress bar (order: 2) but after intro content (order: 0) */
       & > div {
         @apply font-bold mb-2;
@@ -303,9 +471,9 @@ div[data-hsfc-id=Renderer] {
       & ul  {
         @apply list-disc pl-5;
         & li {
-          @apply mb-1 text-[#721c24];
+          @apply mb-1 text-hs-form-error-box-text;
           & a {
-            @apply text-[#721c24] text-sm underline cursor-pointer;
+            @apply text-hs-form-error-box-text text-sm underline cursor-pointer;
           }
         }
       }
@@ -330,26 +498,51 @@ div[data-hsfc-id=Renderer] {
     & form {
       & .hsfc-Row {
         & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
-          @apply bg-white;
+          @apply bg-hs-form-reverse-field-bg;
         }
         & input[type=checkbox]:checked, & input[type=radio]:checked {
-          @apply bg-[gray];
+          @apply bg-hs-form-reverse-field-checked-bg;
         }
-        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert {
-          @apply text-white;
+        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+          @apply text-hs-form-reverse-text;
+        }
+        & .hsfc-FieldDescription span {
+          color: var(--color-hs-form-reverse-text) !important;
         }
         & .hsfc-PhoneInput {
           & .hsfc-PhoneInput__FlagAndCaret {
-            background:white;
+            background:var(--color-hs-form-reverse-field-bg);
+          }
+        }
+        & .hsfc-FileInput {
+          @apply flex flex-col text-sm;
+          &::file-selector-button {
+            @apply mr-2 py-1 px-4 rounded bg-hs-form-reverse-btn-ancillary-bg text-hs-form-reverse-btn-ancillary-text hover:bg-hs-form-reverse-btn-ancillary-hover-bg hover:text-hs-form-reverse-btn-ancillary-hover-text focus:bg-hs-form-reverse-btn-ancillary-hover-bg focus:text-hs-form-reverse-btn-ancillary-hover-text;
           }
         }
         & .hsfc-ErrorAlert {
           &::before {
-            @apply bg-white;
+            @apply bg-hs-form-reverse-field-bg;
           }
         }
         & .hsfc-CharacterCounter {
-          @apply !text-white;
+          @apply !text-hs-form-reverse-text;
+        }
+      }
+      & .hsfc-NavigationRow {
+        & button {
+          @apply bg-hs-form-reverse-btn-primary-bg border-hs-form-reverse-btn-primary-border text-hs-form-reverse-btn-primary-text hover:bg-hs-form-reverse-btn-primary-hover-bg hover:border-hs-form-reverse-btn-primary-hover-border hover:text-hs-form-reverse-btn-primary-hover-text focus:bg-hs-form-reverse-btn-primary-focus-bg focus:border-hs-form-reverse-btn-primary-focus-border focus:text-hs-form-reverse-btn-primary-focus-text;
+        }
+      }
+      & .hsfc-ProgressBar {
+        & .hsfc-ProgressBar__Text {
+          @apply text-hs-form-reverse-text;
+        }
+        & .hsfc-ProgressBar__Progress {
+          @apply bg-hs-form-reverse-progress-bar-bg outline-hs-form-reverse-progress-bar-border;
+          & > div {
+            @apply bg-hs-form-reverse-progress-bar-fill;
+          }
         }
       }
     }
