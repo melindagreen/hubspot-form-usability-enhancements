@@ -21,12 +21,35 @@
  * introductory content like headings and paragraphs.
  */
 
+/* 
+ * CSS Custom Properties (Variables) - Default Values
+ * 
+ * To override these in your Tailwind CSS project, define them in your own @theme block:
+ * 
+ * Example override in your CSS (with Tailwind CSS):
+ * @theme {
+ *   --color-primary: oklch(0.55 0.20 340);
+ *   --color-primary-lt: oklch(0.92 0.08 340);
+ * }
+ * 
+ * Or if not using Tailwind CSS, override in :root:
+ * :root {
+ *   --color-primary: oklch(0.55 0.20 340);
+ *   --color-primary-lt: oklch(0.92 0.08 340);
+ * }
+ * 
+ * Because these variables use var() references, you often only need to override
+ * the base colors (--color-primary, --color-secondary, etc.) and the rest will
+ * automatically update.
+ */
+
 @theme {
+  /* Base Color Palette */
   --color-primary: oklch(0.5835 0.1505 250.88);
-  --color-primary-lt: oklch(0.7835 0.1305 250.88);
+  --color-primary-lt: oklch(0.9200 0.0800 250.88);
   --color-primary-dk: oklch(0.3835 0.1705 250.88);
   --color-secondary: oklch(0.6500 0.1400 195.00);
-  --color-secondary-lt: oklch(0.8500 0.1200 195.00);
+  --color-secondary-lt: oklch(0.9200 0.0600 195.00);
   --color-secondary-dk: oklch(0.4500 0.1600 195.00);
   --color-neutral: oklch(0.5500 0.0050 250.00);
   --color-neutral-hlt: oklch(0.9700 0.0020 250.00);
@@ -43,41 +66,47 @@
   --color-white: oklch(1 0 0);
   --color-black: oklch(0 0 0);
   
-  /* hubspot form specific colors */
+  /* HubSpot Form Specific Colors */
   --color-hs-form-bg: var(--color-white);
   --color-hs-form-border: var(--color-neutral-lt);
 
+  /* Primary Buttons */
   --color-hs-form-btn-primary-bg: var(--color-primary);
   --color-hs-form-btn-primary-border: var(--color-primary);
+  --color-hs-form-btn-primary-text: var(--color-white);
   --color-hs-form-btn-primary-hover-bg: var(--color-primary-dk);
   --color-hs-form-btn-primary-hover-border: var(--color-primary-dk);
+  --color-hs-form-btn-primary-hover-text: var(--color-white);
   --color-hs-form-btn-primary-focus-bg: var(--color-primary-dk);
   --color-hs-form-btn-primary-focus-border: var(--color-primary-dk);
-  --color-hs-form-btn-primary-text: var(--color-white);
+  --color-hs-form-btn-primary-focus-text: var(--color-white);
 
+  /* Ancillary Buttons */
   --color-hs-form-btn-ancillary-bg: var(--color-secondary);
+  --color-hs-form-btn-ancillary-text: var(--color-white);
   --color-hs-form-btn-ancillary-border: var(--color-secondary);
   --color-hs-form-btn-ancillary-hover-bg: var(--color-secondary-dk);
   --color-hs-form-btn-ancillary-hover-border: var(--color-secondary-dk);
+  --color-hs-form-btn-ancillary-hover-text: var(--color-white);
   --color-hs-form-btn-ancillary-focus-bg: var(--color-secondary-dk);
   --color-hs-form-btn-ancillary-focus-border: var(--color-secondary-dk);
-  --color-hs-form-btn-ancillary-text: var(--color-white);
+  --color-hs-form-btn-ancillary-focus-text: var(--color-white);
 
+  /* Disabled Buttons */
   --color-hs-form-btn-disabled-bg: var(--color-neutral-lt);
   --color-hs-form-btn-disabled-border: var(--color-neutral-lt);
   --color-hs-form-btn-disabled-text: var(--color-neutral-dk);
 
-  --color-hs-form-btn-reverse: var(--color-white);
-  --color-hs-form-btn-reverse-hover: oklch(53.24% 0.301 290.86 / 0.8);
-
-  --color-hs-form-field-bg: var(--color-white);
+  /* Form Fields */
+  --color-hs-form-field-bg: var(--color-black);
   --color-hs-form-field-border: var(--color-neutral-lt);
   --color-hs-form-field-border-hover: var(--color-neutral-lt);
   --color-hs-form-field-border-focus: var(--color-primary);
   --color-hs-form-field-text: var(--color-neutral);
-  --color-hs-form-field-checked-bg: var(--color-neutral);
+  --color-hs-form-field-checked-bg: var(--color-primary);
   --color-hs-form-placeholder-text: var(--color-neutral-lt);
 
+  /* Dropdown Lists */
   --color-hs-form-selectlist-bg: var(--color-white);
   --color-hs-form-selectlist-border: var(--color-neutral-lt);
   --color-hs-form-selectlist-item-bg: var(--color-white);
@@ -85,20 +114,25 @@
   --color-hs-form-selectlist-item-text: var(--color-neutral);
   --color-hs-form-selectlist-caret-color: var(--color-neutral-dk);
 
+  /* Focus Ring */
   --color-hs-form-focus-ring: var(--color-focus-ring);
 
+  /* Typography */
   --color-hs-form-headings: var(--color-black);
   --color-hs-form-text: var(--color-neutral);
   --color-hs-form-link: var(--color-primary);
 
+  /* Labels */
   --color-hs-form-label-text: var(--color-neutral);
   --color-hs-form-label-description-text: var(--color-neutral-lt);
   --color-hs-form-label-optional-text: var(--color-neutral-lt);
 
+  /* Progress Bars */
   --color-hs-form-progress-bar-bg: var(--color-white);
   --color-hs-form-progress-bar-border: var(--color-neutral);
   --color-hs-form-progress-bar-fill: var(--color-primary);
 
+  /* Validation Messages */
   --color-hs-form-required-indicator: var(--color-error);
   --color-hs-form-error-message: var(--color-error);
   --color-hs-form-error-box-bg: var(--color-error-lt);
@@ -110,6 +144,37 @@
   --color-hs-form-success-box-bg: var(--color-success-lt);
   --color-hs-form-success-box-border: var(--color-success-dk);
   --color-hs-form-success-box-text: var(--color-success);
+
+  /* Reverse Theme (for dark backgrounds) */
+  --color-hs-form-reverse-btn-primary-bg: var(--color-white);
+  --color-hs-form-reverse-btn-primary-border: var(--color-white);
+  --color-hs-form-reverse-btn-primary-text: var(--color-primary);
+  --color-hs-form-reverse-btn-primary-hover-bg: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-hover-border: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-hover-text: var(--color-neutral-dk);
+  --color-hs-form-reverse-btn-primary-focus-bg: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-border: var(--color-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-text: var(--color-neutral-dk);
+
+  --color-hs-form-reverse-btn-ancillary-bg: var(--color-white);
+  --color-hs-form-reverse-btn-ancillary-border: var(--color-white);
+  --color-hs-form-reverse-btn-ancillary-text: var(--color-secondary);
+  --color-hs-form-reverse-btn-ancillary-hover-bg: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-hover-border: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-hover-text: var(--color-neutral-dk);
+  --color-hs-form-reverse-btn-ancillary-focus-bg: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-border: var(--color-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-text: var(--color-neutral-dk);
+
+  --color-hs-form-reverse-bg: var(--color-primary);
+  --color-hs-form-reverse-text: var(--color-white);
+  --color-hs-form-reverse-link: var(--color-white);
+  --color-hs-form-reverse-field-bg: var(--color-white);
+  --color-hs-form-reverse-field-checked-bg: var(--color-neutral-lt);
+  --color-hs-form-reverse-focus-ring: var(--color-focus-ring);
+  --color-hs-form-reverse-progress-bar-bg: var(--color-white);
+  --color-hs-form-reverse-progress-bar-border: var(--color-neutral-lt);
+  --color-hs-form-reverse-progress-bar-fill: var(--color-neutral-lt);
 }
 
 
@@ -154,6 +219,10 @@ div[data-hsfc-id=Renderer] {
 
     & .hsfc-Row {
       /* Content Elements - ensure they appear before validation errors and progress bars */
+      @apply flex flex-row justify-stretch items-start flex-nowrap gap-6;
+      & > div {
+        @apply flex-1;
+      }
       & h1, & h2, & h3 {
         @apply mt-4 mb-2 !text-2xl text-hs-form-headings font-bold uppercase;
         order: 0; /* Ensure headings appear first */
@@ -183,7 +252,10 @@ div[data-hsfc-id=Renderer] {
       & label {
         @apply inline-block max-w-full text-sm lg:text-base text-hs-form-label-text font-bold;
         &+ .hsfc-FieldDescription{
-          @apply inline-block !w-[auto] ml-2 pt-2 text-xs text-hs-form-label-description-text font-normal;
+          @apply inline-block !w-[auto] ml-2 text-xs text-hs-form-label-description-text font-normal;
+          & span {
+            color: var(--color-hs-form-label-description-text) !important;
+          }
         }
         &:not(:has(.hsfc-FieldLabel__RequiredIndicator)) {
           & > span::after {
@@ -384,7 +456,7 @@ div[data-hsfc-id=Renderer] {
       
       /* Specific styling for repositioned progress bars */
       &.hsfc-ProgressBar--repositioned {
-        @apply mb-4;
+        @apply my-4;
         order: 2; /* Ensure progress bar appears after validation errors (order: 1) but before form fields (order: 3) */
         flex-shrink: 0;
       }
@@ -426,26 +498,51 @@ div[data-hsfc-id=Renderer] {
     & form {
       & .hsfc-Row {
         & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
-          @apply bg-white;
+          @apply bg-hs-form-reverse-field-bg;
         }
         & input[type=checkbox]:checked, & input[type=radio]:checked {
-          @apply bg-neutral;
+          @apply bg-hs-form-reverse-field-checked-bg;
         }
-        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert {
-          @apply text-white;
+        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+          @apply text-hs-form-reverse-text;
+        }
+        & .hsfc-FieldDescription span {
+          color: var(--color-hs-form-reverse-text) !important;
         }
         & .hsfc-PhoneInput {
           & .hsfc-PhoneInput__FlagAndCaret {
-            background:white;
+            background:var(--color-hs-form-reverse-field-bg);
+          }
+        }
+        & .hsfc-FileInput {
+          @apply flex flex-col text-sm;
+          &::file-selector-button {
+            @apply mr-2 py-1 px-4 rounded bg-hs-form-reverse-btn-ancillary-bg text-hs-form-reverse-btn-ancillary-text hover:bg-hs-form-reverse-btn-ancillary-hover-bg hover:text-hs-form-reverse-btn-ancillary-hover-text focus:bg-hs-form-reverse-btn-ancillary-hover-bg focus:text-hs-form-reverse-btn-ancillary-hover-text;
           }
         }
         & .hsfc-ErrorAlert {
           &::before {
-            @apply bg-white;
+            @apply bg-hs-form-reverse-field-bg;
           }
         }
         & .hsfc-CharacterCounter {
-          @apply !text-white;
+          @apply !text-hs-form-reverse-text;
+        }
+      }
+      & .hsfc-NavigationRow {
+        & button {
+          @apply bg-hs-form-reverse-btn-primary-bg border-hs-form-reverse-btn-primary-border text-hs-form-reverse-btn-primary-text hover:bg-hs-form-reverse-btn-primary-hover-bg hover:border-hs-form-reverse-btn-primary-hover-border hover:text-hs-form-reverse-btn-primary-hover-text focus:bg-hs-form-reverse-btn-primary-focus-bg focus:border-hs-form-reverse-btn-primary-focus-border focus:text-hs-form-reverse-btn-primary-focus-text;
+        }
+      }
+      & .hsfc-ProgressBar {
+        & .hsfc-ProgressBar__Text {
+          @apply text-hs-form-reverse-text;
+        }
+        & .hsfc-ProgressBar__Progress {
+          @apply bg-hs-form-reverse-progress-bar-bg outline-hs-form-reverse-progress-bar-border;
+          & > div {
+            @apply bg-hs-form-reverse-progress-bar-fill;
+          }
         }
       }
     }

@@ -1,70 +1,65 @@
 const removeHubSpotFormStyles = () => {
-  // Constants for HubSpot BaseStyle CSS removal
-  const HUBSPOT_BASESTYLE_SELECTOR = 'style[data-hsfc-id="BaseStyle"]';
+  // Constants for HubSpot CSS removal - now removes ALL HubSpot style elements
+  const HUBSPOT_STYLE_SELECTOR = 'style[data-hsfc-id]';
   const OBSERVER_TIMEOUT_MS = 10000;
   const HUBSPOT_DATA_ATTR = 'data-hsfc-id';
-  const HUBSPOT_BASESTYLE_VALUE = 'BaseStyle';
 
-  // Helper function to check if a node is the target HubSpot style element
-  const isHubSpotBaseStyleElement = (node) => {
+  // Helper function to check if a node is a HubSpot style element
+  const isHubSpotStyleElement = (node) => {
     return node.nodeType === Node.ELEMENT_NODE &&
            node.tagName === 'STYLE' &&
-           node.getAttribute(HUBSPOT_DATA_ATTR) === HUBSPOT_BASESTYLE_VALUE;
+           node.hasAttribute(HUBSPOT_DATA_ATTR);
   };
 
-  // Function to remove HubSpot BaseStyle CSS
-  const removeHubSpotBaseStyle = () => {
-    const hsBaseFormCss = document.querySelector(HUBSPOT_BASESTYLE_SELECTOR);
-    if (hsBaseFormCss) {
-      hsBaseFormCss.remove();
-      return true;
-    }
-    return false;
-  };
-
-  // Helper function to handle successful removal and cleanup
-  const handleStyleRemoved = (observer) => {
-    observer.disconnect();
+  // Function to remove ALL HubSpot style elements
+  const removeAllHubSpotStyles = () => {
+    const hsStyles = document.querySelectorAll(HUBSPOT_STYLE_SELECTOR);
+    let removed = false;
+    
+    hsStyles.forEach(styleElement => {
+      styleElement.remove();
+      removed = true;
+    });
+    
+    return removed;
   };
 
   // Try to remove immediately
-  if (!removeHubSpotBaseStyle()) {
-    // Set up a MutationObserver to watch for the style element being added
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type !== 'childList') continue;
+  const initialRemoval = removeAllHubSpotStyles();
+  
+  // Set up a MutationObserver to watch for new style elements being added
+  // This catches styles added dynamically after forms load
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type !== 'childList') continue;
+      
+      for (const addedNode of mutation.addedNodes) {
+        // Direct match: added node is a HubSpot style element
+        if (isHubSpotStyleElement(addedNode)) {
+          addedNode.remove();
+          continue;
+        }
         
-        for (const addedNode of mutation.addedNodes) {
-          // Direct match: added node is the target style element
-          if (isHubSpotBaseStyleElement(addedNode)) {
-            addedNode.remove();
-            handleStyleRemoved(observer);
-            return;
-          }
-          
-          // Indirect match: added node contains the target style element
-          if (addedNode.nodeType === Node.ELEMENT_NODE && 
-              addedNode.querySelector && 
-              addedNode.querySelector(HUBSPOT_BASESTYLE_SELECTOR)) {
-            removeHubSpotBaseStyle();
-            handleStyleRemoved(observer);
-            return;
-          }
+        // Indirect match: added node contains HubSpot style elements
+        if (addedNode.nodeType === Node.ELEMENT_NODE && 
+            addedNode.querySelector) {
+          const nestedStyles = addedNode.querySelectorAll(HUBSPOT_STYLE_SELECTOR);
+          nestedStyles.forEach(style => style.remove());
         }
       }
-    });
+    }
+  });
 
-    // Start observing the document for changes
-    observer.observe(document, {
-      childList: true,
-      subtree: true
-    });
+  // Start observing the document for changes
+  observer.observe(document, {
+    childList: true,
+    subtree: true
+  });
 
-    // Set a timeout to stop observing if element isn't found
-    setTimeout(() => {
-      observer.disconnect();
-    }, OBSERVER_TIMEOUT_MS);
-  }
+  // Set a timeout to stop observing after a reasonable period
+  setTimeout(() => {
+    observer.disconnect();
+  }, OBSERVER_TIMEOUT_MS);
 }
 
 const FieldValidator = {
