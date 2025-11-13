@@ -213,7 +213,7 @@ div[data-hsfc-id=Renderer] {
           @apply flex flex-col;
         }
       }
-      & .hsfc-hs-form-errorAlert.hsfc-SimpleNotification {
+      & .hsfc-hs-form-ErrorAlert.hsfc-SimpleNotification {
         @apply mb-5 py-2 px-3 bg-hs-form-error-message leading-snug text-sm text-hs-form-error-message border border-hs-form-error-border;
       }
       & .hsfc-Step__Banner {
@@ -396,7 +396,7 @@ div[data-hsfc-id=Renderer] {
           @apply border-hs-form-error-border;
         }
       }
-      & .hsfc-hs-form-errorAlert {
+      & .hsfc-ErrorAlert {
         @apply flex flex-row items-center my-1 leading-tight text-sm lg:text-xs text-hs-form-error-message font-bold;
         &::before {
           content: '';
@@ -435,7 +435,7 @@ div[data-hsfc-id=Renderer] {
           @apply ml-4;
         }
       }
-      & .hsfc-hs-form-errorAlert {
+      & .hsfc-ErrorAlert {
         @apply text-base text-hs-form-error-message font-bold mb-4;
       }
     }
@@ -505,7 +505,7 @@ div[data-hsfc-id=Renderer] {
         & input[type=checkbox]:checked, & input[type=radio]:checked {
           @apply bg-hs-form-reverse-field-checked-bg;
         }
-        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-hs-form-errorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
           @apply text-hs-form-reverse-text;
         }
         & .hsfc-FieldDescription span {
@@ -522,7 +522,7 @@ div[data-hsfc-id=Renderer] {
             @apply mr-2 py-1 px-4 rounded bg-hs-form-reverse-btn-ancillary-bg text-hs-form-reverse-btn-ancillary-text hover:bg-hs-form-reverse-btn-ancillary-hover-bg hover:text-hs-form-reverse-btn-ancillary-hover-text focus:bg-hs-form-reverse-btn-ancillary-hover-bg focus:text-hs-form-reverse-btn-ancillary-hover-text;
           }
         }
-        & .hsfc-hs-form-errorAlert {
+        & .hsfc-ErrorAlert {
           &::before {
             @apply bg-hs-form-reverse-field-bg;
           }
@@ -586,7 +586,7 @@ div[data-hsfc-id=Renderer] {
       & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type="button"] {
         border-width: 2px;
       }
-      & .hsfc-hs-form-errorAlert {
+      & .hsfc-ErrorAlert {
         border-width: 2px;
         font-weight: 900;
       }
