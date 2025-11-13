@@ -2,7 +2,7 @@
 
 /**
  * HubSpot Form Usability Enhancements - Enhanced Styling
- * Requires Tailwind CSS v4.0+ for @apply directives
+ * Requires Tailwind CSS v4.0+ for @apply directives and @theme block support
  * 
  * This CSS module provides comprehensive styling for HubSpot embedded forms
  * with enhanced accessibility, validation, and user experience improvements.
@@ -22,25 +22,30 @@
  */
 
 /* 
- * CSS Custom Properties (Variables) - Default Values
+ * CSS Custom Properties (Variables) - Color Customization
  * 
- * To override these in your Tailwind CSS project, define them in your own @theme block:
+ * COLOR SYSTEM ARCHITECTURE:
+ * Base color variables are defined in :root and can be overridden in your project.
+ * Component-specific colors in @theme reference these base colors using var().
  * 
- * Example override in your CSS (with Tailwind CSS):
- * @theme {
- *   --color-hs-form-primary: oklch(0.55 0.20 340);
- *   --color-hs-form-primary-lt: oklch(0.92 0.08 340);
- * }
+ * HOW TO CUSTOMIZE:
  * 
- * Or if not using Tailwind CSS, override in :root:
- * :root {
- *   --color-hs-form-primary: oklch(0.55 0.20 340);
- *   --color-hs-form-primary-lt: oklch(0.92 0.08 340);
- * }
+ * Override base colors in your own CSS file's :root block:
  * 
- * Because these variables use var() references, you often only need to override
- * the base colors (--color-hs-form-primary, --color-hs-form-secondary, etc.) and the rest will
- * automatically update.
+ *    :root {
+ *      --color-hs-form-primary: oklch(0.55 0.20 340);
+ *      --color-hs-form-primary-lt: oklch(0.92 0.08 340);
+ *      --color-hs-form-primary-dk: oklch(0.35 0.22 340);
+ *    }
+ * 
+ * For projects using Tailwind 4+, the @theme block will automatically 
+ * pick up these changes.
+ * 
+ * CASCADING ARCHITECTURE:
+ * Because component colors in @theme use var() to reference base colors in :root,
+ * you typically only need to override the base color variables. For example,
+ * changing --color-hs-form-primary will automatically update all button colors,
+ * focus states, and other components that reference it.
  */
 :root {
   --color-hs-form-primary: oklch(0.5835 0.1505 250.88);
