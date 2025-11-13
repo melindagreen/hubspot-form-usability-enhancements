@@ -29,6 +29,9 @@ const init = (options = {}) => {
     };
   }
 
+  // Always remove HubSpot injected styles on init
+  removeHubSpotFormStyles();
+
   // Apply configuration if provided
   if (options.characterLimit) {
     CharacterLimitValidator.DEFAULT_LIMIT = options.characterLimit;
@@ -206,6 +209,8 @@ export const initializeWithTwoPhases = async (options = {}) => {
     ...options
   };
 
+  // Always remove HubSpot injected styles on two-phase init
+  removeHubSpotFormStyles();
   // Phase 1: Apply CSS-only positioning to prevent layout shifts
   const applyImmediateCSS = () => {
     const style = document.createElement('style');
