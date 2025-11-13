@@ -6,7 +6,8 @@ Enhanced HubSpot form usability, validation and styling with React hydration sup
 
 - 🚀 **React Hydration Support** - Works seamlessly with SSR and React hydration
 - ♿ **Accessibility Enhanced** - WCAG 2.1 compliant with improved keyboard navigation
-- 🎨 **Tailwind CSS 4+ Integration** - Modern styling with @apply directives
+- 🎨 **No Tailwind Required in Your Project** - Pre-compiled CSS included; built with Tailwind CSS v4+ (optional integration if your project uses Tailwind)
+- 🌓 **Dark Background Support** - Automatic reverse theme with `.hs-form-reverse` class for forms on dark backgrounds
 - ✅ **Advanced Validation** - Custom validation with enhanced error handling
 - 📁 **File Upload Validation** - Configurable file type and size validation
 - 📝 **Character Limit Validation** - Smart character counting with custom error handling
@@ -20,7 +21,14 @@ npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
 **Peer Dependencies:**
-- `tailwindcss`: ^4.0.0
+- `tailwindcss`: ^4.0.0 (required by this package for compilation)
+
+**Important**: This package is built with Tailwind CSS v4.0+ and includes it as a peer dependency. However, **you don't need Tailwind CSS in your own project** to use this module:
+
+- **Using pre-compiled CSS**: Simply import the compiled stylesheet - no Tailwind required in your project
+- **Custom styling with Tailwind**: If your project already uses Tailwind CSS v4+, you can leverage `@apply` directives and `@theme` customization
+
+See [Styling Customization](#styling-customization) for details on both approaches.
 
 ### CSS Styles
 
@@ -47,11 +55,8 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 For most users, this is all you need:
 
 ```bash
-# Install the package
+# Install the package (includes all necessary styles pre-compiled)
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
-
-# Install Tailwind CSS peer dependency
-npm install tailwindcss@^4.0.0
 ```
 
 ```javascript
@@ -61,6 +66,12 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 // That's it! The module will auto-initialize when HubSpot forms are detected.
 ```
+
+**No Tailwind CSS required in your project!** The package comes with pre-compiled CSS that includes all necessary styles. You can still customize colors by overriding CSS variables in `:root`.
+
+**If your project uses Tailwind CSS v4+**: You can leverage advanced features like `@apply` directives and `@theme` customization. See [Styling Customization](#styling-customization) for details.
+
+**For forms on dark backgrounds**: Simply add the class `.hs-form-reverse` to any parent container for automatic white text and inverted colors. See [Reverse Theme for Dark Backgrounds](#reverse-theme-for-dark-backgrounds).
 
 For React/SSR applications, see the [React/Hydration-Safe Usage](#reacthydration-safe-usage) section below.
 
@@ -72,15 +83,26 @@ For React/SSR applications, see the [React/Hydration-Safe Usage](#reacthydration
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
-### Step 2: Install Peer Dependencies
+### Step 2: Install Peer Dependencies (Optional for Your Project)
+
+**You don't need to install Tailwind CSS unless your project already uses it.**
+
+The package was built with Tailwind CSS v4.0+ (listed as a peer dependency), but the compiled CSS is included in the package. You only need to install Tailwind in your project if you want to use advanced customization features:
 
 ```bash
+# Optional: Only install if your project uses Tailwind CSS v4+
 npm install tailwindcss@^4.0.0
 ```
 
-### Step 3: Configure Tailwind CSS
+**Without Tailwind CSS in your project**: Use the pre-compiled CSS and customize by overriding CSS variables in `:root`. See [Styling Customization](#styling-customization).
 
-Add the module to your Tailwind configuration to ensure styles are processed:
+**With Tailwind CSS v4+ in your project**: Access advanced features like `@apply` directives and `@theme` customization. You'll need to configure Tailwind (see Step 3).
+
+### Step 3: Configure Tailwind CSS (Only If Your Project Uses Tailwind)
+
+**Skip this step if your project doesn't use Tailwind CSS.**
+
+If your project uses Tailwind CSS v4+, add the module to your Tailwind configuration:
 
 ```javascript
 // tailwind.config.js
@@ -430,46 +452,191 @@ VITE_UPLOAD_MAX_SIZE=10MB
 
 ## Styling Customization
 
-The module uses Tailwind CSS for styling. You can customize the appearance by:
+The module provides a flexible color system that works with or without Tailwind CSS in your project.
 
-### 1. Overriding CSS Variables
+**Important**: This npm package is built with Tailwind CSS v4.0+, but **your project doesn't need Tailwind CSS** to use and customize this module. The pre-compiled CSS is included.
+
+### Color System Architecture
+
+The styling system uses a two-tier architecture:
+- **Base colors** defined in `:root` - these are the colors you override
+- **Component colors** defined in `@theme` - these reference base colors using `var()`
+
+This cascading design means you typically only need to override base colors, and all components automatically update.
+
+### For Projects NOT Using Tailwind CSS
+
+You can fully customize colors without Tailwind CSS in your project. Simply override base color variables in your project's CSS:
 
 ```css
-div[data-hsfc-id=Renderer] {
-  --hsfc-primary-color: #your-color;
-  --hsfc-error-color: #your-error-color;
-  --hsfc-border-radius: 8px;
+/* your-styles.css */
+:root {
+  /* Primary brand colors */
+  --color-hs-form-primary: oklch(0.55 0.20 340);
+  --color-hs-form-primary-lt: oklch(0.92 0.08 340);
+  --color-hs-form-primary-dk: oklch(0.35 0.22 340);
+  
+  /* Secondary colors */
+  --color-hs-form-secondary: oklch(0.60 0.15 195);
+  --color-hs-form-secondary-lt: oklch(0.90 0.08 195);
+  --color-hs-form-secondary-dk: oklch(0.40 0.18 195);
+  
+  /* Error colors */
+  --color-hs-form-error: oklch(0.65 0.24 29);
+  --color-hs-form-error-lt: oklch(0.97 0.02 29);
+  --color-hs-form-error-dk: oklch(0.45 0.22 29);
 }
 ```
 
-### 2. Custom Tailwind Classes
+Import the pre-compiled CSS and your customizations will apply automatically:
 
 ```javascript
-// Import without styles and add your own
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-// Don't import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
-
-// Add your custom CSS file with Tailwind classes
-import './my-custom-hubspot-styles.css';
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import './your-styles.css'; // Your overrides
 ```
 
-### 3. Themed Variations
+### For Projects Using Tailwind CSS v4.0+
+
+If your project already uses Tailwind CSS v4+, override colors the same way - the `@theme` block will automatically pick up your changes:
 
 ```css
-/* Light theme (default) */
-.hsfc-theme-light {
-  /* Uses default styling */
+/* your-styles.css */
+:root {
+  /* Primary brand colors */
+  --color-hs-form-primary: oklch(0.55 0.20 340);
+  --color-hs-form-primary-lt: oklch(0.92 0.08 340);
+  --color-hs-form-primary-dk: oklch(0.35 0.22 340);
+  
+  /* Secondary colors */
+  --color-hs-form-secondary: oklch(0.60 0.15 195);
+  --color-hs-form-secondary-lt: oklch(0.90 0.08 195);
+  --color-hs-form-secondary-dk: oklch(0.40 0.18 195);
+  
+  /* Error colors */
+  --color-hs-form-error: oklch(0.65 0.24 29);
+  --color-hs-form-error-lt: oklch(0.97 0.02 29);
+  --color-hs-form-error-dk: oklch(0.45 0.22 29);
+}
+```
+
+**Additional benefits with Tailwind CSS v4+ in your project**:
+- Use `@theme` blocks to override component-specific colors
+- Use `@apply` directives in your own custom components
+- Full integration with your Tailwind theme
+
+### Understanding OKLCH Colors
+
+Colors use the OKLCH format. You can also use hex, rgb, or hsl if you prefer:
+
+```css
+/* OKLCH format (default) */
+:root {
+  --color-hs-form-primary: oklch(0.55 0.20 340);
+  --color-hs-form-primary-lt: oklch(0.92 0.08 340);
+  --color-hs-form-primary-dk: oklch(0.35 0.22 340);
 }
 
-/* Dark theme */
-.hsfc-theme-dark {
-  /* Add dark theme overrides */
+/* Or use hex colors */
+:root {
+  --color-hs-form-primary: #3b82f6;
+  --color-hs-form-primary-lt: #dbeafe;
+  --color-hs-form-primary-dk: #1e40af;
 }
+```
 
-/* Minimal theme */
-.hsfc-theme-minimal {
-  /* Add minimal styling */
+### Common Customization Patterns
+
+#### Change Primary Brand Color
+
+```css
+:root {
+  /* Just change these three and buttons/links/focus states all update */
+  --color-hs-form-primary: #3b82f6;
+  --color-hs-form-primary-lt: #dbeafe;
+  --color-hs-form-primary-dk: #1e40af;
 }
+```
+
+#### Reverse Theme for Dark Backgrounds
+
+**For forms appearing on a dark background**, a reverse-color theme (white text on dark background) can be achieved automatically by adding the class `.hs-form-reverse` to a parent container:
+
+```html
+<!-- Example: Form on a dark background -->
+<div class="hs-form-reverse" style="background-color: #1a1a1a; padding: 2rem;">
+  <!-- Your HubSpot form embed code here -->
+  <div id="hubspot-form-container"></div>
+</div>
+```
+
+The `.hs-form-reverse` class automatically applies:
+- White text colors for labels and content
+- Light button styles that work on dark backgrounds
+- Inverted color schemes for all form elements
+- Proper contrast for accessibility
+
+No additional CSS customization needed - just add the class to any parent element containing your form.
+
+#### Custom Dark Theme
+
+If you need more control over dark theme colors, you can override the reverse theme variables:
+
+```css
+/* Custom dark theme overrides */
+[data-theme="dark"] {
+  --color-hs-form-primary: oklch(0.70 0.18 250);
+  --color-hs-form-neutral: oklch(0.85 0.005 250);
+  --color-hs-form-neutral-lt: oklch(0.65 0.004 250);
+  --color-hs-form-neutral-dk: oklch(0.95 0.002 250);
+  --color-hs-form-white: oklch(0.15 0 0);
+  --color-hs-form-black: oklch(0.95 0 0);
+}
+```
+
+### Advanced: Override Component Colors
+
+If you need granular control over specific components (beyond base colors):
+
+```css
+/* Override specific component colors in @theme */
+@theme {
+  /* Change only the submit button colors */
+  --color-hs-form-btn-hs-form-primary-bg: oklch(0.50 0.25 340);
+  --color-hs-form-btn-hs-form-primary-hover-bg: oklch(0.40 0.27 340);
+  
+  /* Change only error box styling */
+  --color-hs-form-error-box-bg: oklch(0.98 0.01 29);
+  --color-hs-form-error-box-border: oklch(0.40 0.24 29);
+}
+```
+
+### Pre-built Themes
+
+For convenience, you can create reusable theme files:
+
+```css
+/* themes/professional.css */
+:root {
+  --color-hs-form-primary: oklch(0.35 0.10 240);
+  --color-hs-form-primary-lt: oklch(0.90 0.05 240);
+  --color-hs-form-primary-dk: oklch(0.25 0.12 240);
+}
+```
+
+```css
+/* themes/vibrant.css */
+:root {
+  --color-hs-form-primary: oklch(0.60 0.25 300);
+  --color-hs-form-primary-lt: oklch(0.95 0.08 300);
+  --color-hs-form-primary-dk: oklch(0.40 0.27 300);
+}
+```
+
+Then import the theme you want:
+
+```javascript
+import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import './themes/professional.css'; // or vibrant.css
 ```
 
 ## TypeScript Support
