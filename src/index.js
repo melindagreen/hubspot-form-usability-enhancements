@@ -79,6 +79,15 @@ const init = (options = {}) => {
   positionElementsImmediately();
   
   // Set up observer for new elements
+      // Add class to character limit warning elements for styling
+      document.querySelectorAll('.hsfc-CustomValidationError').forEach(el => {
+        if (
+          el.textContent.includes('Enter 500 characters or fewer') ||
+          el.textContent.includes('enter 500 characters or fewer')
+        ) {
+          el.classList.add('has-500-char-warning');
+        }
+      });
   const positioningObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.type === 'childList') {

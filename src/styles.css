@@ -74,15 +74,15 @@
 
 @theme {
   /* Primary Buttons */
-  --color-hs-form-btn-hs-form-primary-bg: var(--color-hs-form-primary);
-  --color-hs-form-btn-hs-form-primary-border: var(--color-hs-form-primary);
-  --color-hs-form-btn-hs-form-primary-text: var(--color-hs-form-white);
-  --color-hs-form-btn-hs-form-primary-hover-bg: var(--color-hs-form-primary-dk);
-  --color-hs-form-btn-hs-form-primary-hover-border: var(--color-hs-form-primary-dk);
-  --color-hs-form-btn-hs-form-primary-hover-text: var(--color-hs-form-white);
-  --color-hs-form-btn-hs-form-primary-hs-form-focus-bg: var(--color-hs-form-primary-dk);
-  --color-hs-form-btn-hs-form-primary-hs-form-focus-border: var(--color-hs-form-primary-dk);
-  --color-hs-form-btn-hs-form-primary-hs-form-focus-text: var(--color-hs-form-white);
+  --color-hs-form-btn-primary-bg: var(--color-hs-form-primary);
+  --color-hs-form-btn-primary-border: var(--color-hs-form-primary);
+  --color-hs-form-btn-primary-text: var(--color-hs-form-white);
+  --color-hs-form-btn-primary-hover-bg: var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-hover-border: var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-hover-text: var(--color-hs-form-white);
+  --color-hs-form-btn-primary-focus-bg: var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-focus-border: var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-focus-text: var(--color-hs-form-white);
 
   /* Ancillary Buttons */
   --color-hs-form-btn-ancillary-bg: var(--color-hs-form-secondary);
@@ -91,9 +91,9 @@
   --color-hs-form-btn-ancillary-hover-bg: var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-hover-border: var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-hover-text: var(--color-hs-form-white);
-  --color-hs-form-btn-ancillary-hs-form-focus-bg: var(--color-hs-form-secondary-dk);
-  --color-hs-form-btn-ancillary-hs-form-focus-border: var(--color-hs-form-secondary-dk);
-  --color-hs-form-btn-ancillary-hs-form-focus-text: var(--color-hs-form-white);
+  --color-hs-form-btn-ancillary-focus-bg: var(--color-hs-form-secondary-dk);
+  --color-hs-form-btn-ancillary-focus-border: var(--color-hs-form-secondary-dk);
+  --color-hs-form-btn-ancillary-focus-text: var(--color-hs-form-white);
 
   /* Disabled Buttons */
   --color-hs-form-btn-disabled-bg: var(--color-hs-form-neutral-lt);
@@ -103,7 +103,7 @@
   /* Form Fields */
   --color-hs-form-field-bg: var(--color-hs-form-black);
   --color-hs-form-field-border: var(--color-hs-form-neutral-lt);
-  --color-hs-form-field-border-hover: var(--color-hs-form-neutral-lt);
+  --color-hs-form-field-border-hover:var(--color-hs-form-neutral-lt);
   --color-hs-form-field-border-hs-form-focus: var(--color-hs-form-primary);
   --color-hs-form-field-text: var(--color-hs-form-neutral);
   --color-hs-form-field-checked-bg: var(--color-hs-form-primary);
@@ -150,15 +150,15 @@
   --color-hs-form-success-box-text: var(--color-hs-form-success);
 
   /* Reverse Theme (for dark backgrounds) */
-  --color-hs-form-reverse-btn-hs-form-primary-bg: var(--color-hs-form-white);
-  --color-hs-form-reverse-btn-hs-form-primary-border: var(--color-hs-form-white);
-  --color-hs-form-reverse-btn-hs-form-primary-text: var(--color-hs-form-primary);
-  --color-hs-form-reverse-btn-hs-form-primary-hover-bg: var(--color-hs-form-primary-lt);
-  --color-hs-form-reverse-btn-hs-form-primary-hover-border: var(--color-hs-form-primary-lt);
-  --color-hs-form-reverse-btn-hs-form-primary-hover-text: var(--color-hs-form-neutral-dk);
-  --color-hs-form-reverse-btn-hs-form-primary-hs-form-focus-bg: var(--color-hs-form-primary-lt);
-  --color-hs-form-reverse-btn-hs-form-primary-hs-form-focus-border: var(--color-hs-form-primary-lt);
-  --color-hs-form-reverse-btn-hs-form-primary-hs-form-focus-text: var(--color-hs-form-neutral-dk);
+  --color-hs-form-reverse-btn-primary-bg: var(--color-hs-form-white);
+  --color-hs-form-reverse-btn-primary-border: var(--color-hs-form-white);
+  --color-hs-form-reverse-btn-primary-text: var(--color-hs-form-primary);
+  --color-hs-form-reverse-btn-primary-hover-bg: var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-hover-border: var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-hover-text: var(--color-hs-form-neutral-dk);
+  --color-hs-form-reverse-btn-primary-focus-bg: var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-border: var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-text: var(--color-hs-form-neutral-dk);
 
   --color-hs-form-reverse-btn-ancillary-bg: var(--color-hs-form-white);
   --color-hs-form-reverse-btn-ancillary-border: var(--color-hs-form-white);
@@ -166,9 +166,9 @@
   --color-hs-form-reverse-btn-ancillary-hover-bg: var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-hover-border: var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-hover-text: var(--color-hs-form-neutral-dk);
-  --color-hs-form-reverse-btn-ancillary-hs-form-focus-bg: var(--color-hs-form-secondary-lt);
-  --color-hs-form-reverse-btn-ancillary-hs-form-focus-border: var(--color-hs-form-secondary-lt);
-  --color-hs-form-reverse-btn-ancillary-hs-form-focus-text: var(--color-hs-form-neutral-dk);
+  --color-hs-form-reverse-btn-ancillary-focus-bg: var(--color-hs-form-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-border: var(--color-hs-form-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-text: var(--color-hs-form-neutral-dk);
 
   --color-hs-form-reverse-bg: var(--color-hs-form-primary);
   --color-hs-form-reverse-text: var(--color-hs-form-white);
@@ -184,7 +184,7 @@
 
 /* Main form container styling */
 div[data-hsfc-id=Renderer] {
-  form {
+  & form {
     @apply relative mx-auto text-hs-form-text;
     font-family: sans-serif;
     
@@ -223,7 +223,7 @@ div[data-hsfc-id=Renderer] {
 
     & .hsfc-Row {
       /* Content Elements - ensure they appear before validation errors and progress bars */
-      @apply flex flex-row justify-stretch items-start flex-nowrap gap-6;
+      @apply md:flex flex-row justify-stretch items-start flex-nowrap gap-6;
       & > div {
         @apply flex-1;
       }
@@ -274,8 +274,8 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-FieldLabel__RequiredIndicator {
-          @apply hidden;
-          /* @apply ml-1 text-hs-form-error-message; */
+          /* @apply hidden; */
+          @apply ml-1 text-hs-form-error-message text-hs-form-required-indicator;
       }
 
       /* Basic Input Elements */
@@ -313,7 +313,7 @@ div[data-hsfc-id=Renderer] {
       }
       
       /* Generic form field containers with inputs should also appear after validation/progress */
-      &:has(input, select, textarea) {
+      &:has(input, select, textarea, .hsfc-DataPrivacyField, .hsfc-DropdownInput) {
         order: 3;
       }
       
@@ -359,7 +359,7 @@ div[data-hsfc-id=Renderer] {
       & .hsfc-FileInput {
         @apply flex flex-col text-sm;
         &::file-selector-button {
-          @apply mr-2 py-1 px-4 rounded bg-hs-form-btn-ancillary-bg hover:bg-hs-form-btn-ancillary-hover-bg focus:bg-hs-form-btn-ancillary-hover-bg text-hs-form-btn-ancillary-text text-sm font-bold transition-colors duration-300;
+          @apply mr-2 py-1 px-4  bg-hs-form-btn-ancillary-bg hover:bg-hs-form-btn-ancillary-hover-bg focus:bg-hs-form-btn-ancillary-hover-bg text-hs-form-btn-ancillary-text text-sm font-bold transition-colors duration-300;
         }
       }
       & .hsfc-PhoneInput {
@@ -405,17 +405,16 @@ div[data-hsfc-id=Renderer] {
           -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
         }
         
-        /* Hide HubSpot's native character limit error messages immediately */
-        &:has-text("Enter 500 characters or fewer"),
-        &:has-text("enter 500 characters or fewer") {
-          @apply hidden;
-        }
+          /* JS will add .has-500-char-warning to elements with character limit text */
+          .has-500-char-warning {
+            @apply text-hs-form-warning-message font-bold;
+          }
       }
       & .hsfc-InfoAlert {
         @apply text-sm lg:text-xs text-hs-form-label-description-text font-bold;
       }
       & .hsfc-AcceptedFiles {
-        @apply mt-2 py-2 px-3 bg-hs-form-success-box-bg text-sm text-hs-form-success-box-text border border-hs-form-success-box-border rounded;
+        @apply mt-2 py-2 px-3 bg-hs-form-success-box-bg text-sm text-hs-form-success-box-text border border-hs-form-success-box-border ;
       }
     }
     
@@ -424,9 +423,9 @@ div[data-hsfc-id=Renderer] {
       order: 4; /* Ensure navigation appears after all form content */
       
       & button {
-        @apply bg-hs-form-btn-hs-form-primary-bg text-hs-form-btn-hs-form-primary-text text-base font-bold py-1 px-6 rounded hover:bg-hs-form-btn-hs-form-primary-hover-bg focus:bg-hs-form-btn-hs-form-primary-hs-form-focus-bg transition-colors duration-300;
+        @apply w-full md:w-auto bg-hs-form-btn-primary-bg text-hs-form-btn-primary-text text-base font-bold py-1 px-6 border-2 border-hs-form-btn-primary-border  hover:bg-hs-form-btn-primary-hover-bg hover:border-hs-form-btn-primary-hover-border focus:bg-hs-form-btn-primary-focus-bg focus:border-hs-form-btn-primary-focus-border transition-colors duration-300;
         &[type="submit"], &[type="button"] {
-          @apply bg-hs-form-btn-hs-form-primary-bg hover:bg-hs-form-btn-hs-form-primary-hover-bg  focus:bg-hs-form-btn-hs-form-primary-hs-form-focus-bg focus:outline-2 focus:outline-hs-form-focus-ring;
+          @apply bg-hs-form-btn-primary-bg border-hs-form-btn-primary-border hover:bg-hs-form-btn-primary-hover-bg hover:border-hs-form-btn-primary-hover-border focus:bg-hs-form-btn-primary-focus-bg focus:border-hs-form-btn-primary-focus-border focus:outline-2 focus:outline-hs-form-focus-ring;
         }
         &:disabled {
           @apply bg-hs-form-btn-disabled-bg hover:bg-hs-form-btn-disabled-bg focus:bg-hs-form-btn-disabled-bg cursor-not-allowed;
@@ -465,7 +464,7 @@ div[data-hsfc-id=Renderer] {
     }
 
     & .hsfc-CustomValidationError {
-      @apply mt-4 mb-6 py-3 px-4 bg-hs-form-error-box-bg border border-hs-form-error-box-border text-sm leading-snug text-hs-form-error-box-text rounded;
+      @apply mt-4 mb-6 py-3 px-4 bg-hs-form-error-box-bg border border-hs-form-error-box-border text-sm leading-snug text-hs-form-error-box-text;
       order: 1; /* Ensure validation error appears before progress bar (order: 2) but after intro content (order: 0) */
       & > div {
         @apply font-bold mb-2;
@@ -505,8 +504,11 @@ div[data-hsfc-id=Renderer] {
         & input[type=checkbox]:checked, & input[type=radio]:checked {
           @apply bg-hs-form-reverse-field-checked-bg;
         }
-        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p {
           @apply text-hs-form-reverse-text;
+        }
+        & a {
+          @apply underline hover:no-underline focus:no-underline text-hs-form-reverse-link;
         }
         & .hsfc-FieldDescription span {
           color: var(--color-hs-form-reverse-text) !important;
@@ -519,7 +521,7 @@ div[data-hsfc-id=Renderer] {
         & .hsfc-FileInput {
           @apply flex flex-col text-sm;
           &::file-selector-button {
-            @apply mr-2 py-1 px-4 rounded bg-hs-form-reverse-btn-ancillary-bg text-hs-form-reverse-btn-ancillary-text hover:bg-hs-form-reverse-btn-ancillary-hover-bg hover:text-hs-form-reverse-btn-ancillary-hover-text focus:bg-hs-form-reverse-btn-ancillary-hover-bg focus:text-hs-form-reverse-btn-ancillary-hover-text;
+            @apply mr-2 py-1 px-4  bg-hs-form-reverse-btn-ancillary-bg text-hs-form-reverse-btn-ancillary-text hover:bg-hs-form-reverse-btn-ancillary-hover-bg hover:text-hs-form-reverse-btn-ancillary-hover-text focus:bg-hs-form-reverse-btn-ancillary-hover-bg focus:text-hs-form-reverse-btn-ancillary-hover-text;
           }
         }
         & .hsfc-ErrorAlert {
@@ -533,7 +535,7 @@ div[data-hsfc-id=Renderer] {
       }
       & .hsfc-NavigationRow {
         & button {
-          @apply bg-hs-form-reverse-btn-hs-form-primary-bg border-hs-form-reverse-btn-hs-form-primary-border text-hs-form-reverse-btn-hs-form-primary-text hover:bg-hs-form-reverse-btn-hs-form-primary-hover-bg hover:border-hs-form-reverse-btn-hs-form-primary-hover-border hover:text-hs-form-reverse-btn-hs-form-primary-hover-text focus:bg-hs-form-reverse-btn-hs-form-primary-hs-form-focus-bg focus:border-hs-form-reverse-btn-hs-form-primary-hs-form-focus-border focus:text-hs-form-reverse-btn-hs-form-primary-hs-form-focus-text;
+          @apply bg-hs-form-reverse-btn-primary-bg border-hs-form-reverse-btn-primary-border text-hs-form-reverse-btn-primary-text hover:bg-hs-form-reverse-btn-primary-hover-bg hover:border-hs-form-reverse-btn-primary-hover-border hover:text-hs-form-reverse-btn-primary-hover-text focus:bg-hs-form-reverse-btn-primary-focus-bg focus:border-hs-form-reverse-btn-primary-focus-border focus:text-hs-form-reverse-btn-primary-focus-text;
         }
       }
       & .hsfc-ProgressBar {
