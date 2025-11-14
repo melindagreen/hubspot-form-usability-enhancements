@@ -21,6 +21,77 @@ import {
  * Main initialization function that accepts configuration options
  */
 const init = (options = {}) => {
+      // Hide native HubSpot character limit errors (was CSS :has-text)
+      function hideNativeCharLimitErrors(root = document) {
+        root.querySelectorAll('.hsfc-hs-form-errorAlert').forEach(el => {
+          if (
+            el.textContent.includes('Enter 500 characters or fewer') ||
+            el.textContent.includes('enter 500 characters or fewer')
+          ) {
+            el.style.display = 'none';
+          }
+        });
+      }
+    // Utility: Toggle classes that replace :has() selectors
+    function toggleHasReplacementClasses(root = document) {
+      // 1. .hsfc-Step
+      root.querySelectorAll('.hsfc-Step').forEach(step => {
+        const hasValidation = step.querySelector('.hsfc-CustomValidationError, .hsfc-ProgressBar--repositioned');
+        step.classList.toggle('hsfc-step-with-validation-and-progress', !!hasValidation);
+      });
+
+      // 2. .hsfc-Step__Content
+      root.querySelectorAll('.hsfc-Step__Content').forEach(content => {
+        const hasValidation = content.querySelector('.hsfc-CustomValidationError, .hsfc-ProgressBar--repositioned');
+        content.classList.toggle('hsfc-content-with-validation-and-progress', !!hasValidation);
+      });
+
+      // 3. label:not(:has(.hsfc-FieldLabel__RequiredIndicator))
+      root.querySelectorAll('label').forEach(label => {
+        const hasRequired = label.querySelector('.hsfc-FieldLabel__RequiredIndicator');
+        label.classList.toggle('hsfc-label-without-required', !hasRequired);
+      });
+
+      // 4. .hsfc-Row:has(input, select, textarea)
+      root.querySelectorAll('.hsfc-Row').forEach(row => {
+        const hasInput = row.querySelector('input, select, textarea');
+        row.classList.toggle('hsfc-row-with-form-inputs', !!hasInput);
+      });
+    }
+
+    // Initial run
+    if (typeof window !== 'undefined') {
+      toggleHasReplacementClasses();
+      hideNativeCharLimitErrors();
+    }
+
+    // Observe DOM mutations to keep classes in sync
+    if (typeof window !== 'undefined') {
+      const hasClassObserver = new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(node => {
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                toggleHasReplacementClasses(node);
+                hideNativeCharLimitErrors(node);
+              }
+            });
+          } else if (mutation.type === 'attributes') {
+            // If attributes change, re-check the affected element
+            if (mutation.target && mutation.target.nodeType === Node.ELEMENT_NODE) {
+              toggleHasReplacementClasses(mutation.target);
+              hideNativeCharLimitErrors(mutation.target);
+            }
+          }
+        }
+      });
+      hasClassObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'id', 'type', 'name']
+      });
+    }
   if (typeof window === 'undefined') {
     return {
       HubSpotFormManager: null,
