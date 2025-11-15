@@ -1952,6 +1952,27 @@ const HubSpotFormManager = {
           }, 120);
         }
       }
+      // --- Phone caret click-to-focus logic ---
+      let phoneCaret = null;
+      if (e.target.classList && e.target.classList.contains('hsfc-PhoneInput__FlagAndCaret')) {
+        phoneCaret = e.target;
+      } else if (e.target.parentElement && e.target.parentElement.classList && e.target.parentElement.classList.contains('hsfc-PhoneInput__FlagAndCaret')) {
+        phoneCaret = e.target.parentElement;
+      }
+      if (phoneCaret && formContainer.contains(phoneCaret)) {
+        const phoneField = phoneCaret.closest('.hsfc-PhoneField, [data-hsfc-id="PhoneField"]');
+        if (phoneField) {
+          setTimeout(() => {
+            const dropdownOptions = phoneField.querySelector('.hsfc-DropdownOptions');
+            if (dropdownOptions && dropdownOptions.offsetHeight > 0 && getComputedStyle(dropdownOptions).display !== 'none' && getComputedStyle(dropdownOptions).visibility !== 'hidden') {
+              const searchInput = dropdownOptions.querySelector('.hsfc-DropdownOptions__Search input[type="text"]');
+              if (searchInput) {
+                searchInput.focus();
+              }
+            }
+          }, 120);
+        }
+      }
     }, { signal: cleanup.abortController.signal });
   },
   
