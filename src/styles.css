@@ -235,7 +235,7 @@ div[data-hsfc-id=Renderer] {
             content:'Optional'; margin-left:0.5rem; font-size:0.75rem; text-transform:none; color:var(--color-hs-form-label-description-text); font-weight:normal;
           }
           &+ div.hsfc-CheckboxFieldGroup__Options{
-              background:var(--color-hs-form-btn-disabled-bg); border-color:var(--color-hs-form-btn-disabled-border); color:var(--color-hs-form-btn-disabled-text); cursor:not-allowed; content:'';
+            background:var(--color-hs-form-btn-disabled-bg); border-color:var(--color-hs-form-btn-disabled-border); color:var(--color-hs-form-btn-disabled-text); cursor:not-allowed; content:'';
           }
           @media screen and (min-width:768px) {
             display:inline-block; margin-left:.5rem;

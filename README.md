@@ -1,12 +1,12 @@
 # @fahlgren-mortine/hubspot-form-usability-enhancements
 
-Enhanced HubSpot form usability, validation and styling with React hydration support, accessibility improvements, and Tailwind CSS integration.
+Enhanced HubSpot form usability, validation and styling with React hydration support and accessibility improvements.
 
 ## Features
 
 - 🚀 **React Hydration Support** - Works seamlessly with SSR and React hydration
 - ♿ **Accessibility Enhanced** - WCAG 2.1 compliant with improved keyboard navigation
-- 🎨 **No Tailwind Required in Your Project** - Pre-compiled CSS included; built with Tailwind CSS v4+ (optional integration if your project uses Tailwind)
+- 🎨 **No Tailwind Required in Your Project** - Pre-compiled CSS included; no Tailwind dependency
 - 🌓 **Dark Background Support** - Automatic reverse theme with `.hs-form-reverse` class for forms on dark backgrounds
 - ✅ **Advanced Validation** - Custom validation with enhanced error handling
 - 📁 **File Upload Validation** - Configurable file type and size validation
@@ -20,8 +20,7 @@ Enhanced HubSpot form usability, validation and styling with React hydration sup
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
-**Peer Dependencies:**
-- `tailwindcss`: ^4.0.0 (required by this package for compilation)
+
 
 **Important**: This package is built with Tailwind CSS v4.0+ and includes it as a peer dependency. However, **you don't need Tailwind CSS in your own project** to use this module:
 
@@ -452,9 +451,8 @@ VITE_UPLOAD_MAX_SIZE=10MB
 
 ## Styling Customization
 
-The module provides a flexible color system that works with or without Tailwind CSS in your project.
 
-**Important**: This npm package is built with Tailwind CSS v4.0+, but **your project doesn't need Tailwind CSS** to use and customize this module. The pre-compiled CSS is included.
+The module provides a flexible color system that works out of the box. **No Tailwind CSS is required** to use and customize this module. The pre-compiled CSS is included.
 
 ### Color System Architecture
 
@@ -464,9 +462,10 @@ The styling system uses a two-tier architecture:
 
 This cascading design means you typically only need to override base colors, and all components automatically update.
 
-### For Projects NOT Using Tailwind CSS
 
-You can fully customize colors without Tailwind CSS in your project. Simply override base color variables in your project's CSS:
+### Customizing Colors
+
+You can fully customize colors by overriding base color variables in your project's CSS:
 
 ```css
 /* your-styles.css */
@@ -495,34 +494,7 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 import './your-styles.css'; // Your overrides
 ```
 
-### For Projects Using Tailwind CSS v4.0+
 
-If your project already uses Tailwind CSS v4+, override colors the same way - the `@theme` block will automatically pick up your changes:
-
-```css
-/* your-styles.css */
-:root {
-  /* Primary brand colors */
-  --color-hs-form-primary: oklch(0.55 0.20 340);
-  --color-hs-form-primary-lt: oklch(0.92 0.08 340);
-  --color-hs-form-primary-dk: oklch(0.35 0.22 340);
-  
-  /* Secondary colors */
-  --color-hs-form-secondary: oklch(0.60 0.15 195);
-  --color-hs-form-secondary-lt: oklch(0.90 0.08 195);
-  --color-hs-form-secondary-dk: oklch(0.40 0.18 195);
-  
-  /* Error colors */
-  --color-hs-form-error: oklch(0.65 0.24 29);
-  --color-hs-form-error-lt: oklch(0.97 0.02 29);
-  --color-hs-form-error-dk: oklch(0.45 0.22 29);
-}
-```
-
-**Additional benefits with Tailwind CSS v4+ in your project**:
-- Use `@theme` blocks to override component-specific colors
-- Use `@apply` directives in your own custom components
-- Full integration with your Tailwind theme
 
 ### Understanding OKLCH Colors
 
@@ -1034,18 +1006,7 @@ if (window.HUBSPOT_FORMS_NO_AUTO_INIT) {
 }
 ```
 
-### Styling not applied
-```javascript
-// Ensure Tailwind CSS is configured for the module
-// tailwind.config.js
-module.exports = {
-  content: [
-    './node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/**/*.js',
-    // ... your other content paths
-  ],
-  // ... rest of config
-};
-```
+
 
 ## Contributing
 
