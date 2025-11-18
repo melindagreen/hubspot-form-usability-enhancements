@@ -1,6 +1,6 @@
 {
   "name": "@fahlgren-mortine/hubspot-form-usability-enhancements",
-  "version": "0.1.0-alpha.3",
+  "version": "1.0.0",
   "type": "module",
   "description": "Enhanced HubSpot form usability, validation and styling with React hydration support",
   "main": "./dist/index.js",

@@ -188,20 +188,19 @@ div[data-hsfc-id=Renderer] {
         flex:1 1 0%;
       }
       & h1, & h2, & h3 {
-        margin-top:1rem; margin-bottom:0.5rem; font-size:1.5rem; color:var(--color-hs-form-headings); font-weight:bold; text-transform:uppercase;
+        color:var(--color-hs-form-headings);
         order:0; /* Ensure headings appear first */
       }
       & .hsfc-RichText {
         margin-bottom:1.5rem; font-size:0.875rem;
         order:0; /* Ensure rich text content appears first */
         & p {
-          margin-bottom:1rem;
           &:last-child {
             margin-bottom:0;
           }
         }
         & a {
-          color:var(--color-hs-form-link); text-decoration-color: var(--color-hs-form-link); font-weight:bold; transition-property:all; transition-duration:300ms;
+          color:var(--color-hs-form-link); text-decoration-color: var(--color-hs-form-link);
           &:hover {
             color:var(--color-hs-form-link-hover); text-decoration-color: var(--color-hs-form-link-hover);
           }

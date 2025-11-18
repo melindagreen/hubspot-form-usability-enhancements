@@ -2,12 +2,12 @@
 
 Enhanced HubSpot form usability, validation and styling with React hydration support and accessibility improvements.
 
+**This is intended to be used with developer-declared color values, overriding the values in HubSpot. The intent is to have a color palette that is tightly branded, not changeable on the fly by a CMS user. HubSpot color values are removed by this plugin.**
+
 ## Features
 
 - 🚀 **React Hydration Support** - Works seamlessly with SSR and React hydration
-- ♿ **Accessibility Enhanced** - WCAG 2.1 compliant with improved keyboard navigation
-- 🎨 **No Tailwind Required in Your Project** - Pre-compiled CSS included; no Tailwind dependency
-- 🌓 **Dark Background Support** - Automatic reverse theme with `.hs-form-reverse` class for forms on dark backgrounds
+- ♿ **Accessibility Enhanced** - WCAG 2.1 compliant with improved keyboard navigation- 🌓 **Dark Background Support** - Automatic reverse theme with `.hs-form-reverse` class for forms on dark backgrounds
 - ✅ **Advanced Validation** - Custom validation with enhanced error handling
 - 📁 **File Upload Validation** - Configurable file type and size validation
 - 📝 **Character Limit Validation** - Smart character counting with custom error handling
@@ -22,12 +22,7 @@ npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 
 
 
-**Important**: This package is built with Tailwind CSS v4.0+ and includes it as a peer dependency. However, **you don't need Tailwind CSS in your own project** to use this module:
 
-- **Using pre-compiled CSS**: Simply import the compiled stylesheet - no Tailwind required in your project
-- **Custom styling with Tailwind**: If your project already uses Tailwind CSS v4+, you can leverage `@apply` directives and `@theme` customization
-
-See [Styling Customization](#styling-customization) for details on both approaches.
 
 ### CSS Styles
 
@@ -66,9 +61,7 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 // That's it! The module will auto-initialize when HubSpot forms are detected.
 ```
 
-**No Tailwind CSS required in your project!** The package comes with pre-compiled CSS that includes all necessary styles. You can still customize colors by overriding CSS variables in `:root`.
-
-**If your project uses Tailwind CSS v4+**: You can leverage advanced features like `@apply` directives and `@theme` customization. See [Styling Customization](#styling-customization) for details.
+**Minimal CSS required in your project!** The package comes with pre-compiled CSS that includes all necessary styles. You can still customize colors by overriding CSS variables in `:root`.
 
 **For forms on dark backgrounds**: Simply add the class `.hs-form-reverse` to any parent container for automatic white text and inverted colors. See [Reverse Theme for Dark Backgrounds](#reverse-theme-for-dark-backgrounds).
 
@@ -82,47 +75,7 @@ For React/SSR applications, see the [React/Hydration-Safe Usage](#reacthydration
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
-### Step 2: Install Peer Dependencies (Optional for Your Project)
-
-**You don't need to install Tailwind CSS unless your project already uses it.**
-
-The package was built with Tailwind CSS v4.0+ (listed as a peer dependency), but the compiled CSS is included in the package. You only need to install Tailwind in your project if you want to use advanced customization features:
-
-```bash
-# Optional: Only install if your project uses Tailwind CSS v4+
-npm install tailwindcss@^4.0.0
-```
-
-**Without Tailwind CSS in your project**: Use the pre-compiled CSS and customize by overriding CSS variables in `:root`. See [Styling Customization](#styling-customization).
-
-**With Tailwind CSS v4+ in your project**: Access advanced features like `@apply` directives and `@theme` customization. You'll need to configure Tailwind (see Step 3).
-
-### Step 3: Configure Tailwind CSS (Only If Your Project Uses Tailwind)
-
-**Skip this step if your project doesn't use Tailwind CSS.**
-
-If your project uses Tailwind CSS v4+, add the module to your Tailwind configuration:
-
-```javascript
-// tailwind.config.js
-module.exports = {
-  content: [
-    './src/**/*.{html,js,jsx,ts,tsx,vue,svelte}',
-    './node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/**/*.js',
-    // ... your other content paths
-  ],
-  theme: {
-    extend: {
-      // Your custom theme extensions
-    }
-  },
-  plugins: [
-    // Your plugins
-  ]
-};
-```
-
-### Step 4: Import Styles
+### Step 2: Import Styles
 
 Import the CSS styles in your main stylesheet or JavaScript entry point:
 
@@ -139,7 +92,7 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 <link rel="stylesheet" href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css">
 ```
 
-### Step 5: Add HubSpot Form Embed Code
+### Step 3: Add HubSpot Form Embed Code
 
 Add your HubSpot form embed code to your HTML. The module will automatically detect and enhance any forms with the class `.hsfc-Form`.
 
@@ -150,7 +103,7 @@ Add your HubSpot form embed code to your HTML. The module will automatically det
 </div>
 ```
 
-### Step 6: Initialize the Module
+### Step 4: Initialize the Module
 
 Choose the initialization method that best fits your platform:
 
@@ -193,7 +146,7 @@ setTimeout(async () => {
 }, 500);
 ```
 
-### Step 7: Test Your Integration
+### Step 5: Test Your Integration
 
 1. **Load your page** with a HubSpot form
 2. **Check that styles are applied** - forms should have enhanced styling
@@ -203,7 +156,7 @@ setTimeout(async () => {
 6. **Check browser console** - should be free of errors
 7. **Test on mobile devices** - ensure responsive behavior works
 
-### Step 8: Customize (Optional)
+### Step 6: Customize (Optional)
 
 If needed, override default styles or configuration:
 
@@ -452,7 +405,7 @@ VITE_UPLOAD_MAX_SIZE=10MB
 ## Styling Customization
 
 
-The module provides a flexible color system that works out of the box. **No Tailwind CSS is required** to use and customize this module. The pre-compiled CSS is included.
+The module provides a flexible color system that works out of the box. The pre-compiled CSS is included.
 
 ### Color System Architecture
 
