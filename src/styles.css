@@ -61,6 +61,9 @@
   --color-hs-form-btn-primary-focus-bg:var(--color-hs-form-primary-dk);
   --color-hs-form-btn-primary-focus-border:var(--color-hs-form-primary-dk);
   --color-hs-form-btn-primary-focus-text:var(--color-hs-form-white);
+  --color-hs-form-btn-primary-active-bg:var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-active-border:var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-active-text:var(--color-hs-form-white);
 
   --color-hs-form-btn-ancillary-bg:var(--color-hs-form-secondary);
   --color-hs-form-btn-ancillary-text:var(--color-hs-form-white);
@@ -71,10 +74,13 @@
   --color-hs-form-btn-ancillary-focus-bg:var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-focus-border:var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-focus-text:var(--color-hs-form-white);
+  --color-hs-form-btn-ancillary-active-bg:var(--color-hs-form-secondary-dk);
+  --color-hs-form-btn-ancillary-active-border:var(--color-hs-form-secondary-dk);
+  --color-hs-form-btn-ancillary-active-text:var(--color-hs-form-white);
 
-  --color-hs-form-btn-disabled-bg:var(--color-hs-form-neutral-lt);
-  --color-hs-form-btn-disabled-border:var(--color-hs-form-neutral-lt);
-  --color-hs-form-btn-disabled-text:var(--color-hs-form-neutral-dk);
+  --color-hs-form-btn-disabled-bg:var(--color-hs-form-neutral);
+  --color-hs-form-btn-disabled-border:var(--color-hs-form-neutral);
+  --color-hs-form-btn-disabled-text:var(--color-hs-form-neutra-lt);
 
   --color-hs-form-field-bg:var(--color-hs-form-black);
   --color-hs-form-field-border:var(--color-hs-form-neutral-lt);
@@ -92,6 +98,8 @@
   --color-hs-form-selectlist-item-hover-text:var(--color-hs-form-neutral);
   --color-hs-form-selectlist-item-focus-bg:var(--color-hs-form-neutral-hlt);
   --color-hs-form-selectlist-item-focus-text:var(--color-hs-form-neutral);
+  --color-hs-form-selectlist-item-active-bg:var(--color-hs-form-neutral-hlt);
+  --color-hs-form-selectlist-item-active-text:var(--color-hs-form-neutral);
   --color-hs-form-selectlist-caret-color:var(--color-hs-form-neutral-dk);
 
   --color-hs-form-focus-ring:var(--color-hs-form-focus-ring);
@@ -101,6 +109,7 @@
   --color-hs-form-link:var(--color-hs-form-primary);
   --color-hs-form-link-hover:var(--color-hs-form-primary-dk);
   --color-hs-form-link-focus:var(--color-hs-form-primary-dk);
+  --color-hs-form-link-active:var(--color-hs-form-primary-dk);
 
   --color-hs-form-label-text:var(--color-hs-form-neutral);
   --color-hs-form-label-description-text:var(--color-hs-form-neutral-lt);
@@ -132,6 +141,9 @@
   --color-hs-form-reverse-btn-primary-focus-bg:var(--color-hs-form-primary-lt);
   --color-hs-form-reverse-btn-primary-focus-border:var(--color-hs-form-primary-lt);
   --color-hs-form-reverse-btn-primary-focus-text:var(--color-hs-form-neutral-dk);
+  --color-hs-form-reverse-btn-primary-active-bg:var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-active-border:var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-active-text:var(--color-hs-form-neutral-dk);
 
   --color-hs-form-reverse-btn-ancillary-bg:var(--color-hs-form-white);
   --color-hs-form-reverse-btn-ancillary-border:var(--color-hs-form-white);
@@ -142,6 +154,13 @@
   --color-hs-form-reverse-btn-ancillary-focus-bg:var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-focus-border:var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-focus-text:var(--color-hs-form-neutral-dk);
+  --color-hs-form-reverse-btn-ancillary-active-bg:var(--color-hs-form-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-active-border:var(--color-hs-form-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-active-text:var(--color-hs-form-neutral-dk);
+
+  --color-hs-form-reverse-btn-disabled-bg:var(--color-hs-form-neutral-lt);
+  --color-hs-form-reverse-btn-disabled-border:var(--color-hs-form-neutral-lt);
+  --color-hs-form-reverse-btn-disabled-text:var(--color-hs-form-neutral);
 
   --color-hs-form-reverse-bg:var(--color-hs-form-primary);
   --color-hs-form-reverse-text:var(--color-hs-form-white);
@@ -204,8 +223,14 @@ div[data-hsfc-id=Renderer] {
           &:hover {
             color:var(--color-hs-form-link-hover); text-decoration-color: var(--color-hs-form-link-hover);
           }
-          &:focus {
+          &:focus, &:focus-visible {
             color:var(--color-hs-form-link-focus); text-decoration-color: var(--color-hs-form-link-focus);
+          }
+          &:hover {
+            color:var(--color-hs-form-link-hover); text-decoration-color: var(--color-hs-form-link-hover);
+          }
+          &:active {
+            color:var(--color-hs-form-link-active); text-decoration-color: var(--color-hs-form-link-active);
           }
         }
         &:last-child {
@@ -316,8 +341,11 @@ div[data-hsfc-id=Renderer] {
             &:hover {
               background:var(--color-hs-form-selectlist-item-hover-bg); color:var(--color-hs-form-selectlist-item-hover-text);
             }
-            &:focus {
+            &:focus, &:focus-visible {
               background:var(--color-hs-form-selectlist-item-focus-bg); color:var(--color-hs-form-selectlist-item-focus-text);
+            }
+            &:active {
+              background:var(--color-hs-form-selectlist-item-active-bg); color:var(--color-hs-form-selectlist-item-active-text);
             }
           }
         }
@@ -331,6 +359,9 @@ div[data-hsfc-id=Renderer] {
           }
           &:focus:not(:disabled), &:focus-visible:not(:disabled) {
             background:var(--color-hs-form-btn-ancillary-focus-bg); border-color:var(--color-hs-form-btn-ancillary-focus-border); color:var(--color-hs-form-btn-ancillary-focus-text);
+          }
+          &:active:not(:disabled) {
+            background:var(--color-hs-form-btn-ancillary-active-bg); border-color:var(--color-hs-form-btn-ancillary-active-border); color:var(--color-hs-form-btn-ancillary-active-text);
           }
         }
       }
@@ -365,10 +396,10 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-TextareaInput {
-        &.hsfc-Textarea--warning:focus {
+        &.hsfc-Textarea--warning:focus, &.hsfc-Textarea--warning:focus-visible, &.hsfc-Textarea--warning:active {
           border-color:var(--color-hs-form-warning-border);
         }
-        &.hsfc-Textarea--danger:focus {
+        &.hsfc-Textarea--danger:focus, &.hsfc-Textarea--danger:focus-visible, &.hsfc-Textarea--danger:active {
           border-color:var(--color-hs-form-error-border);
         }
       }
@@ -396,18 +427,21 @@ div[data-hsfc-id=Renderer] {
       order:4; /* Ensure navigation appears after all form content */
       
       & button {
-        background:var(--color-hs-form-btn-primary-bg); color:var(--color-hs-form-btn-primary-text); font-size:1rem; font-weight:bold; padding:0.25rem 1.5rem; transition-property:color, background-color, border-color, text-decoration-color, fill, stroke; transition-duration:300ms;
+        background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); color:var(--color-hs-form-btn-primary-text); font-size:1rem; font-weight:bold; padding:0.25rem 1.5rem; transition-property:color, background-color, border-color, text-decoration-color, fill, stroke; transition-duration:300ms;
         &[type="submit"], &[type="button"] {
-          background:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); color:var(--color-hs-form-btn-primary-text);
+          background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); color:var(--color-hs-form-btn-primary-text);
         }
         &:hover {
-          background:var(--color-hs-form-btn-primary-hover-bg); border-color:var(--color-hs-form-btn-primary-hover-border); color:var(--color-hs-form-btn-primary-hover-text);
+          background-color:var(--color-hs-form-btn-primary-hover-bg); border-color:var(--color-hs-form-btn-primary-hover-border); color:var(--color-hs-form-btn-primary-hover-text);
         }
-        &:focus {
-          background:var(--color-hs-form-btn-primary-focus-bg); border-color:var(--color-hs-form-btn-primary-focus-border); color:var(--color-hs-form-btn-primary-focus-text);
+        &:focus, &:focus-visible {
+          background-color:var(--color-hs-form-btn-primary-focus-bg); border-color:var(--color-hs-form-btn-primary-focus-border); color:var(--color-hs-form-btn-primary-focus-text);
+        }
+        &:active {
+          background-color:var(--color-hs-form-btn-primary-active-bg); border-color:var(--color-hs-form-btn-primary-active-border); color:var(--color-hs-form-btn-primary-active-text);
         }
         &:disabled {
-          background:var(--color-hs-form-btn-disabled-bg); cursor:not-allowed;
+          background-color:var(--color-hs-form-btn-disabled-bg); border-color:var(--color-hs-form-btn-disabled-border); color:var(--color-hs-form-btn-disabled-text); cursor:not-allowed;
         }
         &+ button {
           margin-left:1rem;
@@ -502,7 +536,7 @@ div[data-hsfc-id=Renderer] {
           }
         }
         & .hsfc-ErrorAlert {
-          &::before { background:var(--color-hs-form-reverse-field-bg);
+          &::before { background-color:var(--color-hs-form-reverse-field-bg);
           }
         }
         & .hsfc-CharacterCounter {
@@ -511,15 +545,21 @@ div[data-hsfc-id=Renderer] {
       }
       & .hsfc-NavigationRow {
         & button { 
-          background:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
+          background-color:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
           &[type="submit"], &[type="button"] {
             background-color:var(--color-hs-form-reverse-btn-primary-bg); border-color:var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text);
           }
           &:hover {
-            background:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
+            background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
           }
-          &:focus {
-            background:var(--color-hs-form-reverse-btn-primary-focus-bg); border-color:var(--color-hs-form-reverse-btn-primary-focus-border); color:var(--color-hs-form-reverse-btn-primary-focus-text);
+          &:focus, &:focus-visible {
+            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); border-color:var(--color-hs-form-reverse-btn-primary-focus-border); color:var(--color-hs-form-reverse-btn-primary-focus-text);
+          }
+          &:active {
+            background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
+          }
+          &:disabled {
+            background-color:var(--color-hs-form-reverse-btn-disabled-bg); border-color:var(--color-hs-form-reverse-btn-disabled-border); color:var(--color-hs-form-reverse-btn-disabled-text); cursor:not-allowed;
           }
         }
       }
