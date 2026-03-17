@@ -23,7 +23,7 @@
     "build:js": "rollup -c",
     "build:css": "postcss src/styles.css -o dist/styles.css",
     "build:types": "cp src/index.d.ts dist/index.d.ts",
-    "dev": "rollup -c -w",
+    "dev": "concurrently \"rollup -c -w\" \"postcss src/styles.css -o dist/styles.css --watch\"",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
