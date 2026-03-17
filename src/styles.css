@@ -38,7 +38,7 @@
   --color-hs-form-neutral-hlt:oklch(0.9700 0.0020 250.00);
   --color-hs-form-neutral-lt:oklch(0.7000 0.0040 250.00);
   --color-hs-form-neutral-dk:oklch(0.2500 0.0070 250.00);
-  --color-hs-form-focus-ring:oklch(0.6000 0.2000 250.88);
+  --color-hs-form-required-indicator:oklch(0.6463 0.2409 29.23);
   --color-hs-form-error:oklch(0.6463 0.2409 29.23);
   --color-hs-form-error-lt:oklch(0.9700 0.0200 29.23);
   --color-hs-form-error-dk:oklch(0.4500 0.2200 29.23);
@@ -51,6 +51,11 @@
   --color-hs-form-white:oklch(1 0 0);
   --color-hs-form-black:oklch(0 0 0);
 
+  --color-hs-form-focus-ring:oklch(0.6000 0.2000 250.88);
+  --width-hs-form-field-focus-outline:3px;
+  --offset-hs-form-field-focus-outline:0px;
+  --style-hs-form-field-focus-outline:solid;
+
   /* Custom properties for form theming */
   --color-hs-form-btn-primary-bg:var(--color-hs-form-primary);
   --color-hs-form-btn-primary-border:var(--color-hs-form-primary);
@@ -59,7 +64,7 @@
   --color-hs-form-btn-primary-hover-border:var(--color-hs-form-primary-dk);
   --color-hs-form-btn-primary-hover-text:var(--color-hs-form-white);
   --color-hs-form-btn-primary-focus-bg:var(--color-hs-form-primary-dk);
-  --color-hs-form-btn-primary-focus-border:var(--color-hs-form-primary-dk);
+  --color-hs-form-btn-primary-focus-outline:var(--color-hs-form-primary-dk);
   --color-hs-form-btn-primary-focus-text:var(--color-hs-form-white);
   --color-hs-form-btn-primary-active-bg:var(--color-hs-form-primary-dk);
   --color-hs-form-btn-primary-active-border:var(--color-hs-form-primary-dk);
@@ -68,11 +73,12 @@
   --color-hs-form-btn-ancillary-bg:var(--color-hs-form-secondary);
   --color-hs-form-btn-ancillary-text:var(--color-hs-form-white);
   --color-hs-form-btn-ancillary-border:var(--color-hs-form-secondary);
+  
   --color-hs-form-btn-ancillary-hover-bg:var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-hover-border:var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-hover-text:var(--color-hs-form-white);
   --color-hs-form-btn-ancillary-focus-bg:var(--color-hs-form-secondary-dk);
-  --color-hs-form-btn-ancillary-focus-border:var(--color-hs-form-secondary-dk);
+  --color-hs-form-btn-ancillary-focus-outline:var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-focus-text:var(--color-hs-form-white);
   --color-hs-form-btn-ancillary-active-bg:var(--color-hs-form-secondary-dk);
   --color-hs-form-btn-ancillary-active-border:var(--color-hs-form-secondary-dk);
@@ -84,8 +90,8 @@
 
   --color-hs-form-field-bg:var(--color-hs-form-black);
   --color-hs-form-field-border:var(--color-hs-form-neutral-lt);
-  --color-hs-form-field-border-hover:var(--color-hs-form-neutral-lt);
-  --color-hs-form-field-border-hs-form-focus:var(--color-hs-form-primary);
+  --color-hs-form-field-hover-border:var(--color-hs-form-neutral-lt);
+  --color-hs-form-field-focus-outline:var(--color-hs-form-focus-ring);
   --color-hs-form-field-text:var(--color-hs-form-neutral);
   --color-hs-form-field-checked-bg:var(--color-hs-form-primary);
   --color-hs-form-placeholder-text:var(--color-hs-form-neutral-lt);
@@ -102,8 +108,6 @@
   --color-hs-form-selectlist-item-active-text:var(--color-hs-form-neutral);
   --color-hs-form-selectlist-caret-color:var(--color-hs-form-neutral-dk);
 
-  --color-hs-form-focus-ring:var(--color-hs-form-focus-ring);
-
   --color-hs-form-headings:var(--color-hs-form-black);
   --color-hs-form-text:var(--color-hs-form-neutral);
   --color-hs-form-link:var(--color-hs-form-primary);
@@ -119,7 +123,7 @@
   --color-hs-form-progress-bar-border:var(--color-hs-form-neutral);
   --color-hs-form-progress-bar-fill:var(--color-hs-form-primary);
 
-  --color-hs-form-required-indicator:var(--color-hs-form-error);
+  --color-hs-form-required-indicator:var(--color-hs-form-required-indicator);
   --color-hs-form-error-message:var(--color-hs-form-error);
   --color-hs-form-error-box-bg:var(--color-hs-form-error-lt);
   --color-hs-form-error-box-text:var(--color-hs-form-error-dk);
@@ -138,7 +142,7 @@
   --color-hs-form-reverse-btn-primary-hover-border:var(--color-hs-form-primary-lt);
   --color-hs-form-reverse-btn-primary-hover-text:var(--color-hs-form-neutral-dk);
   --color-hs-form-reverse-btn-primary-focus-bg:var(--color-hs-form-primary-lt);
-  --color-hs-form-reverse-btn-primary-focus-border:var(--color-hs-form-primary-lt);
+  --color-hs-form-reverse-btn-primary-focus-outline:var(--color-hs-form-primary-lt);
   --color-hs-form-reverse-btn-primary-focus-text:var(--color-hs-form-neutral-dk);
   --color-hs-form-reverse-btn-primary-active-bg:var(--color-hs-form-primary-lt);
   --color-hs-form-reverse-btn-primary-active-border:var(--color-hs-form-primary-lt);
@@ -151,7 +155,7 @@
   --color-hs-form-reverse-btn-ancillary-hover-border:var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-hover-text:var(--color-hs-form-neutral-dk);
   --color-hs-form-reverse-btn-ancillary-focus-bg:var(--color-hs-form-secondary-lt);
-  --color-hs-form-reverse-btn-ancillary-focus-border:var(--color-hs-form-secondary-lt);
+  --color-hs-form-reverse-btn-ancillary-focus-outline:var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-focus-text:var(--color-hs-form-neutral-dk);
   --color-hs-form-reverse-btn-ancillary-active-bg:var(--color-hs-form-secondary-lt);
   --color-hs-form-reverse-btn-ancillary-active-border:var(--color-hs-form-secondary-lt);
@@ -289,7 +293,16 @@ div[data-hsfc-id=Renderer] {
       }  
       & textarea {
         min-height:4rem; max-height:8rem; /* roughly 500char for limit */
-      }              
+      } 
+      input:not([type="button"]), textarea, select {
+        &:focus, &:focus-visible {
+          box-shadow: none;
+          outline-width: var(--focus-form-outline-width, 3px);
+          outline-offset: var(--focus-form-outline-offset, 0);
+          outline-color: var(--hs-form-field-focus-outline, var(--color-hs-form-field-focus-outline));
+          outline-style: var(--focus-form-outline-style, solid);
+        }
+      }            
 
       /* Field Container Styles */
       & .hsfc-CheckboxFieldGroup, & .hsfc-DateField, & .hsfc-DropdownField, & .hsfc-EmailField, & .hsfc-FileField, & .hsfc-NumberField, & .hsfc-PhoneField, & .hsfc-RadioFieldGroup, & .hsfc-TextareaField, & .hsfc-TextField {
@@ -300,8 +313,7 @@ div[data-hsfc-id=Renderer] {
           order:3;
         }
         &:has(.hsfc-ErrorAlert) {
-          & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
-            border:2px solid var(--color-hs-form-error-box-border);
+             border:2px solid var(--color-hs-form-error-box-border);
           }
         }
       & .hsfc-DropdownInput, & .hsfc-EmailInput, & .hsfc-FileInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput, & .hsfc-TextInput {
@@ -362,7 +374,7 @@ div[data-hsfc-id=Renderer] {
             background:var(--color-hs-form-btn-ancillary-hover-bg); border-color:var(--color-hs-form-btn-ancillary-hover-border); color:var(--color-hs-form-btn-ancillary-hover-text);
           }
           &:focus:not(:disabled), &:focus-visible:not(:disabled) {
-            background:var(--color-hs-form-btn-ancillary-focus-bg); border-color:var(--color-hs-form-btn-ancillary-focus-border); color:var(--color-hs-form-btn-ancillary-focus-text);
+            background:var(--color-hs-form-btn-ancillary-focus-bg); outline-color:var(--color-hs-form-btn-ancillary-focus-outline); color:var(--color-hs-form-btn-ancillary-focus-text);
           }
           &:active:not(:disabled) {
             background:var(--color-hs-form-btn-ancillary-active-bg); border-color:var(--color-hs-form-btn-ancillary-active-border); color:var(--color-hs-form-btn-ancillary-active-text);
@@ -439,7 +451,7 @@ div[data-hsfc-id=Renderer] {
           background-color:var(--color-hs-form-btn-primary-hover-bg); border-color:var(--color-hs-form-btn-primary-hover-border); color:var(--color-hs-form-btn-primary-hover-text);
         }
         &:focus, &:focus-visible {
-          background-color:var(--color-hs-form-btn-primary-focus-bg); border-color:var(--color-hs-form-btn-primary-focus-border); color:var(--color-hs-form-btn-primary-focus-text);
+          background-color:var(--color-hs-form-btn-primary-focus-bg); outline-color:var(--color-hs-form-btn-primary-focus-outline); color:var(--color-hs-form-btn-primary-focus-text);
         }
         &:active {
           background-color:var(--color-hs-form-btn-primary-active-bg); border-color:var(--color-hs-form-btn-primary-active-border); color:var(--color-hs-form-btn-primary-active-text);
@@ -509,10 +521,9 @@ div[data-hsfc-id=Renderer] {
       & + .hs-form-field,
       & + .hsfc-FormField, & + .hsfc-Row { margin-top:0; }
     }
-  }
 
-  /* Reverse theme styles (for dark backgrounds) */
-  .hs-form-reverse & {
+    /* Reverse theme styles (for dark backgrounds) */
+    .hs-form-reverse & {
     & form {
       & .hsfc-Row {
         & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
@@ -563,7 +574,7 @@ div[data-hsfc-id=Renderer] {
             background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
           }
           &:focus, &:focus-visible {
-            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); border-color:var(--color-hs-form-reverse-btn-primary-focus-border); color:var(--color-hs-form-reverse-btn-primary-focus-text);
+            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); outline-color:var(--color-hs-form-reverse-btn-primary-focus-outline); color:var(--color-hs-form-reverse-btn-primary-focus-text);
           }
           &:active {
             background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
@@ -586,19 +597,19 @@ div[data-hsfc-id=Renderer] {
       }
     }
   }
-  
-  /* 
-   * Absolute flexbox ordering rules to ensure validation errors always appear above progress bars
-   * regardless of their DOM insertion order. These rules use CSS flexbox order property
-   * to control visual order without changing the actual DOM structure.
-   */
-  .hsfc-ProgressBar--repositioned ~ .hsfc-CustomValidationError {
-    order:1 !important;
-  }
-  
-  .hsfc-CustomValidationError ~ .hsfc-ProgressBar--repositioned {
-    order:2 !important;
-  }
+}
+
+/* 
+ * Absolute flexbox ordering rules to ensure validation errors always appear above progress bars
+ * regardless of their DOM insertion order. These rules use CSS flexbox order property
+ * to control visual order without changing the actual DOM structure.
+ */
+.hsfc-ProgressBar--repositioned ~ .hsfc-CustomValidationError {
+  order:1 !important;
+}
+
+.hsfc-CustomValidationError ~ .hsfc-ProgressBar--repositioned {
+  order:2 !important;
 }
 
 /* Utility classes for custom integration */

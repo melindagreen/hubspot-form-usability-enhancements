@@ -24,7 +24,6 @@ import {
  * Main initialization function that accepts configuration options
  */
 const init = (options = {}) => {
-  console.log('Initializing HubSpot Form Usability Enhancements with options:', options);
       // Hide native HubSpot character limit errors (was CSS :has-text)
       function hideNativeCharLimitErrors(root = document) {
         root.querySelectorAll('.hsfc-hs-form-errorAlert').forEach(el => {

@@ -1,5 +1,4 @@
 const removeHubSpotFormStyles = () => {
-  console.log('Attempting to remove HubSpot BaseStyle CSS');
   // Constants for HubSpot BaseStyle CSS removal
   const HUBSPOT_BASESTYLE_SELECTOR = 'style[data-hsfc-id="BaseStyle"]';
   const OBSERVER_TIMEOUT_MS = 10000;

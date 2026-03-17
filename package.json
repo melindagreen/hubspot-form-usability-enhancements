@@ -31,22 +31,17 @@
     "form-usability",
     "validation",
     "accessibility",
-    "react",
-    "tailwind"
+    "react"
   ],
   "author": "Fahlgren Mortine",
   "license": "MIT",
-  "dependencies": {
-    "@tailwindcss/cli": "^4.1.16",
-    "@tailwindcss/postcss": "^4.1.16",
-    "postcss": "^8.5.0",
-    "postcss-cli": "^11.0.0",
-    "tailwindcss": "^4.1.16"
-  },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "concurrently": "^9.2.1",
+    "postcss": "^8.5.0",
+    "postcss-cli": "^11.0.0",
+    "postcss-nested": "^7.0.2",
     "rollup": "^4.21.2",
     "typescript": "^5.6.2"
   },
