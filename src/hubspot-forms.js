@@ -1,4 +1,5 @@
 const removeHubSpotFormStyles = () => {
+  console.log('Attempting to remove HubSpot BaseStyle CSS');
   // Constants for HubSpot BaseStyle CSS removal
   const HUBSPOT_BASESTYLE_SELECTOR = 'style[data-hsfc-id="BaseStyle"]';
   const OBSERVER_TIMEOUT_MS = 10000;
@@ -845,11 +846,12 @@ const HubSpotFormValidator = {
     const errorList = document.createElement('ul');
     
     fieldsWithErrors.forEach((fieldInfo, index) => {
+      console.log(fieldInfo);
       const listItem = document.createElement('li');
       
       const errorLink = document.createElement('a');
       errorLink.href = '#';
-      errorLink.textContent = fieldInfo.description;
+      errorLink.innerHTML = fieldInfo.description;
       
       // Add click handler to focus the field
       errorLink.addEventListener('click', (e) => {
@@ -932,7 +934,7 @@ const HubSpotFormValidator = {
           
           fieldsWithErrors.push({
             field: field,
-            description: `${fieldLabel}: ${errorText}`,
+            description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorText}</span>`,
             errorElement: errorEl
           });
         }
@@ -976,7 +978,7 @@ const HubSpotFormValidator = {
       if (isFieldInvalid(field) && !fieldsWithErrors.some(f => f.field === field)) {
         const fieldLabel = this.getFieldLabel(field) || `Field "${field.name || field.id || 'unknown'}"`;
         
-        const errorDescription = `${fieldLabel}: Please complete this required field.`;
+        const errorDescription = `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">Please complete this required field.</span>`;
         
         fieldsWithErrors.push({
           field: field,
@@ -1001,14 +1003,14 @@ const HubSpotFormValidator = {
       // Check email format validation
       if (field.type === 'email' || field.name?.toLowerCase().includes('email')) {
         if (!this.isValidEmail(field.value)) {
-          formatError = `${fieldLabel} must be formatted correctly`;
+          formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">must be formatted correctly</span>`;
         }
       }
       // Check fields with pattern attribute
       else if (field.hasAttribute('pattern')) {
         try {
           if (!field.value.match(new RegExp(field.pattern))) {
-            formatError = `${fieldLabel} must be formatted correctly`;
+            formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">must be formatted correctly</span>`;
           }
         } catch (e) {
           // Pattern validation error - skip this field
@@ -1039,7 +1041,7 @@ const HubSpotFormValidator = {
         
         fieldsWithErrors.push({
           field: field,
-          description: `${fieldLabel}: Please complete this required field.`,
+          description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">Please complete this required field.</span>`,
           errorElement: null
         });
       }

@@ -80,7 +80,7 @@
 
   --color-hs-form-btn-disabled-bg:var(--color-hs-form-neutral);
   --color-hs-form-btn-disabled-border:var(--color-hs-form-neutral);
-  --color-hs-form-btn-disabled-text:var(--color-hs-form-neutra-lt);
+  --color-hs-form-btn-disabled-text:var(--color-hs-form-neutral-lt);
 
   --color-hs-form-field-bg:var(--color-hs-form-black);
   --color-hs-form-field-border:var(--color-hs-form-neutral-lt);
@@ -122,8 +122,7 @@
   --color-hs-form-required-indicator:var(--color-hs-form-error);
   --color-hs-form-error-message:var(--color-hs-form-error);
   --color-hs-form-error-box-bg:var(--color-hs-form-error-lt);
-  --color-hs-form-error-border:var(--color-hs-form-error-dk);
-  --color-hs-form-error-box-text:var(--color-hs-form-error);
+  --color-hs-form-error-box-text:var(--color-hs-form-error-dk);
   --color-hs-form-error-box-border:var(--color-hs-form-error);
   --color-hs-form-warning-message:var(--color-hs-form-warning);
   --color-hs-form-warning-border:var(--color-hs-form-warning-dk);
@@ -193,7 +192,7 @@ div[data-hsfc-id=Renderer] {
           display:flex; flex-direction:column;
         }
       }
-      & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background:var(--color-hs-form-error-message); line-height:1.375; font-size:0.875rem; color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-border); }
+      & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background:var(--color-hs-form-error-message); line-height:1.375; font-size:0.875rem; color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-box-border); }
       & .hsfc-Step__Banner { display:none; }
     }
 
@@ -300,6 +299,11 @@ div[data-hsfc-id=Renderer] {
         &:has(input, select, textarea, .hsfc-RichText) {
           order:3;
         }
+        &:has(.hsfc-ErrorAlert) {
+          & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
+            border:2px solid var(--color-hs-form-error-box-border);
+          }
+        }
       & .hsfc-DropdownInput, & .hsfc-EmailInput, & .hsfc-FileInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput, & .hsfc-TextInput {
         display:flex; flex-direction:row; position:relative; width:100%; color:var(--color-hs-form-field-text);
       }
@@ -400,7 +404,7 @@ div[data-hsfc-id=Renderer] {
           border-color:var(--color-hs-form-warning-border);
         }
         &.hsfc-Textarea--danger:focus, &.hsfc-Textarea--danger:focus-visible, &.hsfc-Textarea--danger:active {
-          border-color:var(--color-hs-form-error-border);
+          border-color:var(--color-hs-form-error-box-border);
         }
       }
       & .hsfc-ErrorAlert {
@@ -486,7 +490,13 @@ div[data-hsfc-id=Renderer] {
         & li {
           margin-bottom:0.25rem; color:var(--color-hs-form-error-box-text);
           & a {
-            color:var(--color-hs-form-error-box-text); font-size:0.875rem; text-decoration:underline; cursor:pointer;
+            color:var(--color-hs-form-error-box-text); font-size:0.875rem; text-decoration:none; cursor:pointer;
+            & span.customValidationErrorLabel {
+              font-weight:bold;
+            }
+            & span.customValidationErrorText {
+              text-decoration:underline;
+            }
           }
         }
       }
