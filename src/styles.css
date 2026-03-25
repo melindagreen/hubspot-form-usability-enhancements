@@ -297,17 +297,19 @@ div[data-hsfc-id=Renderer] {
       }            
 
       /* Field Container Styles */
-      & .hsfc-CheckboxFieldGroup, & .hsfc-DateField, & .hsfc-DropdownField, & .hsfc-EmailField, & .hsfc-FileField, & .hsfc-NumberField, & .hsfc-PhoneField, & .hsfc-RadioFieldGroup, & .hsfc-TextareaField, & .hsfc-TextField {
-        margin-bottom:1rem; order:3; /* Ensure form fields appear after validation errors (order:1) and progress bars (order:2) */
+      & .hsfc-CheckboxField, & .hsfc-CheckboxFieldGroup, & .hsfc-DateField, & .hsfc-DropdownField, & .hsfc-EmailField, & .hsfc-FileField, & .hsfc-NumberField, & .hsfc-PhoneField, & .hsfc-RadioFieldGroup, & .hsfc-TextareaField, & .hsfc-TextField {
+        margin-bottom:1rem; order:3; 
+      }
+      /* Ensure form fields appear after validation errors (order:1) and progress bars (order:2) */
+      &.hsfc-row-with-form-inputs,
+      &:has(input, select, textarea, .hsfc-RichText) {
+        order:3;
+      }
+      & div:not(.hsfc-CheckboxGroup):not(.hsfc-RadioFieldGroup) {
+        &:has(> .hsfc-ErrorAlert) input, &:has(> .hsfc-ErrorAlert) select, &:has(> .hsfc-ErrorAlert) textarea {
+          border:2px solid var(--color-hs-form-error-box-border);
         }
-        &.hsfc-row-with-form-inputs,
-        &:has(input, select, textarea, .hsfc-RichText) {
-          order:3;
-        }
-        &:has(.hsfc-ErrorAlert) input, &:has(.hsfc-ErrorAlert) select, &:has(.hsfc-ErrorAlert) textarea {
-             border:2px solid var(--color-hs-form-error-box-border);
-          }
-        }
+      }
       & .hsfc-DropdownInput, & .hsfc-EmailInput, & .hsfc-FileInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput, & .hsfc-TextInput {
         display:flex; flex-direction:row; position:relative; width:100%; color:var(--color-hs-form-field-text);
       }
@@ -531,78 +533,79 @@ div[data-hsfc-id=Renderer] {
 
     /* Reverse theme styles (for dark backgrounds) */
     .hs-form-reverse & {
-    & form {
-      & .hsfc-Row {
-        & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
-          background:var(--color-hs-form-reverse-field-bg);
-        }
-        & input[type=checkbox]:checked, & input[type=radio]:checked {
-          background:var(--color-hs-form-reverse-field-checked-bg);
-        }
-        & .hsfc-FieldLabel, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & .hsfc-FieldLabel:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
-          color:var(--color-hs-form-reverse-text);
-        }
-        & .hsfc-RichText a {
-          color:var(--color-hs-form-reverse-link);
-            text-decoration:underline;
-          &:hover {
-            text-decoration-color:transparent;
-          }
-        }
-        & .hsfc-FieldDescription span {
-          color:var(--color-hs-form-reverse-text) !important;
-        }
-        & .hsfc-PhoneInput {
-          & .hsfc-PhoneInput__FlagAndCaret {
+      & form {
+        & .hsfc-Row {
+          & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
             background:var(--color-hs-form-reverse-field-bg);
           }
-        }
-        & .hsfc-FileInput {
-          display:flex; flex-direction:column; font-size:0.875rem;
-          &::file-selector-button {
-            margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background:var(--color-hs-form-reverse-btn-ancillary-bg); color:var(--color-hs-form-reverse-btn-ancillary-text); /* hover/focus handled below */
+          & input[type=checkbox]:checked, & input[type=radio]:checked {
+            background:var(--color-hs-form-reverse-field-checked-bg);
+          }
+          & .hsfc-FieldLabel, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & .hsfc-FieldLabel:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+            color:var(--color-hs-form-reverse-text);
+          }
+          & .hsfc-RichText a {
+            color:var(--color-hs-form-reverse-link);
+              text-decoration:underline;
+            &:hover {
+              text-decoration-color:transparent;
+            }
+          }
+          & .hsfc-FieldDescription span {
+            color:var(--color-hs-form-reverse-text) !important;
+          }
+          & .hsfc-PhoneInput {
+            & .hsfc-PhoneInput__FlagAndCaret {
+              background:var(--color-hs-form-reverse-field-bg);
+            }
+          }
+          & .hsfc-FileInput {
+            display:flex; flex-direction:column; font-size:0.875rem;
+            &::file-selector-button {
+              margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background:var(--color-hs-form-reverse-btn-ancillary-bg); color:var(--color-hs-form-reverse-btn-ancillary-text); /* hover/focus handled below */
+            }
+          }
+          & .hsfc-CharacterCounter {
+            color:var(--color-hs-form-reverse-text) !important;
           }
         }
-        & .hsfc-CharacterCounter {
-          color:var(--color-hs-form-reverse-text) !important;
-        }
-      }
-      & .hsfc-NavigationRow {
-        & button { 
-          background-color:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
-          &[type="submit"], &[type="button"] {
-            background-color:var(--color-hs-form-reverse-btn-primary-bg); border-color:var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text);
-          }
-          &:hover {
-            background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
-          }
-          &:focus, &:focus-visible {
-            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); color:var(--color-hs-form-reverse-btn-primary-focus-text);
-          }
-          &:active {
-            background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
-          }
-          &:disabled {
-            background-color:var(--color-hs-form-reverse-btn-disabled-bg); border-color:var(--color-hs-form-reverse-btn-disabled-border); color:var(--color-hs-form-reverse-btn-disabled-text); cursor:not-allowed;
+        & .hsfc-NavigationRow {
+          & button { 
+            background-color:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
+            &[type="submit"], &[type="button"] {
+              background-color:var(--color-hs-form-reverse-btn-primary-bg); border-color:var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text);
+            }
+            &:hover {
+              background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
+            }
+            &:focus, &:focus-visible {
+              background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); color:var(--color-hs-form-reverse-btn-primary-focus-text);
+            }
+            &:active {
+              background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
+            }
+            &:disabled {
+              background-color:var(--color-hs-form-reverse-btn-disabled-bg); border-color:var(--color-hs-form-reverse-btn-disabled-border); color:var(--color-hs-form-reverse-btn-disabled-text); cursor:not-allowed;
+            }
           }
         }
-      }
-      & .hsfc-Row, & .hsfc-NavigationRow {
-        & input, & textarea, & select, & button {
-          &:focus, &:focus-visible {
-            box-shadow: none;
-            outline-color: var(--color-hs-form-reverse-field-focus-outline, var(--color-hs-form-primary-lt));
+        & .hsfc-Row, & .hsfc-NavigationRow {
+          & input, & textarea, & select, & button {
+            &:focus, &:focus-visible {
+              box-shadow: none;
+              outline-color: var(--color-hs-form-reverse-field-focus-outline, var(--color-hs-form-primary-lt));
+            }
           }
         }
-      }
-      & .hsfc-ProgressBar {
-        & .hsfc-ProgressBar__Text {
-          color:var(--color-hs-form-reverse-text);
-        }
-        & .hsfc-ProgressBar__Progress {
-          background:var(--color-hs-form-reverse-progress-bar-bg); outline:1px solid var(--color-hs-form-reverse-progress-bar-border);
-          & > div {
-            background:var(--color-hs-form-reverse-progress-bar-fill);
+        & .hsfc-ProgressBar {
+          & .hsfc-ProgressBar__Text {
+            color:var(--color-hs-form-reverse-text);
+          }
+          & .hsfc-ProgressBar__Progress {
+            background:var(--color-hs-form-reverse-progress-bar-bg); outline:1px solid var(--color-hs-form-reverse-progress-bar-border);
+            & > div {
+              background:var(--color-hs-form-reverse-progress-bar-fill);
+            }
           }
         }
       }
