@@ -832,7 +832,7 @@ const HubSpotFormValidator = {
     
     // Create error container
     const errorDiv = document.createElement('div');
-    errorDiv.className = 'hsfc-ErrorAlert hsfc-CustomValidationError';
+    errorDiv.className = 'hsfc-CustomValidationError';
     errorDiv.setAttribute('role', 'alert');
     errorDiv.setAttribute('aria-live', 'polite');
     

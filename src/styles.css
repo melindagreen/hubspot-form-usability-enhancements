@@ -27,6 +27,7 @@
  */
 :root {
   --font-hs-form-base: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-hs-form-labels: var(--font-hs-form-base);
   
   --color-hs-form-primary:oklch(0.5835 0.1505 250.88);
   --color-hs-form-primary-lt:oklch(0.9200 0.0800 250.88);
@@ -51,10 +52,6 @@
   --color-hs-form-white:oklch(1 0 0);
   --color-hs-form-black:oklch(0 0 0);
 
-  --color-hs-form-focus-ring:oklch(0.6000 0.2000 250.88);
-  --width-hs-form-field-focus-outline:3px;
-  --offset-hs-form-field-focus-outline:0px;
-  --style-hs-form-field-focus-outline:solid;
 
   /* Custom properties for form theming */
   --color-hs-form-btn-primary-bg:var(--color-hs-form-primary);
@@ -91,7 +88,6 @@
   --color-hs-form-field-bg:var(--color-hs-form-black);
   --color-hs-form-field-border:var(--color-hs-form-neutral-lt);
   --color-hs-form-field-hover-border:var(--color-hs-form-neutral-lt);
-  --color-hs-form-field-focus-outline:var(--color-hs-form-focus-ring);
   --color-hs-form-field-text:var(--color-hs-form-neutral);
   --color-hs-form-field-checked-bg:var(--color-hs-form-primary);
   --color-hs-form-placeholder-text:var(--color-hs-form-neutral-lt);
@@ -135,6 +131,11 @@
   --color-hs-form-success-box-border:var(--color-hs-form-success-dk);
   --color-hs-form-success-box-text:var(--color-hs-form-success);
 
+  --color-hs-form-field-focus-outline:var(--color-hs-form-primary-dk);
+  --width-hs-form-field-focus-outline:2px;
+  --offset-hs-form-field-focus-outline:2px;
+  --style-hs-form-field-focus-outline:solid;
+
   --color-hs-form-reverse-btn-primary-bg:var(--color-hs-form-white);
   --color-hs-form-reverse-btn-primary-border:var(--color-hs-form-white);
   --color-hs-form-reverse-btn-primary-text:var(--color-hs-form-primary);
@@ -170,10 +171,12 @@
   --color-hs-form-reverse-link:var(--color-hs-form-white);
   --color-hs-form-reverse-field-bg:var(--color-hs-form-white);
   --color-hs-form-reverse-field-checked-bg:var(--color-hs-form-neutral-lt);
-  --color-hs-form-reverse-hs-form-focus-ring:var(--color-hs-form-focus-ring);
+  --color-hs-form-reverse-field-focus-outline:var(--color-hs-form-focus-outline);
   --color-hs-form-reverse-progress-bar-bg:var(--color-hs-form-white);
   --color-hs-form-reverse-progress-bar-border:var(--color-hs-form-neutral-lt);
   --color-hs-form-reverse-progress-bar-fill:var(--color-hs-form-neutral-lt);
+
+  --color-hs-form-reverse-field-focus-outline:var(--color-hs-form-primary-lt);
 }
 
 
@@ -181,7 +184,6 @@
 div[data-hsfc-id=Renderer] {
   form {
     position:relative; margin-left:auto; margin-right:auto; color:var(--color-hs-form-text); font-family:var(--font-hs-form-base);
-    
     & .hsfc-Step {
       border:none;
       /* JS will add .hsfc-step-with-validation-and-progress if .hsfc-CustomValidationError or .hsfc-ProgressBar--repositioned is present */
@@ -199,7 +201,6 @@ div[data-hsfc-id=Renderer] {
       & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background:var(--color-hs-form-error-message); line-height:1.375; font-size:0.875rem; color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-box-border); }
       & .hsfc-Step__Banner { display:none; }
     }
-
     & .hsfc-Row {
       /* Content Elements - ensure they appear before validation errors and progress bars */
       flex-direction:row; justify-content:stretch; align-items:flex-start; flex-wrap:nowrap; gap:1.5rem;
@@ -246,7 +247,7 @@ div[data-hsfc-id=Renderer] {
       }
 
       /* Form Labels and Descriptions */
-      & label {
+      & .hsfc-FieldLabel {
         display:inline-block; max-width:100%; font-size:0.875rem; color:var(--color-hs-form-label-text); font-weight:bold;
         &+ .hsfc-FieldDescription {
           width:auto !important; font-size:0.75rem; color:var(--color-hs-form-label-description-text); font-weight:normal;
@@ -293,15 +294,6 @@ div[data-hsfc-id=Renderer] {
       }  
       & textarea {
         min-height:4rem; max-height:8rem; /* roughly 500char for limit */
-      } 
-      input:not([type="button"]), textarea, select {
-        &:focus, &:focus-visible {
-          box-shadow: none;
-          outline-width: var(--focus-form-outline-width, 3px);
-          outline-offset: var(--focus-form-outline-offset, 0);
-          outline-color: var(--hs-form-field-focus-outline, var(--color-hs-form-field-focus-outline));
-          outline-style: var(--focus-form-outline-style, solid);
-        }
       }            
 
       /* Field Container Styles */
@@ -312,7 +304,7 @@ div[data-hsfc-id=Renderer] {
         &:has(input, select, textarea, .hsfc-RichText) {
           order:3;
         }
-        &:has(.hsfc-ErrorAlert) {
+        &:has(.hsfc-ErrorAlert) input, &:has(.hsfc-ErrorAlert) select, &:has(.hsfc-ErrorAlert) textarea {
              border:2px solid var(--color-hs-form-error-box-border);
           }
         }
@@ -326,7 +318,7 @@ div[data-hsfc-id=Renderer] {
         & input[type="checkbox"], & input[type="radio"] { margin-right:0.5rem; margin-bottom:0.25rem; }
       }
       & .hsfc-CheckboxFieldGroup__Options, & .hsfc-RadioFieldGroup__Options {
-        & label > span::after {
+        & .hsfc-FieldLabel > span::after {
           content:'';
           background:none;
         }
@@ -423,6 +415,7 @@ div[data-hsfc-id=Renderer] {
         display:flex; flex-direction:row; align-items:center; margin-top:0.25rem; margin-bottom:0.25rem; line-height:1.25; font-size:0.875rem; color:var(--color-hs-form-error-message); font-weight:bold;
         &::before {
           content:'';
+          background-color:var(--color-hs-form-reverse-field-bg);
           flex-shrink:0; width:1.5rem; height:1.5rem; display:inline-block; margin-right:0.25rem; background:var(--color-hs-form-error-message) no-repeat center/contain;
           mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
           -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
@@ -437,7 +430,6 @@ div[data-hsfc-id=Renderer] {
         margin-top:0.5rem; padding:0.5rem 0.75rem; background:var(--color-hs-form-success-box-bg); font-size:0.875rem; color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border); 
       }
     }
-    
     & .hsfc-NavigationRow {
       text-align:right; margin-top:1rem;
       order:4; /* Ensure navigation appears after all form content */
@@ -451,7 +443,8 @@ div[data-hsfc-id=Renderer] {
           background-color:var(--color-hs-form-btn-primary-hover-bg); border-color:var(--color-hs-form-btn-primary-hover-border); color:var(--color-hs-form-btn-primary-hover-text);
         }
         &:focus, &:focus-visible {
-          background-color:var(--color-hs-form-btn-primary-focus-bg); outline-color:var(--color-hs-form-btn-primary-focus-outline); color:var(--color-hs-form-btn-primary-focus-text);
+          background-color:var(--color-hs-form-btn-primary-focus-bg);
+          color:var(--color-hs-form-btn-primary-focus-text); outline-width: var(--width-hs-form-field-focus-outline, 2px);
         }
         &:active {
           background-color:var(--color-hs-form-btn-primary-active-bg); border-color:var(--color-hs-form-btn-primary-active-border); color:var(--color-hs-form-btn-primary-active-text);
@@ -467,7 +460,17 @@ div[data-hsfc-id=Renderer] {
         font-size:1rem; color:var(--color-hs-form-error-message); font-weight:bold; margin-bottom:1rem;
       }
     }
-    
+    & .hsfc-Row, & .hsfc-NavigationRow {
+      & input, & textarea, & select, & button {
+        &:focus, &:focus-visible {
+          box-shadow: none;
+          outline-width: var(--width-hs-form-field-focus-outline, 2px);
+          outline-offset: var(--offset-hs-form-field-focus-outline, 2px);
+          outline-color: var(--color-hs-form-field-focus-outline, var(--color-hs-form-primary-dk));
+          outline-style: var(--style-hs-form-field-focus-outline, solid);
+        }
+      }
+    }
     & .hsfc-ProgressBar {
       display:block; width:100%;
       & .hsfc-ProgressBar__Text {
@@ -482,7 +485,6 @@ div[data-hsfc-id=Renderer] {
           width:100%; height:1rem; background:var(--color-hs-form-progress-bar-fill); border-radius:9999px;
         }
       }
-      
       /* Specific styling for repositioned progress bars */
       &.hsfc-ProgressBar--repositioned {
         margin-top:1rem; margin-bottom:1rem;
@@ -490,12 +492,17 @@ div[data-hsfc-id=Renderer] {
         flex-shrink:0;
       }
     }
-
     & .hsfc-CustomValidationError {
-      margin-top:1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background:var(--color-hs-form-error-box-bg); border:1px solid var(--color-hs-form-error-box-border); font-size:0.875rem; line-height:1.375; color:var(--color-hs-form-error-box-text); 
+      display:block; margin-top:1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background:var(--color-hs-form-error-box-bg); border:1px solid var(--color-hs-form-error-box-border); font-size:0.875rem; line-height:1.375; color:var(--color-hs-form-error-box-text); 
       order:1; /* Ensure validation error appears before progress bar (order:2) but after intro content (order:0) */
       & > div {
-        font-weight:bold; margin-bottom:0.5rem;
+        display:flex; flex-direction:row; align-items:center; font-weight:bold; margin-bottom:0.5rem;
+         &::before {
+          content:'';
+          flex-shrink:0; width:1.5rem; height:1.5rem; display:inline-block; margin-right:0.25rem; background:var(--color-hs-form-error-box-text) no-repeat center/contain;
+          mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
+          -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
+        }
       }
       & ul  {
         list-style-type:disc; padding-left:1.25rem;
@@ -532,7 +539,7 @@ div[data-hsfc-id=Renderer] {
         & input[type=checkbox]:checked, & input[type=radio]:checked {
           background:var(--color-hs-form-reverse-field-checked-bg);
         }
-        & label, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & label:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+        & .hsfc-FieldLabel, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & .hsfc-FieldLabel:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
           color:var(--color-hs-form-reverse-text);
         }
         & .hsfc-RichText a {
@@ -556,10 +563,6 @@ div[data-hsfc-id=Renderer] {
             margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background:var(--color-hs-form-reverse-btn-ancillary-bg); color:var(--color-hs-form-reverse-btn-ancillary-text); /* hover/focus handled below */
           }
         }
-        & .hsfc-ErrorAlert {
-          &::before { background-color:var(--color-hs-form-reverse-field-bg);
-          }
-        }
         & .hsfc-CharacterCounter {
           color:var(--color-hs-form-reverse-text) !important;
         }
@@ -574,13 +577,21 @@ div[data-hsfc-id=Renderer] {
             background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
           }
           &:focus, &:focus-visible {
-            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); outline-color:var(--color-hs-form-reverse-btn-primary-focus-outline); color:var(--color-hs-form-reverse-btn-primary-focus-text);
+            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); color:var(--color-hs-form-reverse-btn-primary-focus-text);
           }
           &:active {
             background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
           }
           &:disabled {
             background-color:var(--color-hs-form-reverse-btn-disabled-bg); border-color:var(--color-hs-form-reverse-btn-disabled-border); color:var(--color-hs-form-reverse-btn-disabled-text); cursor:not-allowed;
+          }
+        }
+      }
+      & .hsfc-Row, & .hsfc-NavigationRow {
+        & input, & textarea, & select, & button {
+          &:focus, &:focus-visible {
+            box-shadow: none;
+            outline-color: var(--color-hs-form-reverse-field-focus-outline, var(--color-hs-form-primary-lt));
           }
         }
       }
