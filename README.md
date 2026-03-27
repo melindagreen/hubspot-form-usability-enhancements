@@ -64,6 +64,18 @@ import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 For React/SSR applications, see the [React/Hydration-Safe Usage](#reacthydration-safe-usage) section below.
 
+## Platform-Specific Guides
+
+Detailed implementation guides for popular platforms:
+
+| Platform                          | Guide                                                      |
+| --------------------------------- | ---------------------------------------------------------- |
+| **Nuxt + Storyblok**              | [user-docs/nuxt-storyblok.md](user-docs/nuxt-storyblok.md) |
+| **Statamic** (with Vite)          | [user-docs/statamic.md](user-docs/statamic.md)             |
+| **WordPress** (with Vite/webpack) | [user-docs/wordpress.md](user-docs/wordpress.md)           |
+
+Each guide covers CSS load order, hydration-safe initialization, and platform-specific configuration.
+
 ## Complete Setup Guide
 
 ### Step 1: Install the Package

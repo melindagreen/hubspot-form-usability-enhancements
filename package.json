@@ -13,12 +13,14 @@
       "types": "./dist/index.d.ts"
     },
     "./styles": "./dist/styles.css",
-    "./theme-template": "./theme-template.css"
+    "./theme-template": "./theme-template.css",
+    "./docs/*": "./user-docs/*"
   },
   "files": [
     "dist/**/*",
     "README.md",
-    "theme-template.css"
+    "theme-template.css",
+    "user-docs/**/*"
   ],
   "scripts": {
     "build": "npm run build:js && npm run build:css && npm run build:types",
