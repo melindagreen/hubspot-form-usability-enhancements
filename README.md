@@ -70,6 +70,7 @@ Detailed implementation guides for popular platforms:
 
 | Platform                          | Guide                                                      |
 | --------------------------------- | ---------------------------------------------------------- |
+| **HubSpot CMS**                   | [user-docs/hubspot-cms.md](user-docs/hubspot-cms.md)       |
 | **Nuxt + Storyblok**              | [user-docs/nuxt-storyblok.md](user-docs/nuxt-storyblok.md) |
 | **Statamic** (with Vite)          | [user-docs/statamic.md](user-docs/statamic.md)             |
 | **WordPress** (with Vite/webpack) | [user-docs/wordpress.md](user-docs/wordpress.md)           |
