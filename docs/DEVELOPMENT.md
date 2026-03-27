@@ -12,13 +12,13 @@ This document covers the build process, local development workflow, and NPM publ
 
 The package uses a dual-output build system producing both ESM and CJS bundles:
 
-| Command               | Description                 | Output                               |
-| --------------------- | --------------------------- | ------------------------------------ |
-| `npm run build`       | Full production build       | All dist files                       |
-| `npm run build:js`    | JavaScript only (Rollup)    | `dist/index.esm.js`, `dist/index.js` |
-| `npm run build:css`   | CSS only (PostCSS/Tailwind) | `dist/styles.css`                    |
-| `npm run build:types` | TypeScript definitions      | `dist/index.d.ts`                    |
-| `npm run dev`         | Watch mode for development  | Live rebuilds                        |
+| Command               | Description              | Output                               |
+| --------------------- | ------------------------ | ------------------------------------ |
+| `npm run build`       | Full production build    | All dist files                       |
+| `npm run build:js`    | JavaScript only (Rollup) | `dist/index.esm.js`, `dist/index.js` |
+| `npm run build:css`   | CSS only (PostCSS)       | `dist/styles.css`                    |
+| `npm run build:types` | TypeScript definitions   | `dist/index.d.ts`                    |
+| `npm run dev`         | Watch mode (nodemon)     | Live rebuilds                        |
 
 ### Output Files
 
@@ -195,6 +195,7 @@ git push && git push --tags
 | `src/index.js`         | Main entry point, exports, auto-init logic   |
 | `src/index.d.ts`       | TypeScript type definitions                  |
 | `src/styles.css`       | CSS styles (uses postcss-nested for nesting) |
+| `theme-template.css`   | Theme template for implementers (published)  |
 | `rollup.config.js`     | JavaScript bundling configuration            |
 | `postcss.config.js`    | CSS processing configuration                 |
 

@@ -20,28 +20,25 @@ Enhanced HubSpot form usability, validation and styling with React hydration sup
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
-
-
-
-
 ### CSS Styles
 
 The module requires CSS styles to be imported separately for proper styling:
 
 ```javascript
 // Always import the CSS styles
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 ```
 
 **Important**: The styles import is separate from the JavaScript module import. This allows you to:
+
 - Import styles once in your main CSS/JS file
 - Customize or replace styles without affecting functionality
 - Optimize bundle splitting in build tools
 
 ```javascript
 // Example: Import both module and styles
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 ```
 
 ## Quick Start
@@ -55,8 +52,8 @@ npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 
 ```javascript
 // Import in your main JavaScript file
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // That's it! The module will auto-initialize when HubSpot forms are detected.
 ```
@@ -89,7 +86,10 @@ import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
 
 ```html
 <!-- Method 3: Link in HTML -->
-<link rel="stylesheet" href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css">
+<link
+  rel="stylesheet"
+  href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css"
+/>
 ```
 
 ### Step 3: Add HubSpot Form Embed Code
@@ -108,39 +108,43 @@ Add your HubSpot form embed code to your HTML. The module will automatically det
 Choose the initialization method that best fits your platform:
 
 #### Option A: Auto-Initialization (Simplest)
+
 ```javascript
 // Import and let the module initialize automatically
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 ```
 
 #### Option B: Manual Initialization (More Control)
+
 ```javascript
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 hubspotForms({
   characterLimit: 1000,
-  allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-  maxFileSize: 5 * 1024 * 1024 // 5MB
+  allowedExtensions: ["pdf", "docx", "jpg", "png"],
+  maxFileSize: 5 * 1024 * 1024, // 5MB
 });
 ```
 
 #### Option C: Delayed Initialization (React/SSR Safe)
+
 ```javascript
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // Prevent auto-initialization
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
 // Initialize after framework hydration
 setTimeout(async () => {
-  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
   if (module.init) {
     module.init({
       characterLimit: 1000,
-      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-      maxFileSize: 5 * 1024 * 1024
+      allowedExtensions: ["pdf", "docx", "jpg", "png"],
+      maxFileSize: 5 * 1024 * 1024,
     });
   }
 }, 500);
@@ -171,12 +175,19 @@ If needed, override default styles or configuration:
 ```javascript
 // Custom configuration
 hubspotForms({
-  characterLimit: 750,           // Custom character limit
-  allowedExtensions: [           // Custom file types
-    'pdf', 'doc', 'docx', 
-    'jpg', 'jpeg', 'png', 'gif', 'svg'
+  characterLimit: 750, // Custom character limit
+  allowedExtensions: [
+    // Custom file types
+    "pdf",
+    "doc",
+    "docx",
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "svg",
   ],
-  maxFileSize: 20 * 1024 * 1024  // 20MB limit
+  maxFileSize: 20 * 1024 * 1024, // 20MB limit
 });
 ```
 
@@ -186,8 +197,8 @@ For environments without React or hydration concerns:
 
 ```javascript
 // Import the module and styles - forms will initialize automatically
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 ```
 
 ### React/Hydration-Safe Usage
@@ -196,15 +207,16 @@ For React applications or environments with hydration (SSR/SSG):
 
 ```javascript
 // Import CSS styles first
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // Prevent auto-initialization to avoid React hydration conflicts
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
 // Initialize after framework hydration completes
 setTimeout(async () => {
-  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
-  
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
+
   // Manually trigger initialization after module loads
   if (module.init) {
     module.init();
@@ -215,17 +227,17 @@ setTimeout(async () => {
 ### React Component Usage
 
 ```jsx
-import { useEffect } from 'react';
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import { useEffect } from "react";
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 function MyFormComponent() {
   useEffect(() => {
     // Initialize forms after component mounts
     hubspotForms({
       characterLimit: 1000,
-      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-      maxFileSize: 5 * 1024 * 1024 // 5MB
+      allowedExtensions: ["pdf", "docx", "jpg", "png"],
+      maxFileSize: 5 * 1024 * 1024, // 5MB
     });
   }, []);
 
@@ -240,16 +252,22 @@ function MyFormComponent() {
 ### Custom Configuration
 
 ```javascript
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 hubspotForms({
-  characterLimit: 1000,           // Custom character limit for textareas
-  allowedExtensions: [            // Allowed file extensions
-    'pdf', 'doc', 'docx', 
-    'jpg', 'jpeg', 'png', 'gif'
+  characterLimit: 1000, // Custom character limit for textareas
+  allowedExtensions: [
+    // Allowed file extensions
+    "pdf",
+    "doc",
+    "docx",
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
   ],
-  maxFileSize: 10 * 1024 * 1024   // 10MB file size limit
+  maxFileSize: 10 * 1024 * 1024, // 10MB file size limit
 });
 ```
 
@@ -258,22 +276,22 @@ hubspotForms({
 ### Granular Control
 
 ```javascript
-import { 
-  HubSpotFormManager, 
+import {
+  HubSpotFormManager,
   CharacterLimitValidator,
-  FileUploadValidator 
-} from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+  FileUploadValidator,
+} from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // Manual form setup
 HubSpotFormManager.setupAllForms();
 
 // Setup specific form
-const formElement = document.querySelector('.hsfc-Form');
+const formElement = document.querySelector(".hsfc-Form");
 HubSpotFormManager.setupSingleForm(formElement);
 
 // Custom character limit for specific textarea
-const textarea = document.querySelector('#my-textarea');
+const textarea = document.querySelector("#my-textarea");
 CharacterLimitValidator.setupSingleTextarea(textarea, cleanupController);
 ```
 
@@ -283,63 +301,68 @@ CharacterLimitValidator.setupSingleTextarea(textarea, cleanupController);
 // Set flag before importing to prevent auto-initialization
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // Manual initialization with custom timing
 setTimeout(() => {
-  import('@fahlgren-mortine/hubspot-form-usability-enhancements').then(({ HubSpotFormManager }) => {
-    HubSpotFormManager.setupAllForms();
-  });
+  import("@fahlgren-mortine/hubspot-form-usability-enhancements").then(
+    ({ HubSpotFormManager }) => {
+      HubSpotFormManager.setupAllForms();
+    },
+  );
 }, 1000);
 ```
 
 ## Build System Integration
 
 ### Webpack
+
 ```javascript
 // webpack.config.js
 module.exports = {
   // ... your config
   resolve: {
     alias: {
-      '@hubspot-forms': '@fahlgren-mortine/hubspot-form-usability-enhancements'
-    }
+      "@hubspot-forms": "@fahlgren-mortine/hubspot-form-usability-enhancements",
+    },
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
-      }
-    ]
-  }
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+    ],
+  },
 };
 ```
 
 ### Vite
+
 ```javascript
 // vite.config.js
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
 export default defineConfig({
   // ... your config
   resolve: {
     alias: {
-      '@hubspot-forms': '@fahlgren-mortine/hubspot-form-usability-enhancements'
-    }
+      "@hubspot-forms": "@fahlgren-mortine/hubspot-form-usability-enhancements",
+    },
   },
   css: {
-    postcss: './postcss.config.js'
-  }
+    postcss: "./postcss.config.js",
+  },
 });
 ```
 
 ### Rollup
+
 ```javascript
 // rollup.config.js
-import resolve from '@rollup/plugin-node-resolve';
-import postcss from 'rollup-plugin-postcss';
+import resolve from "@rollup/plugin-node-resolve";
+import postcss from "rollup-plugin-postcss";
 
 export default {
   // ... your config
@@ -347,19 +370,18 @@ export default {
     resolve(),
     postcss({
       extract: true,
-      minimize: true
-    })
-  ]
+      minimize: true,
+    }),
+  ],
 };
 ```
 
 ### Parcel
+
 ```json
 // package.json
 {
-  "browserslist": [
-    "defaults"
-  ],
+  "browserslist": ["defaults"],
   "@parcel/resolver-default": {
     "packageExports": true
   }
@@ -369,28 +391,29 @@ export default {
 No additional configuration needed - Parcel handles the module automatically.
 
 ### esbuild
+
 ```javascript
 // build.js
-const esbuild = require('esbuild');
+const esbuild = require("esbuild");
 
 esbuild.build({
-  entryPoints: ['src/main.js'],
+  entryPoints: ["src/main.js"],
   bundle: true,
-  outdir: 'dist',
+  outdir: "dist",
   loader: {
-    '.css': 'css'
+    ".css": "css",
   },
-  external: ['@fahlgren-mortine/hubspot-form-usability-enhancements']
+  external: ["@fahlgren-mortine/hubspot-form-usability-enhancements"],
 });
 ```
 
 ## Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `characterLimit` | `number` | `500` | Default character limit for textarea fields |
-| `allowedExtensions` | `string[]` | `['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'txt']` | Allowed file extensions for upload fields |
-| `maxFileSize` | `number` | `10485760` (10MB) | Maximum file size in bytes |
+| Option              | Type       | Default                                                      | Description                                 |
+| ------------------- | ---------- | ------------------------------------------------------------ | ------------------------------------------- |
+| `characterLimit`    | `number`   | `500`                                                        | Default character limit for textarea fields |
+| `allowedExtensions` | `string[]` | `['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'txt']` | Allowed file extensions for upload fields   |
+| `maxFileSize`       | `number`   | `10485760` (10MB)                                            | Maximum file size in bytes                  |
 
 ## Environment Variables
 
@@ -404,17 +427,130 @@ VITE_UPLOAD_MAX_SIZE=10MB
 
 ## Styling Customization
 
-
 The module provides a flexible color system that works out of the box. The pre-compiled CSS is included.
 
 ### Color System Architecture
 
 The styling system uses a two-tier architecture:
+
 - **Base colors** defined in `:root` - these are the colors you override
-- **Component colors** defined in `@theme` - these reference base colors using `var()`
+- **Component colors** reference base colors using `var()` and cascade automatically
 
 This cascading design means you typically only need to override base colors, and all components automatically update.
 
+### Theme Template
+
+For detailed theming, copy the included `theme-template.css` from your `node_modules`:
+
+```bash
+cp node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/theme-template.css ./my-theme.css
+```
+
+This file contains all CSS variables, commented out and organized by component. Uncomment only what you need to override.
+
+### CSS Variables Cascade Reference
+
+The following shows which base colors cascade to which component variables. Override base colors first; only override component variables when you need to break from the cascade.
+
+<details>
+<summary><strong>Primary Color Cascade</strong></summary>
+
+| Base Color                   | Cascades To                                                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-hs-form-primary`    | `btn-primary-bg`, `btn-primary-border`, `field-checked-bg`, `link`, `progress-bar-fill`, `reverse-btn-primary-text`                                                 |
+| `--color-hs-form-primary-lt` | `reverse-btn-primary-hover-bg`, `reverse-btn-primary-focus-bg`, `reverse-field-focus-outline`                                                                       |
+| `--color-hs-form-primary-dk` | `btn-primary-hover-bg`, `btn-primary-hover-border`, `btn-primary-focus-*`, `btn-primary-active-*`, `link-hover`, `link-focus`, `link-active`, `field-focus-outline` |
+
+</details>
+
+<details>
+<summary><strong>Secondary Color Cascade</strong></summary>
+
+| Base Color                     | Cascades To                                                                                               |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `--color-hs-form-secondary`    | `btn-ancillary-bg`, `btn-ancillary-border`, `reverse-btn-ancillary-text`                                  |
+| `--color-hs-form-secondary-lt` | `reverse-btn-ancillary-hover-bg`, `reverse-btn-ancillary-focus-bg`                                        |
+| `--color-hs-form-secondary-dk` | `btn-ancillary-hover-bg`, `btn-ancillary-hover-border`, `btn-ancillary-focus-*`, `btn-ancillary-active-*` |
+
+</details>
+
+<details>
+<summary><strong>Neutral Color Cascade</strong></summary>
+
+| Base Color                    | Cascades To                                                                                                                                                                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--color-hs-form-neutral`     | `btn-disabled-bg`, `text`, `field-text`, `label-text`, `selectlist-item-text`, `progress-bar-border`, `reverse-btn-disabled-text`                                                                                                    |
+| `--color-hs-form-neutral-hlt` | `selectlist-item-hover-bg`, `selectlist-item-focus-bg`, `selectlist-item-active-bg`                                                                                                                                                  |
+| `--color-hs-form-neutral-lt`  | `btn-disabled-text`, `field-border`, `field-hover-border`, `placeholder-text`, `selectlist-border`, `label-description-text`, `label-optional-text`, `reverse-field-checked-bg`, `reverse-progress-bar-*`, `reverse-btn-disabled-bg` |
+| `--color-hs-form-neutral-dk`  | `headings`, `selectlist-caret-color`, `reverse-btn-*-hover-text`, `reverse-btn-*-focus-text`, `reverse-btn-*-active-text`                                                                                                            |
+
+</details>
+
+<details>
+<summary><strong>Status Color Cascades (Error, Warning, Success)</strong></summary>
+
+| Base Color                   | Cascades To                                               |
+| ---------------------------- | --------------------------------------------------------- |
+| `--color-hs-form-error`      | `required-indicator`, `error-message`, `error-box-border` |
+| `--color-hs-form-error-lt`   | `error-box-bg`                                            |
+| `--color-hs-form-error-dk`   | `error-box-text`                                          |
+| `--color-hs-form-warning`    | `warning-message`                                         |
+| `--color-hs-form-warning-dk` | `warning-border`                                          |
+| `--color-hs-form-success`    | `success-message`, `success-box-text`                     |
+| `--color-hs-form-success-lt` | `success-box-bg`                                          |
+| `--color-hs-form-success-dk` | `success-box-border`                                      |
+
+</details>
+
+<details>
+<summary><strong>White/Black Cascade</strong></summary>
+
+| Base Color              | Cascades To                                                                                                                                                                                           |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-hs-form-white` | `btn-primary-text`, `btn-ancillary-text`, `selectlist-bg`, `selectlist-item-bg`, `progress-bar-bg`, `reverse-text`, `reverse-link`, `reverse-field-bg`, `reverse-btn-*-bg`, `reverse-progress-bar-bg` |
+| `--color-hs-form-black` | `headings`, `field-bg`                                                                                                                                                                                |
+
+</details>
+
+<details>
+<summary><strong>Common Override Scenarios</strong></summary>
+
+**Progress bar fill should NOT be primary color:**
+
+```css
+:root {
+  --color-hs-form-progress-bar-fill: #custom-color;
+}
+```
+
+**Hover borders should be gray, not match default:**
+
+```css
+:root {
+  --color-hs-form-field-hover-border: var(--color-hs-form-neutral);
+}
+```
+
+**Button hover should be lighter, not darker:**
+
+```css
+:root {
+  --color-hs-form-btn-primary-hover-bg: var(--color-hs-form-primary-lt);
+  --color-hs-form-btn-primary-hover-border: var(--color-hs-form-primary-lt);
+  --color-hs-form-btn-primary-hover-text: var(--color-hs-form-neutral-dk);
+}
+```
+
+**Links should be different from primary:**
+
+```css
+:root {
+  --color-hs-form-link: #0066cc;
+  --color-hs-form-link-hover: #004499;
+}
+```
+
+</details>
 
 ### Customizing Colors
 
@@ -424,15 +560,15 @@ You can fully customize colors by overriding base color variables in your projec
 /* your-styles.css */
 :root {
   /* Primary brand colors */
-  --color-hs-form-primary: oklch(0.55 0.20 340);
+  --color-hs-form-primary: oklch(0.55 0.2 340);
   --color-hs-form-primary-lt: oklch(0.92 0.08 340);
   --color-hs-form-primary-dk: oklch(0.35 0.22 340);
-  
+
   /* Secondary colors */
-  --color-hs-form-secondary: oklch(0.60 0.15 195);
-  --color-hs-form-secondary-lt: oklch(0.90 0.08 195);
-  --color-hs-form-secondary-dk: oklch(0.40 0.18 195);
-  
+  --color-hs-form-secondary: oklch(0.6 0.15 195);
+  --color-hs-form-secondary-lt: oklch(0.9 0.08 195);
+  --color-hs-form-secondary-dk: oklch(0.4 0.18 195);
+
   /* Error colors */
   --color-hs-form-error: oklch(0.65 0.24 29);
   --color-hs-form-error-lt: oklch(0.97 0.02 29);
@@ -443,11 +579,9 @@ You can fully customize colors by overriding base color variables in your projec
 Import the pre-compiled CSS and your customizations will apply automatically:
 
 ```javascript
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
-import './your-styles.css'; // Your overrides
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+import "./your-styles.css"; // Your overrides
 ```
-
-
 
 ### Understanding OKLCH Colors
 
@@ -456,7 +590,7 @@ Colors use the OKLCH format. You can also use hex, rgb, or hsl if you prefer:
 ```css
 /* OKLCH format (default) */
 :root {
-  --color-hs-form-primary: oklch(0.55 0.20 340);
+  --color-hs-form-primary: oklch(0.55 0.2 340);
   --color-hs-form-primary-lt: oklch(0.92 0.08 340);
   --color-hs-form-primary-dk: oklch(0.35 0.22 340);
 }
@@ -495,6 +629,7 @@ Colors use the OKLCH format. You can also use hex, rgb, or hsl if you prefer:
 ```
 
 The `.hs-form-reverse` class automatically applies:
+
 - White text colors for labels and content
 - Light button styles that work on dark backgrounds
 - Inverted color schemes for all form elements
@@ -509,7 +644,7 @@ If you need more control over dark theme colors, you can override the reverse th
 ```css
 /* Custom dark theme overrides */
 [data-theme="dark"] {
-  --color-hs-form-primary: oklch(0.70 0.18 250);
+  --color-hs-form-primary: oklch(0.7 0.18 250);
   --color-hs-form-neutral: oklch(0.85 0.005 250);
   --color-hs-form-neutral-lt: oklch(0.65 0.004 250);
   --color-hs-form-neutral-dk: oklch(0.95 0.002 250);
@@ -520,18 +655,18 @@ If you need more control over dark theme colors, you can override the reverse th
 
 ### Advanced: Override Component Colors
 
-If you need granular control over specific components (beyond base colors):
+If you need granular control over specific components (beyond base colors), override them in `:root`:
 
 ```css
-/* Override specific component colors in @theme */
-@theme {
+/* Override specific component colors */
+:root {
   /* Change only the submit button colors */
-  --color-hs-form-btn-hs-form-primary-bg: oklch(0.50 0.25 340);
-  --color-hs-form-btn-hs-form-primary-hover-bg: oklch(0.40 0.27 340);
-  
+  --color-hs-form-btn-primary-bg: oklch(0.5 0.25 340);
+  --color-hs-form-btn-primary-hover-bg: oklch(0.4 0.27 340);
+
   /* Change only error box styling */
   --color-hs-form-error-box-bg: oklch(0.98 0.01 29);
-  --color-hs-form-error-box-border: oklch(0.40 0.24 29);
+  --color-hs-form-error-box-border: oklch(0.4 0.24 29);
 }
 ```
 
@@ -542,8 +677,8 @@ For convenience, you can create reusable theme files:
 ```css
 /* themes/professional.css */
 :root {
-  --color-hs-form-primary: oklch(0.35 0.10 240);
-  --color-hs-form-primary-lt: oklch(0.90 0.05 240);
+  --color-hs-form-primary: oklch(0.35 0.1 240);
+  --color-hs-form-primary-lt: oklch(0.9 0.05 240);
   --color-hs-form-primary-dk: oklch(0.25 0.12 240);
 }
 ```
@@ -551,17 +686,17 @@ For convenience, you can create reusable theme files:
 ```css
 /* themes/vibrant.css */
 :root {
-  --color-hs-form-primary: oklch(0.60 0.25 300);
+  --color-hs-form-primary: oklch(0.6 0.25 300);
   --color-hs-form-primary-lt: oklch(0.95 0.08 300);
-  --color-hs-form-primary-dk: oklch(0.40 0.27 300);
+  --color-hs-form-primary-dk: oklch(0.4 0.27 300);
 }
 ```
 
 Then import the theme you want:
 
 ```javascript
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
-import './themes/professional.css'; // or vibrant.css
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+import "./themes/professional.css"; // or vibrant.css
 ```
 
 ## TypeScript Support
@@ -569,16 +704,16 @@ import './themes/professional.css'; // or vibrant.css
 The module includes full TypeScript definitions:
 
 ```typescript
-import hubspotForms, { 
+import hubspotForms, {
   HubSpotFormsConfig,
   HubSpotFormManager,
-  ValidationResult 
-} from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+  ValidationResult,
+} from "@fahlgren-mortine/hubspot-form-usability-enhancements";
 
 const config: HubSpotFormsConfig = {
   characterLimit: 1000,
-  allowedExtensions: ['pdf', 'docx'],
-  maxFileSize: 5 * 1024 * 1024
+  allowedExtensions: ["pdf", "docx"],
+  maxFileSize: 5 * 1024 * 1024,
 };
 
 const instance = hubspotForms(config);
@@ -615,13 +750,14 @@ If you encounter React hydration errors (like Error #418), use the delayed impor
 
 ```javascript
 // ❌ This may cause hydration conflicts
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
 
 // ✅ This prevents hydration conflicts
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
 setTimeout(async () => {
-  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
   if (module.init) {
     module.init();
   }
@@ -633,35 +769,40 @@ setTimeout(async () => {
 The module works with any JavaScript framework or vanilla HTML. Here are platform-specific examples:
 
 #### Vanilla HTML/JavaScript
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-    <link rel="stylesheet" href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css">
-</head>
-<body>
+  <head>
+    <link
+      rel="stylesheet"
+      href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css"
+    />
+  </head>
+  <body>
     <!-- Your HubSpot form embed code here -->
-    
+
     <script type="module">
-        import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-        
-        // Auto-initialization will occur, or customize:
-        hubspotForms({
-            characterLimit: 1000,
-            allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-            maxFileSize: 5 * 1024 * 1024
-        });
+      import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+
+      // Auto-initialization will occur, or customize:
+      hubspotForms({
+        characterLimit: 1000,
+        allowedExtensions: ["pdf", "docx", "jpg", "png"],
+        maxFileSize: 5 * 1024 * 1024,
+      });
     </script>
-</body>
+  </body>
 </html>
 ```
 
 #### React Applications
+
 ```jsx
 // App.js or main component
-import { useEffect } from 'react';
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import { useEffect } from "react";
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 function App() {
   useEffect(() => {
@@ -669,23 +810,20 @@ function App() {
     const timer = setTimeout(() => {
       hubspotForms({
         characterLimit: 1000,
-        allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-        maxFileSize: 5 * 1024 * 1024
+        allowedExtensions: ["pdf", "docx", "jpg", "png"],
+        maxFileSize: 5 * 1024 * 1024,
       });
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
-  return (
-    <div className="App">
-      {/* Your HubSpot form component */}
-    </div>
-  );
+  return <div className="App">{/* Your HubSpot form component */}</div>;
 }
 ```
 
 #### Vue.js Applications
+
 ```vue
 <template>
   <div id="app">
@@ -694,55 +832,57 @@ function App() {
 </template>
 
 <script>
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 export default {
-  name: 'App',
+  name: "App",
   mounted() {
     // Initialize after Vue component is mounted
     hubspotForms({
       characterLimit: 1000,
-      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-      maxFileSize: 5 * 1024 * 1024
+      allowedExtensions: ["pdf", "docx", "jpg", "png"],
+      maxFileSize: 5 * 1024 * 1024,
     });
-  }
-}
+  },
+};
 </script>
 ```
 
 #### Angular Applications
+
 ```typescript
 // app.component.ts
-import { Component, OnInit } from '@angular/core';
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import { Component, OnInit } from "@angular/core";
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
+  selector: "app-root",
+  templateUrl: "./app.component.html",
   styleUrls: [
-    './app.component.css',
-    '../node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css'
-  ]
+    "./app.component.css",
+    "../node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css",
+  ],
 })
 export class AppComponent implements OnInit {
   ngOnInit() {
     hubspotForms({
       characterLimit: 1000,
-      allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-      maxFileSize: 5 * 1024 * 1024
+      allowedExtensions: ["pdf", "docx", "jpg", "png"],
+      maxFileSize: 5 * 1024 * 1024,
     });
   }
 }
 ```
 
 #### Statamic with Alpine.js
+
 ```javascript
 // resources/js/site.js
-import Alpine from 'alpinejs';
+import Alpine from "alpinejs";
 
 // Import CSS styles first
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // Prevent auto-initialization
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
@@ -753,7 +893,8 @@ Alpine.start();
 
 // Then initialize HubSpot forms after hydration
 setTimeout(async () => {
-  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
   if (module.init) {
     module.init();
   }
@@ -761,18 +902,20 @@ setTimeout(async () => {
 ```
 
 #### Next.js App Router
+
 ```javascript
 // app/layout.js
-'use client';
-import { useEffect } from 'react';
+"use client";
+import { useEffect } from "react";
 
 export default function RootLayout({ children }) {
   useEffect(() => {
     const timer = setTimeout(async () => {
-      const { default: hubspotForms } = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+      const { default: hubspotForms } =
+        await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
       hubspotForms();
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -785,12 +928,14 @@ export default function RootLayout({ children }) {
 ```
 
 #### Nuxt.js
+
 ```javascript
 // plugins/hubspot-forms.client.js
 export default defineNuxtPlugin(() => {
   if (process.client) {
     setTimeout(async () => {
-      const { default: hubspotForms } = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+      const { default: hubspotForms } =
+        await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
       hubspotForms();
     }, 500);
   }
@@ -798,6 +943,7 @@ export default defineNuxtPlugin(() => {
 ```
 
 #### Svelte/SvelteKit
+
 ```svelte
 <script>
   import { onMount } from 'svelte';
@@ -817,16 +963,17 @@ export default defineNuxtPlugin(() => {
 ```
 
 #### WordPress (with build tools)
+
 ```javascript
 // src/js/main.js
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   hubspotForms({
     characterLimit: 1000,
-    allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-    maxFileSize: 5 * 1024 * 1024
+    allowedExtensions: ["pdf", "docx", "jpg", "png"],
+    maxFileSize: 5 * 1024 * 1024,
   });
 });
 ```
@@ -842,18 +989,19 @@ For any platform not listed above, follow this general pattern:
 
 ```javascript
 // Generic platform integration
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
 // Wait for DOM and framework initialization
 const initializeHubSpotForms = () => {
-  import('@fahlgren-mortine/hubspot-form-usability-enhancements')
-    .then(({ default: hubspotForms }) => {
+  import("@fahlgren-mortine/hubspot-form-usability-enhancements").then(
+    ({ default: hubspotForms }) => {
       hubspotForms({
         characterLimit: 1000,
-        allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
-        maxFileSize: 5 * 1024 * 1024
+        allowedExtensions: ["pdf", "docx", "jpg", "png"],
+        maxFileSize: 5 * 1024 * 1024,
       });
-    });
+    },
+  );
 };
 
 // Choose appropriate timing for your platform:
@@ -868,38 +1016,45 @@ const initializeHubSpotForms = () => {
 ### Main Functions
 
 #### `init(options?: HubSpotFormsConfig)`
+
 Main initialization function.
 
 ```javascript
-import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
 
 const instance = hubspotForms({
-  characterLimit: 750
+  characterLimit: 750,
 });
 ```
 
 #### `HubSpotFormManager.setupAllForms()`
+
 Setup validation for all HubSpot forms on the page.
 
 #### `HubSpotFormManager.setupSingleForm(formContainer)`
+
 Setup validation for a specific form.
 
 #### `removeHubSpotFormStyles()`
+
 Remove HubSpot's default form styles.
 
 ### Validators
 
 #### `CharacterLimitValidator`
+
 - `setupCharacterLimits(formContainer, cleanup)`
 - `hasCharacterLimitError(textarea)`
 - `getCharacterLimitErrorMessage(textarea)`
 
 #### `FileUploadValidator`
+
 - `validateFile(fileInput)`
 - `formatFileSize(bytes)`
 - `setup(formContainer)`
 
 #### `FieldValidator`
+
 - `isFieldValid(field, container)`
 - `isFieldInvalid(field, container)`
 - `needsValidation(field, container)`
@@ -909,18 +1064,21 @@ Remove HubSpot's default form styles.
 ### React hydration conflicts (Error #418/#422)
 
 **Problem**: React hydration errors when using immediate import
+
 ```javascript
 // ❌ This can cause React hydration errors
-import '@fahlgren-mortine/hubspot-form-usability-enhancements';
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
 ```
 
 **Solution**: Use delayed import pattern
+
 ```javascript
 // ✅ This prevents hydration conflicts
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
 setTimeout(async () => {
-  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
   if (module.init) {
     module.init(); // Ensures proper positioning and functionality
   }
@@ -936,7 +1094,8 @@ setTimeout(async () => {
 ```javascript
 // ✅ Correct: Manual init() preserves positioning
 setTimeout(async () => {
-  const module = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
   if (module.init) {
     module.init(); // This triggers immediate positioning
   }
@@ -944,22 +1103,21 @@ setTimeout(async () => {
 
 // ❌ Incorrect: Only importing without initialization
 setTimeout(() => {
-  import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+  import("@fahlgren-mortine/hubspot-form-usability-enhancements");
   // Missing init() call - positioning won't work
 }, 500);
 ```
 
 ### Forms not initializing
+
 ```javascript
 // Check if auto-initialization is disabled
 if (window.HUBSPOT_FORMS_NO_AUTO_INIT) {
   // Manual initialization required
-  import { HubSpotFormManager } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
+  import { HubSpotFormManager } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
   HubSpotFormManager.setupAllForms();
 }
 ```
-
-
 
 ## Contributing
 
@@ -976,6 +1134,7 @@ MIT License - see LICENSE file for details.
 ## Support
 
 For issues and questions:
+
 - GitHub Issues: [Repository Issues](https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements/issues)
 - Documentation: [Full Documentation](https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements#readme)
 

@@ -8,7 +8,7 @@ This is an **npm package** that enhances HubSpot embedded forms with validation,
 
 ### CSS Custom Properties System
 
-- **Base colors** in `:root` (lines 28-54 in `src/styles.css`) - users override these
+- **Base colors** in `:root` (top of `src/styles.css`) - users override these
 - **Component colors** reference base colors via `var()` and cascade automatically
 - Users only modify `:root` variables; component styles update automatically
 - **Dark backgrounds**: `.hs-form-reverse` class auto-applies white text and inverted colors
@@ -18,10 +18,10 @@ This is an **npm package** that enhances HubSpot embedded forms with validation,
 
 **Critical**: This module is designed to avoid React hydration conflicts (Error #418/#422)
 
-- Auto-init uses `window.addEventListener('load')` + 1000ms delay (`src/index.js` line 285)
+- Auto-init uses `window.addEventListener('load')` + 1000ms delay (see `autoInit()` in `src/index.js`)
 - Two-phase initialization: immediate CSS positioning, delayed DOM manipulation
-- Progress bar positioning happens **immediately** to prevent layout shifts (lines 45-73)
-- Form setup happens **after hydration** via `whenSafeToInitialize()` (lines 105-142)
+- Progress bar positioning happens **immediately** via `positionProgressBars()` to prevent layout shifts
+- Form setup happens **after hydration** via `whenSafeToInitialize()`
 - Users can disable auto-init: `window.HUBSPOT_FORMS_NO_AUTO_INIT = true`
 
 ### Build System (Dual Output)
@@ -126,9 +126,10 @@ export { initializeWithTwoPhases }; // React-safe two-phase init
 
 ## File References
 
-- **Color system docs**: `src/styles.css` lines 21-27
-- **React hydration safety**: `src/index.js` lines 105-142
-- **Progress bar positioning**: `src/index.js` lines 45-73
-- **Reverse theme styles**: `src/styles.css` lines 477-530
+- **Color system docs**: `src/styles.css` — see `:root` block and file header comments
+- **React hydration safety**: `src/index.js` — see `whenSafeToInitialize()` and `autoInit()`
+- **Progress bar positioning**: `src/index.js` — see `positionProgressBars()`
+- **Reverse theme styles**: `src/styles.css` — search for `.hs-form-reverse`
+- **Theme template**: `theme-template.css` — published with package for implementers
 - **Build configuration**: `package.json` scripts, `rollup.config.js`, `postcss.config.js`
 - **Why no Tailwind**: `docs/why-no-tailwind.md`

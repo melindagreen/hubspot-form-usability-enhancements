@@ -1,0 +1,262 @@
+/**
+ * HubSpot Form Usability Enhancements - Theme Template
+ * 
+ * Copy this file to your project and rename it (e.g., theme-client-name.css).
+ * Uncomment and modify only the variables you need to override.
+ * 
+ * HOW THE CASCADE WORKS:
+ * - Base colors (primary, secondary, neutral) cascade to component colors
+ * - Override base colors first; component colors update automatically
+ * - Override individual component colors only when breaking from the cascade
+ * 
+ * USAGE:
+ * 1. Import the main styles first:
+ *    @import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
+ * 
+ * 2. Then import your theme file:
+ *    @import './theme-client-name.css';
+ */
+
+:root {
+  /* ==========================================================================
+     TYPOGRAPHY
+     ========================================================================== */
+
+  /* --font-hs-form-base: "Your Font", sans-serif; */
+  /* --font-hs-form-labels: var(--font-hs-form-base); */
+
+  /* ==========================================================================
+     BASE COLORS - Override these first, everything cascades from them
+     ========================================================================== */
+
+  /* Primary brand color - used for buttons, links, focus states, progress bar */
+  /* --color-hs-form-primary: #your-primary; */
+  /* --color-hs-form-primary-lt: #your-primary-light; */ /* hover backgrounds, reverse theme */
+  /* --color-hs-form-primary-dk: #your-primary-dark; */ /* hover/active states */
+
+  /* Secondary brand color - used for ancillary buttons (back, file upload) */
+  /* --color-hs-form-secondary: #your-secondary; */
+  /* --color-hs-form-secondary-lt: #your-secondary-light; */
+  /* --color-hs-form-secondary-dk: #your-secondary-dark; */
+
+  /* Neutral colors - used for text, borders, backgrounds */
+  /* --color-hs-form-neutral: #your-neutral; */ /* main text color */
+  /* --color-hs-form-neutral-hlt: #your-neutral-highlight; */ /* dropdown hover bg */
+  /* --color-hs-form-neutral-lt: #your-neutral-light; */ /* placeholder, descriptions, borders */
+  /* --color-hs-form-neutral-dk: #your-neutral-dark; */ /* headings, dark text */
+
+  /* Status colors */
+  /* --color-hs-form-error: #your-error; */
+  /* --color-hs-form-error-lt: #your-error-light; */ /* error box background */
+  /* --color-hs-form-error-dk: #your-error-dark; */ /* error box text */
+  /* --color-hs-form-warning: #your-warning; */
+  /* --color-hs-form-warning-lt: #your-warning-light; */
+  /* --color-hs-form-warning-dk: #your-warning-dark; */
+  /* --color-hs-form-success: #your-success; */
+  /* --color-hs-form-success-lt: #your-success-light; */
+  /* --color-hs-form-success-dk: #your-success-dark; */
+
+  /* Base black/white */
+  /* --color-hs-form-white: #ffffff; */
+  /* --color-hs-form-black: #000000; */
+
+  /* ==========================================================================
+     PRIMARY BUTTONS (Submit, Next)
+     Cascades from: primary, primary-dk, white
+     ========================================================================== */
+
+  /* Default state */
+  /* --color-hs-form-btn-primary-bg: var(--color-hs-form-primary); */
+  /* --color-hs-form-btn-primary-border: var(--color-hs-form-primary); */
+  /* --color-hs-form-btn-primary-text: var(--color-hs-form-white); */
+
+  /* Hover state */
+  /* --color-hs-form-btn-primary-hover-bg: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-btn-primary-hover-border: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-btn-primary-hover-text: var(--color-hs-form-white); */
+
+  /* Focus state */
+  /* --color-hs-form-btn-primary-focus-bg: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-btn-primary-focus-outline: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-btn-primary-focus-text: var(--color-hs-form-white); */
+
+  /* Active state */
+  /* --color-hs-form-btn-primary-active-bg: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-btn-primary-active-border: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-btn-primary-active-text: var(--color-hs-form-white); */
+
+  /* ==========================================================================
+     ANCILLARY BUTTONS (Back, File Upload)
+     Cascades from: secondary, secondary-dk, white
+     ========================================================================== */
+
+  /* Default state */
+  /* --color-hs-form-btn-ancillary-bg: var(--color-hs-form-secondary); */
+  /* --color-hs-form-btn-ancillary-border: var(--color-hs-form-secondary); */
+  /* --color-hs-form-btn-ancillary-text: var(--color-hs-form-white); */
+
+  /* Hover state */
+  /* --color-hs-form-btn-ancillary-hover-bg: var(--color-hs-form-secondary-dk); */
+  /* --color-hs-form-btn-ancillary-hover-border: var(--color-hs-form-secondary-dk); */
+  /* --color-hs-form-btn-ancillary-hover-text: var(--color-hs-form-white); */
+
+  /* Focus state */
+  /* --color-hs-form-btn-ancillary-focus-bg: var(--color-hs-form-secondary-dk); */
+  /* --color-hs-form-btn-ancillary-focus-outline: var(--color-hs-form-secondary-dk); */
+  /* --color-hs-form-btn-ancillary-focus-text: var(--color-hs-form-white); */
+
+  /* Active state */
+  /* --color-hs-form-btn-ancillary-active-bg: var(--color-hs-form-secondary-dk); */
+  /* --color-hs-form-btn-ancillary-active-border: var(--color-hs-form-secondary-dk); */
+  /* --color-hs-form-btn-ancillary-active-text: var(--color-hs-form-white); */
+
+  /* ==========================================================================
+     DISABLED BUTTONS
+     Cascades from: neutral, neutral-lt
+     ========================================================================== */
+
+  /* --color-hs-form-btn-disabled-bg: var(--color-hs-form-neutral); */
+  /* --color-hs-form-btn-disabled-border: var(--color-hs-form-neutral); */
+  /* --color-hs-form-btn-disabled-text: var(--color-hs-form-neutral-lt); */
+
+  /* ==========================================================================
+     FORM FIELDS (Text inputs, textareas, selects)
+     Cascades from: black (bg), neutral-lt (borders), neutral (text), primary (checked)
+     ========================================================================== */
+
+  /* --color-hs-form-field-bg: var(--color-hs-form-black); */
+  /* --color-hs-form-field-border: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-field-hover-border: var(--color-hs-form-neutral-lt); */ /* ← common override */
+  /* --color-hs-form-field-text: var(--color-hs-form-neutral); */
+  /* --color-hs-form-field-checked-bg: var(--color-hs-form-primary); */ /* checkbox/radio checked */
+  /* --color-hs-form-placeholder-text: var(--color-hs-form-neutral-lt); */
+
+  /* Focus outline */
+  /* --color-hs-form-field-focus-outline: var(--color-hs-form-primary-dk); */
+  /* --width-hs-form-field-focus-outline: 2px; */
+  /* --offset-hs-form-field-focus-outline: 2px; */
+  /* --style-hs-form-field-focus-outline: solid; */
+
+  /* ==========================================================================
+     SELECT/DROPDOWN LISTS
+     Cascades from: white, neutral-lt, neutral, neutral-hlt
+     ========================================================================== */
+
+  /* --color-hs-form-selectlist-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-selectlist-border: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-selectlist-caret-color: var(--color-hs-form-neutral-dk); */
+
+  /* List items */
+  /* --color-hs-form-selectlist-item-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-selectlist-item-text: var(--color-hs-form-neutral); */
+  /* --color-hs-form-selectlist-item-hover-bg: var(--color-hs-form-neutral-hlt); */
+  /* --color-hs-form-selectlist-item-hover-text: var(--color-hs-form-neutral); */
+  /* --color-hs-form-selectlist-item-focus-bg: var(--color-hs-form-neutral-hlt); */
+  /* --color-hs-form-selectlist-item-focus-text: var(--color-hs-form-neutral); */
+  /* --color-hs-form-selectlist-item-active-bg: var(--color-hs-form-neutral-hlt); */
+  /* --color-hs-form-selectlist-item-active-text: var(--color-hs-form-neutral); */
+
+  /* ==========================================================================
+     LABELS & TEXT
+     Cascades from: neutral, neutral-lt, black, primary
+     ========================================================================== */
+
+  /* --color-hs-form-headings: var(--color-hs-form-black); */
+  /* --color-hs-form-text: var(--color-hs-form-neutral); */
+  /* --color-hs-form-label-text: var(--color-hs-form-neutral); */
+  /* --color-hs-form-label-description-text: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-label-optional-text: var(--color-hs-form-neutral-lt); */
+
+  /* Links */
+  /* --color-hs-form-link: var(--color-hs-form-primary); */
+  /* --color-hs-form-link-hover: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-link-focus: var(--color-hs-form-primary-dk); */
+  /* --color-hs-form-link-active: var(--color-hs-form-primary-dk); */
+
+  /* ==========================================================================
+     PROGRESS BAR
+     Cascades from: white, neutral, primary
+     ========================================================================== */
+
+  /* --color-hs-form-progress-bar-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-progress-bar-border: var(--color-hs-form-neutral); */
+  /* --color-hs-form-progress-bar-fill: var(--color-hs-form-primary); */ /* ← common override */
+
+  /* ==========================================================================
+     VALIDATION STATES
+     Cascades from: error, warning, success (and their -lt/-dk variants)
+     ========================================================================== */
+
+  /* Required field indicator */
+  /* --color-hs-form-required-indicator: var(--color-hs-form-error); */
+
+  /* Error state */
+  /* --color-hs-form-error-message: var(--color-hs-form-error); */
+  /* --color-hs-form-error-box-bg: var(--color-hs-form-error-lt); */
+  /* --color-hs-form-error-box-border: var(--color-hs-form-error); */
+  /* --color-hs-form-error-box-text: var(--color-hs-form-error-dk); */
+
+  /* Warning state */
+  /* --color-hs-form-warning-message: var(--color-hs-form-warning); */
+  /* --color-hs-form-warning-border: var(--color-hs-form-warning-dk); */
+
+  /* Success state */
+  /* --color-hs-form-success-message: var(--color-hs-form-success); */
+  /* --color-hs-form-success-box-bg: var(--color-hs-form-success-lt); */
+  /* --color-hs-form-success-box-border: var(--color-hs-form-success-dk); */
+  /* --color-hs-form-success-box-text: var(--color-hs-form-success); */
+
+  /* ==========================================================================
+     REVERSE THEME (Dark Backgrounds)
+     Used when .hs-form-reverse class is applied to a parent container
+     Cascades from: white, primary, primary-lt, secondary-lt, neutral-lt, neutral-dk
+     ========================================================================== */
+
+  /* Background and text */
+  /* --color-hs-form-reverse-bg: var(--color-hs-form-primary); */
+  /* --color-hs-form-reverse-text: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-link: var(--color-hs-form-white); */
+
+  /* Form fields */
+  /* --color-hs-form-reverse-field-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-field-checked-bg: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-reverse-field-focus-outline: var(--color-hs-form-primary-lt); */
+
+  /* Progress bar */
+  /* --color-hs-form-reverse-progress-bar-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-progress-bar-border: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-reverse-progress-bar-fill: var(--color-hs-form-neutral-lt); */
+
+  /* Primary buttons (inverted) */
+  /* --color-hs-form-reverse-btn-primary-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-btn-primary-border: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-btn-primary-text: var(--color-hs-form-primary); */
+  /* --color-hs-form-reverse-btn-primary-hover-bg: var(--color-hs-form-primary-lt); */
+  /* --color-hs-form-reverse-btn-primary-hover-border: var(--color-hs-form-primary-lt); */
+  /* --color-hs-form-reverse-btn-primary-hover-text: var(--color-hs-form-neutral-dk); */
+  /* --color-hs-form-reverse-btn-primary-focus-bg: var(--color-hs-form-primary-lt); */
+  /* --color-hs-form-reverse-btn-primary-focus-outline: var(--color-hs-form-primary-lt); */
+  /* --color-hs-form-reverse-btn-primary-focus-text: var(--color-hs-form-neutral-dk); */
+  /* --color-hs-form-reverse-btn-primary-active-bg: var(--color-hs-form-primary-lt); */
+  /* --color-hs-form-reverse-btn-primary-active-border: var(--color-hs-form-primary-lt); */
+  /* --color-hs-form-reverse-btn-primary-active-text: var(--color-hs-form-neutral-dk); */
+
+  /* Ancillary buttons (inverted) */
+  /* --color-hs-form-reverse-btn-ancillary-bg: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-btn-ancillary-border: var(--color-hs-form-white); */
+  /* --color-hs-form-reverse-btn-ancillary-text: var(--color-hs-form-secondary); */
+  /* --color-hs-form-reverse-btn-ancillary-hover-bg: var(--color-hs-form-secondary-lt); */
+  /* --color-hs-form-reverse-btn-ancillary-hover-border: var(--color-hs-form-secondary-lt); */
+  /* --color-hs-form-reverse-btn-ancillary-hover-text: var(--color-hs-form-neutral-dk); */
+  /* --color-hs-form-reverse-btn-ancillary-focus-bg: var(--color-hs-form-secondary-lt); */
+  /* --color-hs-form-reverse-btn-ancillary-focus-outline: var(--color-hs-form-secondary-lt); */
+  /* --color-hs-form-reverse-btn-ancillary-focus-text: var(--color-hs-form-neutral-dk); */
+  /* --color-hs-form-reverse-btn-ancillary-active-bg: var(--color-hs-form-secondary-lt); */
+  /* --color-hs-form-reverse-btn-ancillary-active-border: var(--color-hs-form-secondary-lt); */
+  /* --color-hs-form-reverse-btn-ancillary-active-text: var(--color-hs-form-neutral-dk); */
+
+  /* Disabled buttons (inverted) */
+  /* --color-hs-form-reverse-btn-disabled-bg: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-reverse-btn-disabled-border: var(--color-hs-form-neutral-lt); */
+  /* --color-hs-form-reverse-btn-disabled-text: var(--color-hs-form-neutral); */
+}
