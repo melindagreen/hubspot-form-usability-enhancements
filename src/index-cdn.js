@@ -4,9 +4,8 @@
  * This file auto-initializes when loaded via <script> tag.
  * Use this for HubSpot CMS or any non-bundler environment.
  *
- * NOTE: This version does NOT remove HubSpot's BaseStyle tag to avoid
- * React hydration conflicts. Instead, our CSS overrides theirs via specificity.
- * Ensure styles.css loads AFTER HubSpot's form scripts for proper cascade.
+ * Strategy: Our CSS wins via specificity immediately (no flash).
+ * Style removal happens AFTER hydration as a silent cleanup.
  */
 
 import {
@@ -15,86 +14,89 @@ import {
   CharacterLimitValidator,
   FieldValidator,
   FileUploadValidator,
+  removeHubSpotFormStyles,
 } from "./hubspot-forms.js";
 
-// Delay before manipulating form DOM (allows React hydration to complete)
+// Delay before any DOM manipulation (allows React hydration to complete)
 const HYDRATION_DELAY = 1000;
 
-// DO NOT remove HubSpot styles here - causes hydration errors
-// Our CSS overrides via specificity instead
+// DO NOT remove styles immediately - causes React hydration errors
+// Our CSS has higher specificity and wins immediately
+// Style removal happens after hydration as cleanup
 
 /**
  * Auto-initialization for CDN usage
- * Waits for hydration to complete before manipulating form DOM
+ * All DOM manipulation waits for hydration to complete
  */
 const autoInit = () => {
-  // Set up form enhancements with delay to avoid hydration conflicts
-  const setupFormsWithDelay = () => {
+  // Set up form enhancements after hydration delay
+  const setupForms = () => {
     const forms = document.querySelectorAll(".hsfc-Form");
     if (forms.length > 0) {
-      // Wait for React hydration to complete
-      setTimeout(() => {
-        HubSpotFormManager.setupAllForms();
-      }, HYDRATION_DELAY);
+      HubSpotFormManager.setupAllForms();
     }
   };
 
-  // Try after initial delay
-  setTimeout(setupFormsWithDelay, 100);
+  // Wait for hydration, then setup forms and remove redundant styles
+  setTimeout(() => {
+    removeHubSpotFormStyles();
+    setupForms();
+  }, HYDRATION_DELAY);
 
-  // Also watch for dynamically added forms
-  const observer = new MutationObserver((mutations) => {
-    let foundNewForm = false;
+  // Watch for dynamically added forms (after initial delay)
+  setTimeout(() => {
+    const observer = new MutationObserver((mutations) => {
+      let foundNewForm = false;
+      let foundStyleTag = false;
 
-    for (const mutation of mutations) {
-      if (mutation.type !== "childList") continue;
+      for (const mutation of mutations) {
+        if (mutation.type !== "childList") continue;
 
-      for (const addedNode of mutation.addedNodes) {
-        if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
+        for (const addedNode of mutation.addedNodes) {
+          if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
 
-        // Check for HubSpot's BaseStyle being re-added
-        if (
-          addedNode.tagName === "STYLE" &&
-          addedNode.getAttribute("data-hsfc-id") === "BaseStyle"
-        ) {
-          foundStyleTag = true;
-        }
+          // Check for HubSpot's BaseStyle being re-added
+          if (
+            addedNode.tagName === "STYLE" &&
+            addedNode.getAttribute("data-hsfc-id") === "BaseStyle"
+          ) {
+            foundStyleTag = true;
+          }
 
-        // Check for new forms
-        if (
-          addedNode.classList?.contains("hsfc-Form") ||
-          addedNode.querySelector?.(".hsfc-Form")
-        ) {
-          foundNewForm = true;
+          // Check for new forms
+          if (
+            addedNode.classList?.contains("hsfc-Form") ||
+            addedNode.querySelector?.(".hsfc-Form")
+          ) {
+            foundNewForm = true;
+          }
         }
       }
-    }
 
-    // Remove style tag if found (safe - only touches <head>)
-    if (foundStyleTag) {
-      removeHubSpotFormStyles();
-    }
+      // Remove style tag if found (safe after hydration)
+      if (foundStyleTag) {
+        removeHubSpotFormStyles();
+      }
 
-    // Setup new forms if found (with hydration delay)
-    if (foundNewForm) {
-      setTimeout(() => {
+      // Setup new forms if found
+      if (foundNewForm) {
         HubSpotFormManager.setupAllForms();
-      }, HYDRATION_DELAY);
-    }
-  });
+      }
+    });
 
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }, HYDRATION_DELAY);
 };
 
-// Run when DOM is ready, then wait for hydration
+// Run when DOM is ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", autoInit);
 } else {
-  // DOM already loaded, run after short delay
-  setTimeout(autoInit, 100);
+  // DOM already loaded, run immediately
+  autoInit();
 }
 
 // Expose for manual control if needed

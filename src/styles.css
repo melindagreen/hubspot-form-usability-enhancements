@@ -363,8 +363,13 @@ div[data-hsfc-id="Renderer"] {
           color: var(--color-hs-form-placeholder-text);
         }
       }
+      & input[type="checkbox"],
+      & input[type="radio"] {
+        accent-color: var(--color-hs-form-primary);
+      }
       & input[type="checkbox"]:checked,
       & input[type="radio"]:checked {
+        accent-color: var(--color-hs-form-primary);
         background-color: var(--color-hs-form-field-checked-bg);
       }
       & .hsfc-DropdownInput {
@@ -450,8 +455,13 @@ div[data-hsfc-id="Renderer"] {
         margin-bottom: 0.75rem;
         & input[type="checkbox"],
         & input[type="radio"] {
+          width: 1rem;
+          height: 1rem;
+          min-width: 1rem;
+          min-height: 1rem;
           margin-right: 0.5rem;
           margin-bottom: 0.25rem;
+          cursor: pointer;
         }
       }
       & .hsfc-CheckboxFieldGroup__Options,
@@ -813,6 +823,7 @@ div[data-hsfc-id="Renderer"] {
         }
       }
       & ul {
+        margin-bottom: 0;
         list-style-type: disc;
         padding-left: 1.25rem;
         & li {
