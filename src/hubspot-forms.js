@@ -3038,53 +3038,58 @@ const setupSingleFormValidation = (formContainer) =>
 
 // Legacy function for backward compatibility
 const setupFieldValidation = setupAllFormsValidation;
-window.addEventListener("DOMContentLoaded", () => {
-  // Set up a more robust form detection that handles multiple forms
-  const setupFormsWithRetry = () => {
-    const hubspotForms = document.querySelectorAll(".hsfc-Form");
 
-    if (hubspotForms.length > 0) {
-      setupAllFormsValidation();
-      return true;
-    }
-    return false;
-  };
+// Auto-init only if not explicitly disabled (React/SSR safety)
+// Users can set window.HUBSPOT_FORMS_NO_AUTO_INIT = true before importing to disable
+if (typeof window !== 'undefined' && !window.HUBSPOT_FORMS_NO_AUTO_INIT) {
+  window.addEventListener("DOMContentLoaded", () => {
+    // Set up a more robust form detection that handles multiple forms
+    const setupFormsWithRetry = () => {
+      const hubspotForms = document.querySelectorAll(".hsfc-Form");
 
-  // Try immediately
-  if (!setupFormsWithRetry()) {
-    // Set up observer to watch for dynamically loaded forms
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type !== "childList") continue;
+      if (hubspotForms.length > 0) {
+        setupAllFormsValidation();
+        return true;
+      }
+      return false;
+    };
 
-        // Check if any added nodes contain HubSpot form elements
-        for (const addedNode of mutation.addedNodes) {
-          if (addedNode.nodeType === Node.ELEMENT_NODE) {
-            if (
-              addedNode.classList?.contains("hsfc-Form") ||
-              addedNode.querySelector?.(".hsfc-Form")
-            ) {
-              removeHubSpotFormStyles(); // Remove styles for newly detected forms
-              setupAllFormsValidation();
-              // Don't disconnect - we might have more forms loading later
-              return;
+    // Try immediately
+    if (!setupFormsWithRetry()) {
+      // Set up observer to watch for dynamically loaded forms
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.type !== "childList") continue;
+
+          // Check if any added nodes contain HubSpot form elements
+          for (const addedNode of mutation.addedNodes) {
+            if (addedNode.nodeType === Node.ELEMENT_NODE) {
+              if (
+                addedNode.classList?.contains("hsfc-Form") ||
+                addedNode.querySelector?.(".hsfc-Form")
+              ) {
+                removeHubSpotFormStyles(); // Remove styles for newly detected forms
+                setupAllFormsValidation();
+                // Don't disconnect - we might have more forms loading later
+                return;
+              }
             }
           }
         }
-      }
-    });
+      });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
 
-    // Timeout fallback
-    setTimeout(() => {
-      observer.disconnect();
-    }, 10000);
-  }
-});
+      // Timeout fallback
+      setTimeout(() => {
+        observer.disconnect();
+      }, 10000);
+    }
+  });
+}
 
 // Export main API functions
 export { HubSpotFormManager, HubSpotFormValidator, CharacterLimitValidator };
