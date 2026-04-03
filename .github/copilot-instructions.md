@@ -88,7 +88,19 @@ npm run build              # Full production build
 1. Version bump in `package.json`
 2. Full build: `npm run build`
 3. Verify `dist/` contains: `index.esm.js`, `index.js`, `styles.css`, `index.d.ts`
-4. `npm publish` (runs `prepublishOnly` script automatically)
+4. `npm login` (if not already logged in)
+5. Publish with 2FA OTP: `npm publish --otp=YOUR_6_DIGIT_CODE`
+   - Get the 6-digit code from your authenticator app linked to npm
+   - The `prepublishOnly` script runs automatically
+
+**Alternative: Granular Access Token (for CI/automation)**
+
+If you want to skip entering OTP each time:
+1. Go to npmjs.com → Account Settings → Access Tokens
+2. Create a "Granular Access Token" with publish permissions for this package
+3. Enable "Bypass 2FA for automation"
+4. Configure locally: `npm config set //registry.npmjs.org/:_authToken YOUR_TOKEN`
+5. Then `npm publish` works without `--otp`
 
 ## Integration Points
 
