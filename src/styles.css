@@ -305,19 +305,21 @@ div[data-hsfc-id=Renderer] {
       &:has(input, select, textarea, .hsfc-RichText) {
         order:3;
       }
-      &:has(.hsfc-ErrorAlert) {
-        & .hsfc-TextInput, & .hsfc-EmailInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput {
-          border:2px solid var(--color-hs-form-error-box-border);
-          & .hsfc-TextInput {
-            border:none;
+      & .hsfc-TextField, & .hsfc-EmailField, & .hsfc-PhoneField, & .hsfc-DropdownField, & .hsfc-TextareaField {
+        &:has(.hsfc-ErrorAlert) {
+          & .hsfc-TextInput, & .hsfc-EmailInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput {
+            border:2px solid var(--color-hs-form-error-box-border);
+            & .hsfc-TextInput {
+              border:none;
+            }
           }
-        }
-        & .hsfc-PhoneInput {
-          & .hsfc-PhoneInput__FlagAndCaret {
-            border:none;
-          }
-          & .hsfc-TextInput {
-            border-left:revert-layer;
+          & .hsfc-PhoneInput {
+            & .hsfc-PhoneInput__FlagAndCaret {
+              border:none;
+            }
+            & .hsfc-TextInput {
+              border-left:revert-layer;
+            }
           }
         }
       }
