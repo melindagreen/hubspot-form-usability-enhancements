@@ -39,7 +39,8 @@
   --color-hs-form-neutral-hlt:oklch(0.9700 0.0020 250.00);
   --color-hs-form-neutral-lt:oklch(0.7000 0.0040 250.00);
   --color-hs-form-neutral-dk:oklch(0.2500 0.0070 250.00);
-  --color-hs-form-required-indicator:oklch(0.6463 0.2409 29.23);
+  --color-hs-form-attention:oklch(0.6463 0.2409 29.23);
+  --color-hs-form-attention-2:oklch(0.968 0.211 109.77);
   --color-hs-form-error:oklch(0.6463 0.2409 29.23);
   --color-hs-form-error-lt:oklch(0.9700 0.0200 29.23);
   --color-hs-form-error-dk:oklch(0.4500 0.2200 29.23);
@@ -119,7 +120,7 @@
   --color-hs-form-progress-bar-border:var(--color-hs-form-neutral);
   --color-hs-form-progress-bar-fill:var(--color-hs-form-primary);
 
-  --color-hs-form-required-indicator:var(--color-hs-form-required-indicator);
+  --color-hs-form-attention:var(--color-hs-form-attention);
   --color-hs-form-error-message:var(--color-hs-form-error);
   --color-hs-form-error-box-bg:var(--color-hs-form-error-lt);
   --color-hs-form-error-box-text:var(--color-hs-form-error-dk);
@@ -170,11 +171,26 @@
   --color-hs-form-reverse-text:var(--color-hs-form-white);
   --color-hs-form-reverse-link:var(--color-hs-form-white);
   --color-hs-form-reverse-field-bg:var(--color-hs-form-white);
-  --color-hs-form-reverse-field-checked-bg:var(--color-hs-form-neutral-lt);
+  --color-hs-form-reverse-field-checked-bg:var(--color-hs-form-neutral);
   --color-hs-form-reverse-field-focus-outline:var(--color-hs-form-focus-outline);
   --color-hs-form-reverse-progress-bar-bg:var(--color-hs-form-white);
   --color-hs-form-reverse-progress-bar-border:var(--color-hs-form-neutral-lt);
   --color-hs-form-reverse-progress-bar-fill:var(--color-hs-form-neutral-lt);
+
+  --color-hs-form-reverse-attention:oklch(1 0 0);
+  --color-hs-form-reverse-error:oklch(0.968 0.211 109.77);
+
+  --color-hs-form-reverse-attention:var(--color-hs-form-reverse-attention);
+  --color-hs-form-reverse-error-message:var(--color-hs-form-reverse-error);
+  --color-hs-form-reverse-error-box-bg:var(--color-hs-form-error-lt);
+  --color-hs-form-reverse-error-box-text:var(--color-hs-form-error-dk);
+  --color-hs-form-reverse-error-box-border:var(--color-hs-form-error);
+  --color-hs-form-reverse-warning-message:var(--color-hs-form-warning);
+  --color-hs-form-reverse-warning-border:var(--color-hs-form-warning-dk);
+  --color-hs-form-reverse-success-message:var(--color-hs-form-success);
+  --color-hs-form-reverse-success-box-bg:var(--color-hs-form-success-lt);
+  --color-hs-form-reverse-success-box-border:var(--color-hs-form-success-dk);
+  --color-hs-form-reverse-success-box-text:var(--color-hs-form-success);
 
   --color-hs-form-reverse-field-focus-outline:var(--color-hs-form-primary-lt);
 }
@@ -198,7 +214,7 @@ div[data-hsfc-id=Renderer] {
           display:flex; flex-direction:column;
         }
       }
-      & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background:var(--color-hs-form-error-message); line-height:1.375; font-size:0.875rem; color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-box-border); }
+      & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-error-message); line-height:1.375; font-size:0.875rem; color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-box-border); }
       & .hsfc-Step__Banner { display:none; }
     }
     & .hsfc-Row {
@@ -268,7 +284,7 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-FieldLabel__RequiredIndicator {
-        margin-left:0.25rem; color:var(--color-hs-form-error-message);
+        margin-left:0.25rem; color:var(--color-hs-form-attention);
       }
 
       /* Basic Input Elements */
@@ -278,6 +294,7 @@ div[data-hsfc-id=Renderer] {
       }
       & input[type=checkbox]:checked, & input[type=radio]:checked {
         background-color:var(--color-hs-form-field-checked-bg);
+        accent-color:var(--color-hs-form-field-checked-bg);
       }
       & .hsfc-DropdownInput {
         position:relative;
@@ -353,22 +370,22 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-DropdownOptions {
-        display:flex; flex-direction:column; position:absolute; top:0 !important; left:0 !important; width:100%; overflow:hidden; padding-top:0.5rem; padding-bottom:0.5rem; background:var(--color-hs-form-selectlist-bg); border:1px solid var(--color-hs-form-selectlist-border); box-shadow:0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); z-index:10000;
+        display:flex; flex-direction:column; position:absolute; top:0 !important; left:0 !important; width:100%; overflow:hidden; padding-top:0.5rem; padding-bottom:0.5rem; background-color:var(--color-hs-form-selectlist-bg); border:1px solid var(--color-hs-form-selectlist-border); box-shadow:0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); z-index:10000;
         & .hsfc-DropdownOptions__Search {
           flex:0 0 auto; padding-left:0.5rem; padding-right:0.5rem;
         }
         & .hsfc-DropdownOptions__List {
           flex:1 1 0%; padding-top:0.5rem; padding-bottom:0.5rem; margin:0; overflow-y:auto;
           & .hsfc-DropdownOptions__List__ListItem {
-            padding:0.5rem; cursor:pointer; background:var(--color-hs-form-selectlist-item-bg); color:var(--color-hs-form-selectlist-item-text); filter:none;
+            padding:0.5rem; cursor:pointer; background-color:var(--color-hs-form-selectlist-item-bg); color:var(--color-hs-form-selectlist-item-text); filter:none;
             &:hover {
-              background:var(--color-hs-form-selectlist-item-hover-bg); color:var(--color-hs-form-selectlist-item-hover-text);
+              background-color:var(--color-hs-form-selectlist-item-hover-bg); color:var(--color-hs-form-selectlist-item-hover-text);
             }
             &:focus, &:focus-visible {
-              background:var(--color-hs-form-selectlist-item-focus-bg); color:var(--color-hs-form-selectlist-item-focus-text);
+              background-color:var(--color-hs-form-selectlist-item-focus-bg); color:var(--color-hs-form-selectlist-item-focus-text);
             }
             &:active {
-              background:var(--color-hs-form-selectlist-item-active-bg); color:var(--color-hs-form-selectlist-item-active-text);
+              background-color:var(--color-hs-form-selectlist-item-active-bg); color:var(--color-hs-form-selectlist-item-active-text);
             }
           }
         }
@@ -376,15 +393,15 @@ div[data-hsfc-id=Renderer] {
       & .hsfc-FileInput {
         display:flex; flex-direction:column; font-size:0.875rem;
         &::file-selector-button {
-          margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background:var(--color-hs-form-btn-ancillary-bg); color:var(--color-hs-form-btn-ancillary-text); border:1px solid var(--color-hs-form-btn-ancillary-border); font-size:0.875rem; font-weight:bold; transition-property:color,background-color,border-color,text-decoration-color,fill,stroke; transition-duration:300ms;
+          margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background-color:var(--color-hs-form-btn-ancillary-bg); color:var(--color-hs-form-btn-ancillary-text); border:1px solid var(--color-hs-form-btn-ancillary-border); font-size:0.875rem; font-weight:bold; transition-property:color,background-color,border-color,text-decoration-color,fill,stroke; transition-duration:300ms;
           &:hover:not(:disabled) {
-            background:var(--color-hs-form-btn-ancillary-hover-bg); border-color:var(--color-hs-form-btn-ancillary-hover-border); color:var(--color-hs-form-btn-ancillary-hover-text);
+            background-color:var(--color-hs-form-btn-ancillary-hover-bg); border-color:var(--color-hs-form-btn-ancillary-hover-border); color:var(--color-hs-form-btn-ancillary-hover-text);
           }
           &:focus:not(:disabled), &:focus-visible:not(:disabled) {
-            background:var(--color-hs-form-btn-ancillary-focus-bg); outline-color:var(--color-hs-form-btn-ancillary-focus-outline); color:var(--color-hs-form-btn-ancillary-focus-text);
+            background-color:var(--color-hs-form-btn-ancillary-focus-bg); outline-color:var(--color-hs-form-btn-ancillary-focus-outline); color:var(--color-hs-form-btn-ancillary-focus-text);
           }
           &:active:not(:disabled) {
-            background:var(--color-hs-form-btn-ancillary-active-bg); border-color:var(--color-hs-form-btn-ancillary-active-border); color:var(--color-hs-form-btn-ancillary-active-text);
+            background-color:var(--color-hs-form-btn-ancillary-active-bg); border-color:var(--color-hs-form-btn-ancillary-active-border); color:var(--color-hs-form-btn-ancillary-active-text);
           }
         }
       }
@@ -430,7 +447,6 @@ div[data-hsfc-id=Renderer] {
         display:flex; flex-direction:row; align-items:center; margin-top:0.25rem; margin-bottom:0.25rem; line-height:1.25; font-size:0.875rem; color:var(--color-hs-form-error-message); font-weight:bold;
         &::before {
           content:'';
-          background-color:var(--color-hs-form-reverse-field-bg);
           flex-shrink:0; width:1.5rem; height:1.5rem; display:inline-block; margin-right:0.25rem; background:var(--color-hs-form-error-message) no-repeat center/contain;
           mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
           -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
@@ -442,7 +458,7 @@ div[data-hsfc-id=Renderer] {
         font-size:0.875rem; color:var(--color-hs-form-label-description-text); font-weight:bold;
       }
       & .hsfc-AcceptedFiles {
-        margin-top:0.5rem; padding:0.5rem 0.75rem; background:var(--color-hs-form-success-box-bg); font-size:0.875rem; color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border); 
+        margin-top:0.5rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-success-box-bg); font-size:0.875rem; color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border); 
       }
     }
     
@@ -496,9 +512,9 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-ProgressBar__Progress {
-        width:100%; height:1rem; border-radius:9999px; background:var(--color-hs-form-progress-bar-bg); outline:1px solid var(--color-hs-form-progress-bar-border); overflow:hidden;
+        width:100%; height:1rem; border-radius:9999px; background-color:var(--color-hs-form-progress-bar-bg); outline:1px solid var(--color-hs-form-progress-bar-border); overflow:hidden;
         & > div {
-          width:100%; height:1rem; background:var(--color-hs-form-progress-bar-fill); border-radius:9999px;
+          width:100%; height:1rem; background-color:var(--color-hs-form-progress-bar-fill); border-radius:9999px;
         }
       }
       /* Specific styling for repositioned progress bars */
@@ -509,7 +525,7 @@ div[data-hsfc-id=Renderer] {
       }
     }
     & .hsfc-CustomValidationError {
-      display:block; margin-top:1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background:var(--color-hs-form-error-box-bg); border:1px solid var(--color-hs-form-error-box-border); font-size:0.875rem; line-height:1.375; color:var(--color-hs-form-error-box-text); 
+      display:block; margin-top:1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background-color:var(--color-hs-form-error-box-bg); border:1px solid var(--color-hs-form-error-box-border); font-size:0.875rem; line-height:1.375; color:var(--color-hs-form-error-box-text); 
       order:1; /* Ensure validation error appears before progress bar (order:2) but after intro content (order:0) */
       & > div {
         display:flex; flex-direction:row; align-items:center; font-weight:bold; margin-bottom:0.5rem;
@@ -544,82 +560,94 @@ div[data-hsfc-id=Renderer] {
       & + .hs-form-field,
       & + .hsfc-FormField, & + .hsfc-Row { margin-top:0; }
     }
-
-    /* Reverse theme styles (for dark backgrounds) */
-    .hs-form-reverse & {
-      & form {
-        & .hsfc-Row {
-          & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
-            background:var(--color-hs-form-reverse-field-bg);
-          }
-          & input[type=checkbox]:checked, & input[type=radio]:checked {
-            background:var(--color-hs-form-reverse-field-checked-bg);
-          }
-          & .hsfc-FieldLabel, & .hsfc-FieldLabel__RequiredIndicator, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & .hsfc-FieldLabel:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
-            color:var(--color-hs-form-reverse-text);
-          }
-          & .hsfc-RichText a {
-            color:var(--color-hs-form-reverse-link);
-              text-decoration:underline;
-            &:hover {
-              text-decoration-color:transparent;
-            }
-          }
-          & .hsfc-FieldDescription span {
-            color:var(--color-hs-form-reverse-text) !important;
-          }
-          & .hsfc-PhoneInput {
-            & .hsfc-PhoneInput__FlagAndCaret {
-              background:var(--color-hs-form-reverse-field-bg);
-            }
-          }
-          & .hsfc-FileInput {
-            display:flex; flex-direction:column; font-size:0.875rem;
-            &::file-selector-button {
-              margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background:var(--color-hs-form-reverse-btn-ancillary-bg); color:var(--color-hs-form-reverse-btn-ancillary-text); /* hover/focus handled below */
-            }
-          }
-          & .hsfc-CharacterCounter {
-            color:var(--color-hs-form-reverse-text) !important;
+  }
+  /* Reverse theme styles (for dark backgrounds) */
+  .hs-form-reverse & {
+    & form {
+      & .hsfc-Row {
+        & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
+          background-color:var(--color-hs-form-reverse-field-bg);
+        }
+        & input[type=checkbox]:checked, & input[type=radio]:checked {
+          background-color:var(--color-hs-form-reverse-field-checked-bg);
+          accent-color:var(--color-hs-form-reverse-field-checked-bg);
+        }
+        & .hsfc-FieldLabel, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & .hsfc-FieldLabel:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
+          color:var(--color-hs-form-reverse-text);
+        }
+        & .hsfc-FieldLabel__RequiredIndicator {
+          color:var(--color-hs-form-attention-2);
+        }
+        & .hsfc-RichText a {
+          color:var(--color-hs-form-reverse-link);
+            text-decoration:underline;
+          &:hover {
+            text-decoration-color:transparent;
           }
         }
-        & .hsfc-NavigationRow {
-          & button { 
-            background-color:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
-            &[type="submit"], &[type="button"] {
-              background-color:var(--color-hs-form-reverse-btn-primary-bg); border-color:var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text);
-            }
-            &:hover {
-              background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
-            }
-            &:focus, &:focus-visible {
-              background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); color:var(--color-hs-form-reverse-btn-primary-focus-text);
-            }
-            &:active {
-              background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
-            }
-            &:disabled {
-              background-color:var(--color-hs-form-reverse-btn-disabled-bg); border-color:var(--color-hs-form-reverse-btn-disabled-border); color:var(--color-hs-form-reverse-btn-disabled-text); cursor:not-allowed;
-            }
+        & .hsfc-FieldDescription span {
+          color:var(--color-hs-form-reverse-text) !important;
+        }
+        & .hsfc-PhoneInput {
+          & .hsfc-PhoneInput__FlagAndCaret {
+            background-color:var(--color-hs-form-reverse-field-bg);
           }
         }
-        & .hsfc-Row, & .hsfc-NavigationRow {
-          & input, & textarea, & select, & button {
-            &:focus, &:focus-visible {
-              box-shadow: none;
-              outline-color: var(--color-hs-form-reverse-field-focus-outline, var(--color-hs-form-primary-lt));
-            }
+        & .hsfc-FileInput {
+          display:flex; flex-direction:column; font-size:0.875rem;
+          &::file-selector-button {
+            margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background-color:var(--color-hs-form-reverse-btn-ancillary-bg); color:var(--color-hs-form-reverse-btn-ancillary-text); /* hover/focus handled below */
           }
         }
-        & .hsfc-ProgressBar {
-          & .hsfc-ProgressBar__Text {
-            color:var(--color-hs-form-reverse-text);
+        & .hsfc-CharacterCounter {
+          color:var(--color-hs-form-reverse-text) !important;
+        }
+        & .hsfc-ErrorAlert {
+          color:var(--color-hs-form-attention-2);
+          &::before {
+            content:'';
+            background-color:var(--color-hs-form-attention-2);
+            mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
+            -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
           }
-          & .hsfc-ProgressBar__Progress {
-            background:var(--color-hs-form-reverse-progress-bar-bg); outline:1px solid var(--color-hs-form-reverse-progress-bar-border);
-            & > div {
-              background:var(--color-hs-form-reverse-progress-bar-fill);
-            }
+        }
+      }
+      & .hsfc-NavigationRow {
+        & button { 
+          background-color:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
+          &[type="submit"], &[type="button"] {
+            background-color:var(--color-hs-form-reverse-btn-primary-bg); border-color:var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text);
+          }
+          &:hover {
+            background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
+          }
+          &:focus, &:focus-visible {
+            background-color:var(--color-hs-form-reverse-btn-primary-focus-bg); color:var(--color-hs-form-reverse-btn-primary-focus-text);
+          }
+          &:active {
+            background-color:var(--color-hs-form-reverse-btn-primary-active-bg); border-color:var(--color-hs-form-reverse-btn-primary-active-border); color:var(--color-hs-form-reverse-btn-primary-active-text);
+          }
+          &:disabled {
+            background-color:var(--color-hs-form-reverse-btn-disabled-bg); border-color:var(--color-hs-form-reverse-btn-disabled-border); color:var(--color-hs-form-reverse-btn-disabled-text); cursor:not-allowed;
+          }
+        }
+      }
+      & .hsfc-Row, & .hsfc-NavigationRow {
+        & input, & textarea, & select, & button {
+          &:focus, &:focus-visible {
+            box-shadow: none;
+            outline-color: var(--color-hs-form-reverse-field-focus-outline, var(--color-hs-form-primary-lt));
+          }
+        }
+      }
+      & .hsfc-ProgressBar {
+        & .hsfc-ProgressBar__Text {
+          color:var(--color-hs-form-reverse-text);
+        }
+        & .hsfc-ProgressBar__Progress {
+          background-color:var(--color-hs-form-reverse-progress-bar-bg); outline:1px solid var(--color-hs-form-reverse-progress-bar-border);
+          & > div {
+            background-color:var(--color-hs-form-reverse-progress-bar-fill);
           }
         }
       }
