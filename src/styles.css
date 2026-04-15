@@ -306,7 +306,20 @@ div[data-hsfc-id=Renderer] {
         order:3;
       }
       &:has(.hsfc-ErrorAlert) {
-        border:2px solid var(--color-hs-form-error-box-border);
+        & .hsfc-TextInput, & .hsfc-EmailInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput {
+          border:2px solid var(--color-hs-form-error-box-border);
+          & .hsfc-TextInput {
+            border:none;
+          }
+        }
+        & .hsfc-PhoneInput {
+          & .hsfc-PhoneInput__FlagAndCaret {
+            border:none;
+          }
+          & .hsfc-TextInput {
+            border-left:revert-layer;
+          }
+        }
       }
       & .hsfc-DropdownInput, & .hsfc-EmailInput, & .hsfc-FileInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-TextareaInput, & .hsfc-TextInput {
         display:flex; flex-direction:row; position:relative; width:100%; color:var(--color-hs-form-field-text);
