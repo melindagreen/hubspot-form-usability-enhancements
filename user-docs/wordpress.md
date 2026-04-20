@@ -103,38 +103,78 @@ Add to your theme's `functions.php` for easier content editor control:
 ```php
 <?php
 /**
- * Configure HubSpot form file upload validation
+ * Configure HubSpot form validation and error messages
  */
-function configure_hubspot_file_validation() {
+function configure_hubspot_forms() {
     // Get settings from WordPress options, theme customizer, or ACF
     $allowed_extensions = get_theme_mod('hubspot_allowed_extensions', 'pdf,doc,docx,jpg,jpeg,png,gif,txt');
     $max_file_size = get_theme_mod('hubspot_max_file_size', '10MB');
+    
+    // Get current language for multi-language error messages
+    $locale = get_locale();
+    $lang = substr($locale, 0, 2);
+    
+    $error_messages = [];
+    if ($lang === 'es') {
+        $error_messages = [
+            'required' => 'Este campo es obligatorio.',
+            'email' => 'Por favor ingrese un email válido.',
+            'pattern' => 'Por favor verifique el formato.',
+            'characterLimit' => 'Máximo {limit} caracteres. Tiene {overBy} caracter{plural} de más.',
+        ];
+    } elseif ($lang === 'fr') {
+        $error_messages = [
+            'required' => 'Ce champ est obligatoire.',
+            'email' => 'Veuillez saisir une adresse email valide.',
+            'pattern' => 'Veuillez vérifier le format.',
+            'characterLimit' => 'Maximum {limit} caractères. Vous avez {overBy} caractère{plural} en trop.',
+        ];
+    } else {
+        $error_messages = [
+            'required' => 'This field is required for submission.',
+            'email' => 'Please enter a valid email address.',
+            'pattern' => 'Please check the format of this field.',
+            'characterLimit' => 'Maximum {limit} characters allowed. You have {overBy} character{plural} too many.',
+            'date' => 'Please enter a valid date.',
+            'phone' => 'Please enter a valid phone number.',
+            'file' => 'This file type is not allowed.',
+            'fileSize' => 'File size exceeds the {maxSize} limit.',
+            'fileType' => 'Only these file types are allowed: {allowedTypes}',
+            'url' => 'Please enter a valid web address.',
+            'number' => 'Please enter a valid number.',
+            'confirmation' => 'The confirmation does not match.',
+            'captcha' => 'Please complete the verification.',
+            'submission' => 'There was an error submitting the form. Please try again.',
+            'network' => 'Connection error. Please check your internet connection.'
+        ];
+    }
     
     // Output JavaScript configuration
     ?>
     <script>
         window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = <?php echo json_encode($allowed_extensions); ?>;
         window.HUBSPOT_FORMS_MAX_FILE_SIZE = <?php echo json_encode($max_file_size); ?>;
+        window.HUBSPOT_FORMS_ERROR_MESSAGES = <?php echo json_encode($error_messages); ?>;
     </script>
     <?php
 }
-add_action('wp_head', 'configure_hubspot_file_validation', 5); // Run early
+add_action('wp_head', 'configure_hubspot_forms', 5); // Run early
 ```
 
 ### Method 3: Theme Customizer Integration
 
-Add file upload settings to the WordPress Customizer:
+Add HubSpot form settings to the WordPress Customizer:
 
 ```php
 <?php
 /**
- * Add HubSpot file upload settings to theme customizer
+ * Add HubSpot form settings to theme customizer
  */
 function hubspot_customizer_settings($wp_customize) {
     // Add HubSpot section
     $wp_customize->add_section('hubspot_forms', [
         'title' => 'HubSpot Forms',
-        'description' => 'Configure file upload validation for HubSpot forms.',
+        'description' => 'Configure validation and error messages for HubSpot forms.',
         'priority' => 120,
     ]);
     

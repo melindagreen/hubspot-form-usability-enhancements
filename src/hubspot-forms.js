@@ -857,10 +857,21 @@ const ErrorMessageConfig = {
 
     // Default messages
     return {
-      required: "Please complete this required field.",
-      email: "must be formatted correctly",
-      pattern: "must be formatted correctly",
-      characterLimit: "Enter {limit} characters or fewer. You are {overBy} character{plural} over the limit.",
+      required: "⚠️ Please complete this required field.",
+      email: "📧 must be formatted correctly",
+      pattern: "📝 must be formatted correctly",
+      characterLimit: "📏 Enter {limit} characters or fewer. You are {overBy} character{plural} over the limit.",
+      date: "📅 Please enter a valid date.",
+      phone: "📞 Please enter a valid phone number.",
+      file: "📎 File type not allowed. Please select a different file.",
+      fileSize: "📁 File size exceeds {maxSize} limit",
+      fileType: "📄 File type not allowed. Allowed types: {allowedTypes}",
+      url: "🔗 Please enter a valid URL",
+      number: "🔢 Please enter a valid number",
+      confirmation: "🔄 Confirmation does not match",
+      captcha: "🤖 Please complete the verification",
+      submission: "⚠️ There was an error submitting the form. Please try again.",
+      network: "🌐 Connection error. Please check your internet connection.",
     };
   },
 
@@ -871,7 +882,13 @@ const ErrorMessageConfig = {
   // Get a specific message with optional interpolation
   getMessage(messageType, interpolations = {}) {
     const messages = this.messages;
-    let message = messages[messageType] || messages.required;
+    let message = messages[messageType];
+
+    // If no custom message is defined for this type, return null
+    // This allows the calling code to fall back to original text
+    if (!message) {
+      return null;
+    }
 
     // Handle interpolation for dynamic values
     Object.keys(interpolations).forEach((key) => {
@@ -1114,17 +1131,73 @@ const HubSpotFormValidator = {
             `Field "${field.name || field.id || "unknown"}"`;
           let errorText = errorEl.textContent.trim();
           
-          // Replace known HubSpot error messages with custom ones
+          // Replace known HubSpot error messages with custom ones (only if custom message exists)
           if (errorText.toLowerCase().includes("please complete this required field") || 
               errorText.toLowerCase().includes("this field is required") ||
               errorText === "Please complete this required field.") {
-            errorText = ErrorMessageConfig.getMessage('required');
+            const customMessage = ErrorMessageConfig.getMessage('required');
+            if (customMessage) errorText = customMessage;
           } else if (errorText.toLowerCase().includes("email") && 
                      (errorText.toLowerCase().includes("valid") || errorText.toLowerCase().includes("format"))) {
-            errorText = ErrorMessageConfig.getMessage('email');
+            const customMessage = ErrorMessageConfig.getMessage('email');
+            if (customMessage) errorText = customMessage;
           } else if (errorText.toLowerCase().includes("must be formatted correctly") ||
                      errorText.toLowerCase().includes("invalid format")) {
-            errorText = ErrorMessageConfig.getMessage('pattern');
+            const customMessage = ErrorMessageConfig.getMessage('pattern');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("please enter a valid date") ||
+                     errorText.toLowerCase().includes("invalid date")) {
+            const customMessage = ErrorMessageConfig.getMessage('date');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("phone number") && 
+                     (errorText.toLowerCase().includes("invalid") || errorText.toLowerCase().includes("wrong format"))) {
+            const customMessage = ErrorMessageConfig.getMessage('phone');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("file") && 
+                     errorText.toLowerCase().includes("size") && 
+                     errorText.toLowerCase().includes("exceeds")) {
+            // Extract file size info if possible for interpolation
+            const sizeMatch = errorText.match(/exceeds ([0-9.]+ [A-Z]+)/i);
+            const maxSize = sizeMatch ? sizeMatch[1] : "limit";
+            const customMessage = ErrorMessageConfig.getMessage('fileSize', { maxSize });
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("file") && 
+                     (errorText.toLowerCase().includes("not allowed") || errorText.toLowerCase().includes("type"))) {
+            // Check if it's about file types/extensions
+            if (errorText.toLowerCase().includes("allowed types")) {
+              // Extract allowed types if possible
+              const typesMatch = errorText.match(/allowed types: (.+)$/i);
+              const allowedTypes = typesMatch ? typesMatch[1] : "see form requirements";
+              const customMessage = ErrorMessageConfig.getMessage('fileType', { allowedTypes });
+              if (customMessage) errorText = customMessage;
+            } else {
+              const customMessage = ErrorMessageConfig.getMessage('file');
+              if (customMessage) errorText = customMessage;
+            }
+          } else if (errorText.toLowerCase().includes("url") || 
+                     errorText.toLowerCase().includes("website")) {
+            const customMessage = ErrorMessageConfig.getMessage('url');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("number") || 
+                     errorText.toLowerCase().includes("numeric")) {
+            const customMessage = ErrorMessageConfig.getMessage('number');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("confirmation") || 
+                     errorText.toLowerCase().includes("match")) {
+            const customMessage = ErrorMessageConfig.getMessage('confirmation');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("captcha") || 
+                     errorText.toLowerCase().includes("verification")) {
+            const customMessage = ErrorMessageConfig.getMessage('captcha');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("submit") || 
+                     errorText.toLowerCase().includes("error")) {
+            const customMessage = ErrorMessageConfig.getMessage('submission');
+            if (customMessage) errorText = customMessage;
+          } else if (errorText.toLowerCase().includes("connection") || 
+                     errorText.toLowerCase().includes("network")) {
+            const customMessage = ErrorMessageConfig.getMessage('network');
+            if (customMessage) errorText = customMessage;
           }
 
           fieldsWithErrors.push({
@@ -1183,7 +1256,8 @@ const HubSpotFormValidator = {
           this.getFieldLabel(field) ||
           `Field "${field.name || field.id || "unknown"}"`;
 
-        const errorMessage = ErrorMessageConfig.getMessage('required');
+        const customMessage = ErrorMessageConfig.getMessage('required');
+        const errorMessage = customMessage || "Please complete this required field.";
         const errorDescription = `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`;
 
         fieldsWithErrors.push({
@@ -1218,7 +1292,8 @@ const HubSpotFormValidator = {
         field.name?.toLowerCase().includes("email")
       ) {
         if (!this.isValidEmail(field.value)) {
-          const errorMessage = ErrorMessageConfig.getMessage('email');
+          const customMessage = ErrorMessageConfig.getMessage('email');
+          const errorMessage = customMessage || "must be formatted correctly";
           formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">${errorMessage}</span>`;
         }
       }
@@ -1226,7 +1301,8 @@ const HubSpotFormValidator = {
       else if (field.hasAttribute("pattern")) {
         try {
           if (!field.value.match(new RegExp(field.pattern))) {
-            const errorMessage = ErrorMessageConfig.getMessage('pattern');
+            const customMessage = ErrorMessageConfig.getMessage('pattern');
+            const errorMessage = customMessage || "must be formatted correctly";
             formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">${errorMessage}</span>`;
           }
         } catch (e) {
@@ -1264,7 +1340,8 @@ const HubSpotFormValidator = {
           this.getFieldLabel(field) ||
           `Field "${field.name || field.id || "unknown"}"`;
 
-        const errorMessage = ErrorMessageConfig.getMessage('required');
+        const customMessage = ErrorMessageConfig.getMessage('required');
+        const errorMessage = customMessage || "Please complete this required field.";
         fieldsWithErrors.push({
           field: field,
           description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`,
@@ -1662,25 +1739,76 @@ const HubSpotFormManager = {
         return;
       }
 
-      // Skip file validation errors - they have their own system
-      if (errorElement.classList.contains('hsfc-FileError')) {
-        return;
-      }
-
       const originalText = errorElement.textContent.trim();
       let newText = originalText;
 
-      // Replace known HubSpot error messages with custom ones
+      // Replace known HubSpot error messages with custom ones (only if custom message exists)
       if (originalText.toLowerCase().includes("please complete this required field") || 
           originalText.toLowerCase().includes("this field is required") ||
           originalText === "Please complete this required field.") {
-        newText = ErrorMessageConfig.getMessage('required');
+        const customMessage = ErrorMessageConfig.getMessage('required');
+        if (customMessage) newText = customMessage;
       } else if (originalText.toLowerCase().includes("email") && 
                  (originalText.toLowerCase().includes("valid") || originalText.toLowerCase().includes("format"))) {
-        newText = ErrorMessageConfig.getMessage('email');
+        const customMessage = ErrorMessageConfig.getMessage('email');
+        if (customMessage) newText = customMessage;
       } else if (originalText.toLowerCase().includes("must be formatted correctly") ||
                  originalText.toLowerCase().includes("invalid format")) {
-        newText = ErrorMessageConfig.getMessage('pattern');
+        const customMessage = ErrorMessageConfig.getMessage('pattern');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("please enter a valid date") ||
+                 originalText.toLowerCase().includes("invalid date")) {
+        const customMessage = ErrorMessageConfig.getMessage('date');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("phone number") && 
+                 (originalText.toLowerCase().includes("invalid") || originalText.toLowerCase().includes("wrong format"))) {
+        const customMessage = ErrorMessageConfig.getMessage('phone');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("file") && 
+                 originalText.toLowerCase().includes("size") && 
+                 originalText.toLowerCase().includes("exceeds")) {
+        // Extract file size info if possible for interpolation
+        const sizeMatch = originalText.match(/exceeds ([0-9.]+ [A-Z]+)/i);
+        const maxSize = sizeMatch ? sizeMatch[1] : "limit";
+        const customMessage = ErrorMessageConfig.getMessage('fileSize', { maxSize });
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("file") && 
+                 (originalText.toLowerCase().includes("not allowed") || originalText.toLowerCase().includes("type"))) {
+        // Check if it's about file types/extensions
+        if (originalText.toLowerCase().includes("allowed types")) {
+          // Extract allowed types if possible
+          const typesMatch = originalText.match(/allowed types: (.+)$/i);
+          const allowedTypes = typesMatch ? typesMatch[1] : "see form requirements";
+          const customMessage = ErrorMessageConfig.getMessage('fileType', { allowedTypes });
+          if (customMessage) newText = customMessage;
+        } else {
+          const customMessage = ErrorMessageConfig.getMessage('file');
+          if (customMessage) newText = customMessage;
+        }
+      } else if (originalText.toLowerCase().includes("url") || 
+                 originalText.toLowerCase().includes("website")) {
+        const customMessage = ErrorMessageConfig.getMessage('url');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("number") || 
+                 originalText.toLowerCase().includes("numeric")) {
+        const customMessage = ErrorMessageConfig.getMessage('number');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("confirmation") || 
+                 originalText.toLowerCase().includes("match")) {
+        const customMessage = ErrorMessageConfig.getMessage('confirmation');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("captcha") || 
+                 originalText.toLowerCase().includes("verification")) {
+        const customMessage = ErrorMessageConfig.getMessage('captcha');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("submit") || 
+                 originalText.toLowerCase().includes("error")) {
+        const customMessage = ErrorMessageConfig.getMessage('submission');
+        if (customMessage) newText = customMessage;
+      } else if (originalText.toLowerCase().includes("connection") || 
+                 originalText.toLowerCase().includes("network")) {
+        const customMessage = ErrorMessageConfig.getMessage('network');
+        if (customMessage) newText = customMessage;
       }
 
       // Only update if we have a replacement

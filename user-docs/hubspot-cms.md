@@ -64,6 +64,70 @@ Control which file types are allowed in form upload fields:
 <script src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/index.cdn.js"></script>
 ```
 
+### Customizing Error Messages
+
+Customize form validation error messages to match your brand voice or support multiple languages:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css"
+/>
+<script>
+  // Custom error messages
+  window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+    required: "This field is required for submission.",
+    email: "Please enter a valid email address.",
+    pattern: "Please check the format of this field.",
+    characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
+    date: "Please enter a valid date.",
+    phone: "Please enter a valid phone number.",
+    file: "This file type is not allowed.",
+    fileSize: "File size exceeds the {maxSize} limit.",
+    fileType: "Only these file types are allowed: {allowedTypes}",
+    url: "Please enter a valid web address.",
+    number: "Please enter a valid number.",
+    confirmation: "The confirmation does not match.",
+    captcha: "Please complete the verification.",
+    submission: "There was an error submitting the form. Please try again.",
+    network: "Connection error. Please check your internet connection."
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/index.cdn.js"></script>
+```
+
+#### Multi-language Error Messages
+
+```html
+<script>
+  // Detect page language and set appropriate messages
+  const pageLang = document.documentElement.lang || 'en';
+  
+  let errorMessages;
+  if (pageLang.startsWith('es')) {
+    errorMessages = {
+      required: "Este campo es obligatorio.",
+      email: "Por favor ingrese un email válido.",
+      pattern: "Por favor verifique el formato de este campo.",
+    };
+  } else if (pageLang.startsWith('fr')) {
+    errorMessages = {
+      required: "Ce champ est obligatoire.",
+      email: "Veuillez saisir une adresse email valide.",
+      pattern: "Veuillez vérifier le format de ce champ.",
+    };
+  } else {
+    errorMessages = {
+      required: "This field is required.",
+      email: "Please enter a valid email address.",
+      pattern: "Please check the format of this field.",
+    };
+  }
+  
+  window.HUBSPOT_FORMS_ERROR_MESSAGES = errorMessages;
+</script>
+```
+
 #### File Upload Configuration Options
 
 | Setting | Purpose | Format | Default |

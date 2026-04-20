@@ -13,6 +13,28 @@ export interface ErrorMessages {
   pattern?: string;
   /** Message for character limit validation with interpolation support */
   characterLimit?: string;
+  /** Message for date validation */
+  date?: string;
+  /** Message for phone number validation */
+  phone?: string;
+  /** Message for file type validation */
+  file?: string;
+  /** Message for file size validation with interpolation support */
+  fileSize?: string;
+  /** Message for specific file type validation with interpolation support */
+  fileType?: string;
+  /** Message for URL validation */
+  url?: string;
+  /** Message for number validation */
+  number?: string;
+  /** Message for confirmation field validation */
+  confirmation?: string;
+  /** Message for CAPTCHA validation */
+  captcha?: string;
+  /** Message for form submission errors */
+  submission?: string;
+  /** Message for network/connection errors */
+  network?: string;
 }
 
 // Configuration options for initialization

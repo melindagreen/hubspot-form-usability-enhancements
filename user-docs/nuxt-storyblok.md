@@ -120,12 +120,53 @@ const maxFileSize = computed(
   () => siteGlobals.data.value?.hubspot_max_file_size || '10MB',
 );
 
+// Error message configuration
+const errorMessages = computed(() => {
+  const locale = siteGlobals.data.value?.locale || 'en';
+  
+  // Support multi-language error messages from Storyblok
+  if (locale === 'es') {
+    return {
+      required: "Este campo es obligatorio.",
+      email: "Por favor ingrese un email válido.",
+      pattern: "Por favor verifique el formato.",
+      characterLimit: "Máximo {limit} caracteres. Tiene {overBy} caracter{plural} de más.",
+    };
+  } else if (locale === 'fr') {
+    return {
+      required: "Ce champ est obligatoire.",
+      email: "Veuillez saisir une adresse email valide.",
+      pattern: "Veuillez vérifier le format.",
+      characterLimit: "Maximum {limit} caractères. Vous avez {overBy} caractère{plural} en trop.",
+    };
+  } else {
+    return {
+      required: "This field is required for submission.",
+      email: "Please enter a valid email address.",
+      pattern: "Please check the format of this field.",
+      characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
+      date: "Please enter a valid date.",
+      phone: "Please enter a valid phone number.",
+      file: "This file type is not allowed.",
+      fileSize: "File size exceeds the {maxSize} limit.",
+      fileType: "Only these file types are allowed: {allowedTypes}",
+      url: "Please enter a valid web address.",
+      number: "Please enter a valid number.",
+      confirmation: "The confirmation does not match.",
+      captcha: "Please complete the verification.",
+      submission: "There was an error submitting the form. Please try again.",
+      network: "Connection error. Please check your internet connection."
+    };
+  }
+});
+
 // Configure before loading HubSpot script
-const configureFileValidation = () => {
+const configureFormEnhancements = () => {
   if (typeof window === 'undefined') return;
   
   window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = allowedFileTypes.value;
   window.HUBSPOT_FORMS_MAX_FILE_SIZE = maxFileSize.value;
+  window.HUBSPOT_FORMS_ERROR_MESSAGES = errorMessages.value;
 };
 
 const setupHubspotForms = async () => {
@@ -137,7 +178,7 @@ const setupHubspotForms = async () => {
   if (!container) return;
 
   // Configure file validation BEFORE loading script
-  configureFileValidation();
+  configureFormEnhancements();
 
   // ... rest of existing setup code ...
 };

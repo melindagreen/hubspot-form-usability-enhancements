@@ -132,6 +132,17 @@ hubspotForms({
     email: "Please enter a valid email address.",
     pattern: "The format is incorrect.",
     characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
+    date: "Please provide a valid date.",
+    phone: "Please enter a valid phone number.",
+    file: "File type not supported.",
+    fileSize: "File exceeds maximum size of {maxSize}.",
+    fileType: "Only these file types are allowed: {allowedTypes}",
+    url: "Please enter a valid web address.",
+    number: "Please enter a valid number.",
+    confirmation: "The confirmation does not match.",
+    captcha: "Please complete the security verification.",
+    submission: "Form submission failed. Please try again.",
+    network: "Network error. Please check your connection.",
   },
 });
 

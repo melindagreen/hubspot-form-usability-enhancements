@@ -427,6 +427,146 @@ esbuild.build({
 | `characterLimit`    | `number`   | `500`                                                        | Default character limit for textarea fields |
 | `allowedExtensions` | `string[]` | `['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'txt']` | Allowed file extensions for upload fields   |
 | `maxFileSize`       | `number`   | `10485760` (10MB)                                            | Maximum file size in bytes                  |
+| `errorMessages`     | `object`   | See below                                                    | Custom error messages for validation        |
+
+## Custom Error Messages
+
+You can customize all form validation error messages to match your brand voice, support multiple languages, or provide more helpful guidance to users.
+
+### Available Error Types
+
+All error message types that can be customized:
+
+| Error Type        | Description                    | Supports Interpolation |
+| ----------------- | ------------------------------ | ----------------------- |
+| `required`        | Required field validation      | No                     |
+| `email`           | Email format validation        | No                     |
+| `pattern`         | Pattern/format validation      | No                     |
+| `characterLimit`  | Character limit exceeded       | Yes (`{limit}`, `{overBy}`, `{plural}`) |
+| `date`            | Date format validation         | No                     |
+| `phone`           | Phone number validation        | No                     |
+| `file`            | File type not allowed          | No                     |
+| `fileSize`        | File size exceeded             | Yes (`{maxSize}`)      |
+| `fileType`        | Detailed file type error       | Yes (`{allowedTypes}`) |
+| `url`             | URL format validation          | No                     |
+| `number`          | Number format validation       | No                     |
+| `confirmation`    | Confirmation field mismatch    | No                     |
+| `captcha`         | CAPTCHA/verification required  | No                     |
+| `submission`      | Form submission errors         | No                     |
+| `network`         | Network/connection errors      | No                     |
+
+### Configuration Methods
+
+Choose the method that works best for your project:
+
+#### Method 1: Window Globals (Before Import)
+
+```javascript
+// Set before importing the module
+window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+  required: "This field is mandatory.",
+  email: "Please enter a valid email address.",
+  pattern: "The format is incorrect.",
+  characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
+  date: "Please provide a valid date.",
+  phone: "Please enter a valid phone number.",
+  file: "File type not supported.",
+  fileSize: "File exceeds maximum size of {maxSize}.",
+  fileType: "Only these file types are allowed: {allowedTypes}",
+  url: "Please enter a valid web address.",
+  number: "Please enter a valid number.",
+  confirmation: "The confirmation does not match.",
+  captcha: "Please complete the security verification.",
+  submission: "Form submission failed. Please try again.",
+  network: "Network error. Please check your connection.",
+};
+
+// Then import the module
+import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+```
+
+#### Method 2: Direct Property Assignment
+
+```javascript
+import { ErrorMessageConfig } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+
+// Override specific messages
+ErrorMessageConfig.messages = {
+  required: "Este campo es obligatorio.",
+  email: "debe tener el formato correcto",
+  pattern: "el formato es incorrecto",
+  // Only include the messages you want to customize
+};
+```
+
+#### Method 3: Initialization Options
+
+```javascript
+import { init } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+
+// Disable auto-init and configure manually
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+init({
+  characterLimit: 500,
+  errorMessages: {
+    required: "This field is mandatory.",
+    email: "Please enter a valid email address.",
+    characterLimit: "Maximum {limit} characters. You have {overBy} extra character{plural}.",
+  },
+});
+```
+
+### Multi-language Support
+
+```javascript
+// Detect user language and set appropriate messages
+const userLang = navigator.language || 'en-US';
+
+let errorMessages;
+if (userLang.startsWith('es')) {
+  errorMessages = {
+    required: "Este campo es obligatorio.",
+    email: "debe tener el formato correcto de email",
+    pattern: "el formato es incorrecto",
+  };
+} else if (userLang.startsWith('fr')) {
+  errorMessages = {
+    required: "Ce champ est obligatoire.",
+    email: "doit avoir le bon format d'email",
+    pattern: "le format est incorrect",
+  };
+} else {
+  errorMessages = {
+    required: "This field is required.",
+    email: "must be formatted correctly",
+    pattern: "format is incorrect",
+  };
+}
+
+window.HUBSPOT_FORMS_ERROR_MESSAGES = errorMessages;
+```
+
+### Interpolation Values
+
+Some error messages support dynamic values:
+
+- **`characterLimit`**: `{limit}`, `{overBy}`, `{plural}`
+- **`fileSize`**: `{maxSize}` (e.g., "10 MB")
+- **`fileType`**: `{allowedTypes}` (e.g., ".pdf, .doc, .jpg")
+
+```javascript
+// Example with interpolation
+window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+  characterLimit: "Please keep it under {limit} characters. You're {overBy} character{plural} over.",
+  fileSize: "Maximum file size is {maxSize}. Please choose a smaller file.",
+  fileType: "We accept these file types: {allowedTypes}",
+};
+```
+
+### Fallback Behavior
+
+If you don't define a custom message for a specific error type, the original HubSpot error message will be preserved. This allows you to customize only the messages you care about while keeping the defaults for everything else.
 
 ## Environment Variables
 

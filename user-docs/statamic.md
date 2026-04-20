@@ -110,6 +110,25 @@ window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 
 // Configure maximum file size
 window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB'; // Supports: KB, MB, GB
 
+// Customize error messages
+window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+  required: "This field is required for submission.",
+  email: "Please enter a valid email address.",
+  pattern: "Please check the format of this field.",
+  characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
+  date: "Please enter a valid date.",
+  phone: "Please enter a valid phone number.",
+  file: "This file type is not allowed.",
+  fileSize: "File size exceeds the {maxSize} limit.",
+  fileType: "Only these file types are allowed: {allowedTypes}",
+  url: "Please enter a valid web address.",
+  number: "Please enter a valid number.",
+  confirmation: "The confirmation does not match.",
+  captcha: "Please complete the verification.",
+  submission: "There was an error submitting the form. Please try again.",
+  network: "Connection error. Please check your internet connection."
+};
+
 // IMPORTANT: Prevent auto-initialization (required for SSR/React hydration safety)
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
@@ -134,14 +153,67 @@ setTimeout(async () => {
 }, 500);
 ```
 
-### File Upload Configuration Options
+### Configuration Options
 
 | Setting | Purpose | Format | Default |
 |---------|---------|--------|---------|
 | `HUBSPOT_FORMS_ALLOWED_EXTENSIONS` | File types to accept | String or Array | `'pdf,doc,docx,jpg,jpeg,png,gif,txt'` |
 | `HUBSPOT_FORMS_MAX_FILE_SIZE` | Maximum file size | Human readable (e.g., `'5MB'`, `'2GB'`) | `'10MB'` |
+| `HUBSPOT_FORMS_ERROR_MESSAGES` | Custom error messages | Object | See error types below |
+
+### Error Message Types
+
+You can customize any of these error message types:
+
+- `required` - Required field validation
+- `email` - Email format validation  
+- `pattern` - Pattern/format validation
+- `characterLimit` - Character limit exceeded (supports `{limit}`, `{overBy}`, `{plural}`)
+- `date` - Date format validation
+- `phone` - Phone number validation
+- `file` - File type not allowed
+- `fileSize` - File size exceeded (supports `{maxSize}`)
+- `fileType` - Detailed file type error (supports `{allowedTypes}`)
+- `url` - URL format validation
+- `number` - Number format validation
+- `confirmation` - Confirmation field mismatch
+- `captcha` - CAPTCHA/verification required
+- `submission` - Form submission errors
+- `network` - Network/connection errors
+
+### Multi-language Support
+
+```javascript
+// Detect language from Statamic locale or browser
+const locale = document.documentElement.lang || navigator.language || 'en';
+
+let errorMessages;
+if (locale.startsWith('es')) {
+  errorMessages = {
+    required: "Este campo es obligatorio.",
+    email: "Por favor ingrese un email válido.",
+    pattern: "Por favor verifique el formato.",
+  };
+} else if (locale.startsWith('fr')) {
+  errorMessages = {
+    required: "Ce champ est obligatoire.", 
+    email: "Veuillez saisir une adresse email valide.",
+    pattern: "Veuillez vérifier le format.",
+  };
+} else {
+  errorMessages = {
+    required: "This field is required.",
+    email: "Please enter a valid email address.",
+    pattern: "Please check the format.",
+  };
+}
+
+window.HUBSPOT_FORMS_ERROR_MESSAGES = errorMessages;
+```
 
 ### Alternative: Runtime Configuration
+
+You can also configure after the module loads:
 
 You can also configure after the module loads:
 
