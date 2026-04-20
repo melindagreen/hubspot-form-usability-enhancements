@@ -834,6 +834,55 @@ const FileUploadValidator = {
   },
 };
 
+// Error message configuration system
+const ErrorMessageConfig = {
+  // Configuration storage
+  _config: {
+    messages: null,
+  },
+
+  // Get configuration from runtime config, window globals, or use defaults
+  get messages() {
+    if (this._config.messages) {
+      return this._config.messages;
+    }
+
+    // Check for runtime configuration via window global
+    if (
+      typeof window !== "undefined" &&
+      window.HUBSPOT_FORMS_ERROR_MESSAGES
+    ) {
+      return window.HUBSPOT_FORMS_ERROR_MESSAGES;
+    }
+
+    // Default messages
+    return {
+      required: "Please complete this required field.",
+      email: "must be formatted correctly",
+      pattern: "must be formatted correctly",
+      characterLimit: "Enter {limit} characters or fewer. You are {overBy} character{plural} over the limit.",
+    };
+  },
+
+  set messages(value) {
+    this._config.messages = value;
+  },
+
+  // Get a specific message with optional interpolation
+  getMessage(messageType, interpolations = {}) {
+    const messages = this.messages;
+    let message = messages[messageType] || messages.required;
+
+    // Handle interpolation for dynamic values
+    Object.keys(interpolations).forEach((key) => {
+      const value = interpolations[key];
+      message = message.replace(new RegExp(`\\{${key}\\}`, "g"), value);
+    });
+
+    return message;
+  },
+};
+
 // HubSpot form validation system - optimized for multiple forms
 const HubSpotFormValidator = {
   // HubSpot uses both 'required' and 'aria-required="true"' attributes
@@ -1121,7 +1170,8 @@ const HubSpotFormValidator = {
           this.getFieldLabel(field) ||
           `Field "${field.name || field.id || "unknown"}"`;
 
-        const errorDescription = `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">Please complete this required field.</span>`;
+        const errorMessage = ErrorMessageConfig.getMessage('required');
+        const errorDescription = `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`;
 
         fieldsWithErrors.push({
           field: field,
@@ -1155,14 +1205,16 @@ const HubSpotFormValidator = {
         field.name?.toLowerCase().includes("email")
       ) {
         if (!this.isValidEmail(field.value)) {
-          formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">must be formatted correctly</span>`;
+          const errorMessage = ErrorMessageConfig.getMessage('email');
+          formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">${errorMessage}</span>`;
         }
       }
       // Check fields with pattern attribute
       else if (field.hasAttribute("pattern")) {
         try {
           if (!field.value.match(new RegExp(field.pattern))) {
-            formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">must be formatted correctly</span>`;
+            const errorMessage = ErrorMessageConfig.getMessage('pattern');
+            formatError = `<span class="customValidationErrorLabel">${fieldLabel}</span> <span class="customValidationErrorText">${errorMessage}</span>`;
           }
         } catch (e) {
           // Pattern validation error - skip this field
@@ -1199,9 +1251,10 @@ const HubSpotFormValidator = {
           this.getFieldLabel(field) ||
           `Field "${field.name || field.id || "unknown"}"`;
 
+        const errorMessage = ErrorMessageConfig.getMessage('required');
         fieldsWithErrors.push({
           field: field,
-          description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">Please complete this required field.</span>`,
+          description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`,
           errorElement: null,
         });
       }
@@ -3079,7 +3132,7 @@ const setupFieldValidation = setupAllFormsValidation;
 // Users who import hubspot-forms.js directly should call HubSpotFormManager.setupAllForms()
 
 // Export main API functions
-export { HubSpotFormManager, HubSpotFormValidator, CharacterLimitValidator };
+export { HubSpotFormManager, HubSpotFormValidator, CharacterLimitValidator, ErrorMessageConfig };
 
 // Export legacy compatibility functions
 export {

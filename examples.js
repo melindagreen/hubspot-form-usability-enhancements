@@ -28,6 +28,11 @@ function HubSpotFormComponent() {
       characterLimit: 1000,
       allowedExtensions: ["pdf", "docx", "jpg", "png"],
       maxFileSize: 5 * 1024 * 1024, // 5MB
+      errorMessages: {
+        required: "This field is required.",
+        email: "Please enter a valid email address.",
+        pattern: "Please enter a valid format.",
+      },
     });
 
     // Set up listener for when HubSpot form loads
@@ -111,7 +116,74 @@ const initializeSpecificForm = (formSelector) => {
 };
 
 // ========================================
-// 5. PREVENTING AUTO-INITIALIZATION
+// 5. CUSTOM ERROR MESSAGES
+// ========================================
+
+import hubspotForms, {
+  ErrorMessageConfig,
+} from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+
+// Method 1: Configuration via init options
+hubspotForms({
+  characterLimit: 500,
+  errorMessages: {
+    required: "This field is mandatory.",
+    email: "Please enter a valid email address.",
+    pattern: "The format is incorrect.",
+    characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
+  },
+});
+
+// Method 2: Direct property assignment
+ErrorMessageConfig.messages = {
+  required: "Este campo es obligatorio.",
+  email: "debe tener el formato correcto",
+  pattern: "el formato es incorrecto",
+};
+
+// Method 3: Window globals (set before importing)
+window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+  required: "このフィールドは必須です。",
+  email: "正しい形式で入力してください",
+  pattern: "形式が正しくありません",
+};
+
+// Method 4: Partial customization (other messages use defaults)
+hubspotForms({
+  errorMessages: {
+    required: "Required field missing!", // Custom
+    // email and pattern will use built-in defaults
+  },
+});
+
+// Method 5: Dynamic message updates
+const updateMessagesForLocale = (locale) => {
+  const messages = {
+    en: {
+      required: "Please complete this required field.",
+      email: "must be formatted correctly",
+      pattern: "must be formatted correctly",
+    },
+    es: {
+      required: "Por favor complete este campo obligatorio.",
+      email: "debe tener el formato correcto",
+      pattern: "debe tener el formato correcto", 
+    },
+    fr: {
+      required: "Veuillez remplir ce champ obligatoire.",
+      email: "doit être formaté correctement",
+      pattern: "doit être formaté correctement",
+    },
+  };
+  
+  ErrorMessageConfig.messages = messages[locale] || messages.en;
+};
+
+// Usage: updateMessagesForLocale('es');
+
+// ========================================
+// 6. PREVENTING AUTO-INITIALIZATION
 // ========================================
 
 // Set flag before importing
@@ -137,7 +209,7 @@ const initializeWhenReady = () => {
 initializeWhenReady();
 
 // ========================================
-// 6. TYPESCRIPT USAGE
+// 7. TYPESCRIPT USAGE
 // ========================================
 
 import hubspotForms, {
@@ -160,7 +232,7 @@ const setupFormWithTypes = (formContainer) => {
 };
 
 // ========================================
-// 7. CONFIGURATION VIA ENVIRONMENT VARIABLES
+// 8. CONFIGURATION VIA ENVIRONMENT VARIABLES
 // ========================================
 
 // You can read environment variables in your app and pass them to the config.
@@ -182,7 +254,7 @@ hubspotForms({
 });
 
 // ========================================
-// 8. DYNAMIC FORM LOADING
+// 9. DYNAMIC FORM LOADING
 // ========================================
 
 import { HubSpotFormManager } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
@@ -211,7 +283,7 @@ const loadHubSpotForm = async (portalId, formId, targetSelector) => {
 loadHubSpotForm("YOUR_PORTAL_ID", "YOUR_FORM_ID", "#hubspot-form-1");
 
 // ========================================
-// 9. CUSTOM STYLING INTEGRATION
+// 10. CUSTOM STYLING INTEGRATION
 // ========================================
 
 // Option A: Use default styles and override CSS variables

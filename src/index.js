@@ -11,6 +11,7 @@ import {
   CharacterLimitValidator,
   FieldValidator,
   FileUploadValidator,
+  ErrorMessageConfig,
   removeHubSpotFormStyles,
   setupAllFormsValidation,
   setupSingleFormValidation,
@@ -117,6 +118,10 @@ const init = (options = {}) => {
   
   if (options.maxFileSize) {
     FileUploadValidator.maxFileSize = options.maxFileSize;
+  }
+  
+  if (options.errorMessages) {
+    ErrorMessageConfig.messages = options.errorMessages;
   }
 
   // Position elements immediately to prevent layout shifts
@@ -271,6 +276,7 @@ const init = (options = {}) => {
     HubSpotFormValidator,
     CharacterLimitValidator,
     FileUploadValidator,
+    ErrorMessageConfig,
     FieldValidator,
     removeHubSpotFormStyles
   };
@@ -361,6 +367,7 @@ export {
   CharacterLimitValidator,
   FieldValidator,
   FileUploadValidator,
+  ErrorMessageConfig,
   
   // Utility functions
   removeHubSpotFormStyles,

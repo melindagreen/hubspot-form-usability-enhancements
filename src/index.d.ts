@@ -3,6 +3,18 @@
  * Enhanced HubSpot form usability, validation and styling with React hydration support
  */
 
+// Error message configuration interface
+export interface ErrorMessages {
+  /** Message for required field validation */
+  required?: string;
+  /** Message for email format validation */
+  email?: string;
+  /** Message for pattern validation */
+  pattern?: string;
+  /** Message for character limit validation with interpolation support */
+  characterLimit?: string;
+}
+
 // Configuration options for initialization
 export interface HubSpotFormsConfig {
   /** Default character limit for textarea fields (default: 500) */
@@ -11,6 +23,8 @@ export interface HubSpotFormsConfig {
   allowedExtensions?: string[];
   /** Maximum file size in bytes for upload fields */
   maxFileSize?: number;
+  /** Custom error messages for validation */
+  errorMessages?: ErrorMessages;
 }
 
 // Validation result interface
@@ -124,6 +138,20 @@ export interface FileUploadValidator {
   setup(formContainer: HTMLElement): void;
 }
 
+// Error message configuration interface
+export interface ErrorMessageConfig {
+  /** Error message configuration object */
+  messages: ErrorMessages;
+  
+  /**
+   * Get a specific error message with optional interpolation
+   * @param messageType The type of message to retrieve
+   * @param interpolations Optional values for message interpolation
+   * @returns The formatted error message
+   */
+  getMessage(messageType: string, interpolations?: Record<string, any>): string;
+}
+
 // Form validator interface
 export interface FormValidator {
   /**
@@ -220,6 +248,7 @@ export interface HubSpotFormsInstance {
   HubSpotFormValidator: HubSpotFormValidator | null;
   CharacterLimitValidator: CharacterLimitValidator | null;
   FileUploadValidator?: FileUploadValidator | null;
+  ErrorMessageConfig?: ErrorMessageConfig | null;
   FieldValidator?: FieldValidator | null;
   removeHubSpotFormStyles?: () => void;
 }
@@ -242,6 +271,7 @@ export declare const HubSpotFormManager: HubSpotFormManager;
 export declare const HubSpotFormValidator: HubSpotFormValidator;
 export declare const CharacterLimitValidator: CharacterLimitValidator;
 export declare const FileUploadValidator: FileUploadValidator;
+export declare const ErrorMessageConfig: ErrorMessageConfig;
 export declare const FieldValidator: FieldValidator;
 
 /**
