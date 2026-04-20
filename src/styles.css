@@ -27,7 +27,19 @@
  */
 :root {
   --font-hs-form-base: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-hs-form-labels: var(--font-hs-form-base);
+  --font-hs-form-label: var(--font-hs-form-base);
+  --font-hs-form-size: 1rem;
+  --font-hs-form-label-size: 0.875rem;
+  --font-hs-form-description-size: 0.75rem;
+  --font-hs-form-fileinput-size: 0.875rem;
+  --font-hs-form-error-size: 0.875rem;
+  --font-hs-form-button-size: 1rem;
+  --font-hs-form-label-weight:700;
+  --font-hs-form-button-weight:700;
+  --font-hs-form-button-case: uppercase;
+
+  --radius-hs-form-field: .25rem;
+  --radius-hs-form-button: .25rem;
   
   --color-hs-form-primary:oklch(0.5835 0.1505 250.88);
   --color-hs-form-primary-lt:oklch(0.9200 0.0800 250.88);
@@ -40,7 +52,6 @@
   --color-hs-form-neutral-lt:oklch(0.7000 0.0040 250.00);
   --color-hs-form-neutral-dk:oklch(0.2500 0.0070 250.00);
   --color-hs-form-attention:oklch(0.6463 0.2409 29.23);
-  --color-hs-form-attention-2:oklch(0.968 0.211 109.77);
   --color-hs-form-error:oklch(0.6463 0.2409 29.23);
   --color-hs-form-error-lt:oklch(0.9700 0.0200 29.23);
   --color-hs-form-error-dk:oklch(0.4500 0.2200 29.23);
@@ -50,6 +61,8 @@
   --color-hs-form-success:oklch(0.6500 0.1700 145.00);
   --color-hs-form-success-lt:oklch(0.9700 0.0225 145.00);
   --color-hs-form-success-dk:oklch(0.4500 0.1900 145.00);
+  --color-hs-form-reverse-attention:oklch(0.968 0.211 109.77);
+  --color-hs-form-reverse-error:oklch(0.968 0.211 109.77);
   --color-hs-form-white:oklch(1 0 0);
   --color-hs-form-black:oklch(0 0 0);
 
@@ -86,7 +99,7 @@
   --color-hs-form-btn-disabled-border:var(--color-hs-form-neutral);
   --color-hs-form-btn-disabled-text:var(--color-hs-form-neutral-lt);
 
-  --color-hs-form-field-bg:var(--color-hs-form-black);
+  --color-hs-form-field-bg:var(--color-hs-form-white);
   --color-hs-form-field-border:var(--color-hs-form-neutral-lt);
   --color-hs-form-field-hover-border:var(--color-hs-form-neutral-lt);
   --color-hs-form-field-text:var(--color-hs-form-neutral);
@@ -171,16 +184,12 @@
   --color-hs-form-reverse-text:var(--color-hs-form-white);
   --color-hs-form-reverse-link:var(--color-hs-form-white);
   --color-hs-form-reverse-field-bg:var(--color-hs-form-white);
-  --color-hs-form-reverse-field-checked-bg:var(--color-hs-form-neutral);
+  --color-hs-form-reverse-field-checked-bg:var(--color-hs-form-neutral-hlt);
   --color-hs-form-reverse-field-focus-outline:var(--color-hs-form-focus-outline);
   --color-hs-form-reverse-progress-bar-bg:var(--color-hs-form-white);
   --color-hs-form-reverse-progress-bar-border:var(--color-hs-form-neutral-lt);
   --color-hs-form-reverse-progress-bar-fill:var(--color-hs-form-neutral-lt);
 
-  --color-hs-form-reverse-attention:oklch(1 0 0);
-  --color-hs-form-reverse-error:oklch(0.968 0.211 109.77);
-
-  --color-hs-form-reverse-attention:var(--color-hs-form-reverse-attention);
   --color-hs-form-reverse-error-message:var(--color-hs-form-reverse-error);
   --color-hs-form-reverse-error-box-bg:var(--color-hs-form-error-lt);
   --color-hs-form-reverse-error-box-text:var(--color-hs-form-error-dk);
@@ -214,7 +223,7 @@ div[data-hsfc-id=Renderer] {
           display:flex; flex-direction:column;
         }
       }
-      & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-error-message); line-height:1.375; font-size:0.875rem; color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-box-border); }
+      & .hsfc-ErrorAlert.hsfc-SimpleNotification { margin-bottom:1.25rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-error-message); line-height:1.375; font-size:var(--font-hs-form-error-size); color:var(--color-hs-form-error-message); border:1px solid var(--color-hs-form-error-box-border); }
       & .hsfc-Step__Banner { display:none; }
     }
     & .hsfc-Row {
@@ -231,7 +240,7 @@ div[data-hsfc-id=Renderer] {
         order:0; /* Ensure headings appear first */
       }
       & .hsfc-RichText {
-        margin-bottom:1.5rem; font-size:0.875rem;
+        margin-bottom:1.5rem; font-size:var(--font-hs-form-size);
         order:0; /* Ensure rich text content appears first */
         & p {
           &:last-child {
@@ -264,19 +273,18 @@ div[data-hsfc-id=Renderer] {
 
       /* Form Labels and Descriptions */
       & .hsfc-FieldLabel {
-        display:inline-block; max-width:100%; font-size:0.875rem; color:var(--color-hs-form-label-text); font-weight:bold;
+        display:inline-block; max-width:100%; font-size:var(--font-hs-form-label-size); color:var(--color-hs-form-label-text); font-weight:var(--font-hs-form-label-weight); font-family:var(--font-hs-form-label);
         &+ .hsfc-FieldDescription {
-          width:auto !important; font-size:0.75rem; color:var(--color-hs-form-label-description-text); font-weight:normal;
+          width:auto !important; font-size:var(--font-hs-form-description-size); color:var(--color-hs-form-label-description-text); font-weight:normal;
           @media screen and (min-width:768px) {
             display:inline-block; margin-left:.5rem;
           }
         }
-        &.hsfc-label-without-required > span::after,
         &:not(:has(.hsfc-FieldLabel__RequiredIndicator)) {
           & > span::after {
-            content:'Optional'; 
+            content:'(Optional)'; 
             margin-left:0.5rem; 
-            font-size:0.75rem; 
+            font-size:var(--font-hs-form-description-size); 
             text-transform:none; 
             color:var(--color-hs-form-label-description-text); 
             font-weight:normal;
@@ -289,12 +297,49 @@ div[data-hsfc-id=Renderer] {
 
       /* Basic Input Elements */
       & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
-        display:block; text-align:left; border:1px solid var(--color-hs-form-field-border); font-size:1rem; color:var(--color-hs-form-field-text); padding:0.5rem 1rem;
+        display:block; text-align:left; padding:0.5rem 1rem; border:1px solid var(--color-hs-form-field-border); font-size:var(--font-hs-form-size); color:var(--color-hs-form-field-text); border-radius:var(--radius-hs-form-field, 0.25rem); background-color:var(--color-hs-form-field-bg); transition-property:border-color,background-color,color; transition-duration:200ms;
         &::placeholder { color:var(--color-hs-form-placeholder-text); }
+      }
+      & input[type=checkbox], & input[type=radio] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 1.125rem;
+        height: 1.125rem;
+        border: 2px solid var(--color-hs-form-field-border);
+        border-radius: var(--radius-hs-form-field, 0.25rem);
+        background: var(--color-hs-form-white);
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+      }
+      & input[type=radio] {
+        border-radius: 50%;
       }
       & input[type=checkbox]:checked, & input[type=radio]:checked {
         background-color:var(--color-hs-form-field-checked-bg);
-        accent-color:var(--color-hs-form-field-checked-bg);
+        border-color:var(--color-hs-form-field-checked-bg);
+      }
+      & input[type=checkbox]:checked::after {
+        content: '';
+        position: absolute;
+        left: 0.25rem;
+        top: 0.0625rem;
+        width: 0.375rem;
+        height: 0.625rem;
+        border: solid var(--color-hs-form-white);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      & input[type=radio]:checked::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--color-hs-form-white);
       }
       & .hsfc-DropdownInput {
         position:relative;
@@ -355,15 +400,17 @@ div[data-hsfc-id=Renderer] {
           background:none;
         }
       }
-      & .hsfc-CheckboxField label, & .hsfc-CheckboxFieldGroup .hsfc-CheckboxFieldGroup__Options label {
+      & .hsfc-CheckboxField label, & .hsfc-CheckboxFieldGroup .hsfc-CheckboxFieldGroup__Options label, & .hsfc-RadioFieldGroup__Options label {
+        display:flex;
+        align-items:center;
         font-weight:normal;
       }
 
       /* Specialized Field Components */
       & .hsfc-DataPrivacyField {
-        font-size:0.75rem;
+        font-size:var(--font-hs-form-description-size);
         & .hsfc-RichText {
-          margin-bottom:0.25rem; font-size:0.75rem;
+          margin-bottom:0.25rem; font-size:var(--font-hs-form-description-size);
           & span, & span a {
             color:inherit !important; font-size:inherit !important;
           }
@@ -375,9 +422,9 @@ div[data-hsfc-id=Renderer] {
           flex:0 0 auto; padding-left:0.5rem; padding-right:0.5rem;
         }
         & .hsfc-DropdownOptions__List {
-          flex:1 1 0%; padding-top:0.5rem; padding-bottom:0.5rem; margin:0; overflow-y:auto;
+          flex:1 1 0%; list-style:none; margin:0; padding-block:0.5rem; padding-inline:0; overflow-y:auto;
           & .hsfc-DropdownOptions__List__ListItem {
-            padding:0.5rem; cursor:pointer; background-color:var(--color-hs-form-selectlist-item-bg); color:var(--color-hs-form-selectlist-item-text); filter:none;
+            padding:0.5rem 1rem; cursor:pointer; background-color:var(--color-hs-form-selectlist-item-bg); color:var(--color-hs-form-selectlist-item-text); font-size:var(--font-hs-form-size); filter:none;
             &:hover {
               background-color:var(--color-hs-form-selectlist-item-hover-bg); color:var(--color-hs-form-selectlist-item-hover-text);
             }
@@ -391,9 +438,9 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-FileInput {
-        display:flex; flex-direction:column; font-size:0.875rem;
+        display:flex; flex-direction:column; font-size:var(--font-hs-form-fileinput-size);
         &::file-selector-button {
-          margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background-color:var(--color-hs-form-btn-ancillary-bg); color:var(--color-hs-form-btn-ancillary-text); border:1px solid var(--color-hs-form-btn-ancillary-border); font-size:0.875rem; font-weight:bold; transition-property:color,background-color,border-color,text-decoration-color,fill,stroke; transition-duration:300ms;
+          margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background-color:var(--color-hs-form-btn-ancillary-bg); color:var(--color-hs-form-btn-ancillary-text); border:1px solid var(--color-hs-form-btn-ancillary-border); font-size:var(--font-hs-form-fileinput-size); font-weight:var(--font-hs-form-button-weight); transition-property:color,background-color,border-color,text-decoration-color,fill,stroke; transition-duration:300ms;
           &:hover:not(:disabled) {
             background-color:var(--color-hs-form-btn-ancillary-hover-bg); border-color:var(--color-hs-form-btn-ancillary-hover-border); color:var(--color-hs-form-btn-ancillary-hover-text);
           }
@@ -424,7 +471,7 @@ div[data-hsfc-id=Renderer] {
 
       /* Alert Messages */
       & .hsfc-CharacterCounter {
-        float:right; font-size:0.75rem; color:var(--color-hs-form-label-description-text);
+        float:right; font-size:var(--font-hs-form-description-size); color:var(--color-hs-form-label-description-text);   
         &.hsfc-CharacterCounter--default {
           color:var(--color-hs-form-label-description-text); font-weight:normal;
         }
@@ -444,7 +491,7 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-ErrorAlert {
-        display:flex; flex-direction:row; align-items:center; margin-top:0.25rem; margin-bottom:0.25rem; line-height:1.25; font-size:0.875rem; color:var(--color-hs-form-error-message); font-weight:bold;
+        display:flex; flex-direction:row; align-items:center; margin-top:0.25rem; margin-bottom:0.25rem; line-height:1.25; font-size:var(--font-hs-form-error-size); color:var(--color-hs-form-error-message); font-weight:bold;
         &::before {
           content:'';
           flex-shrink:0; width:1.5rem; height:1.5rem; display:inline-block; margin-right:0.25rem; background:var(--color-hs-form-error-message) no-repeat center/contain;
@@ -455,10 +502,10 @@ div[data-hsfc-id=Renderer] {
         
         /* Hide HubSpot's native character limit error messages immediately - now handled by JS */
       & .hsfc-InfoAlert {
-        font-size:0.875rem; color:var(--color-hs-form-label-description-text); font-weight:bold;
+        font-size:var(--font-hs-form-description-size); color:var(--color-hs-form-label-description-text); font-weight:bold;
       }
       & .hsfc-AcceptedFiles {
-        margin-top:0.5rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-success-box-bg); font-size:0.875rem; color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border); 
+        margin-top:0.5rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-success-box-bg); font-size:var(--font-hs-form-fileinput-size); color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border); 
       }
     }
     
@@ -467,7 +514,7 @@ div[data-hsfc-id=Renderer] {
       order:4; /* Ensure navigation appears after all form content */
       
       & button {
-        background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); color:var(--color-hs-form-btn-primary-text); font-size:1rem; font-weight:bold; padding:0.25rem 1.5rem; transition-property:color, background-color, border-color, text-decoration-color, fill, stroke; transition-duration:300ms;
+        padding:0.25rem 1.5rem; background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); border-radius:var(--radius-hs-form-button, 0.25rem); color:var(--color-hs-form-btn-primary-text); font-size:var(--font-hs-form-button-size); font-weight:var(--font-hs-form-button-weight); text-transform:var(--font-hs-form-button-case); transition-property:color, background-color, border-color, text-decoration-color, fill, stroke; transition-duration:300ms;
         &[type="submit"], &[type="button"] {
           background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); color:var(--color-hs-form-btn-primary-text);
         }
@@ -489,7 +536,7 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-ErrorAlert {
-        font-size:1rem; color:var(--color-hs-form-error-message); font-weight:bold; margin-bottom:1rem;
+        font-size:var(--font-hs-form-error-size); color:var(--color-hs-form-error-message); font-weight:bold; margin-bottom:1rem;
       }
     }
     & .hsfc-Row, & .hsfc-NavigationRow {
@@ -506,7 +553,7 @@ div[data-hsfc-id=Renderer] {
     & .hsfc-ProgressBar {
       display:block; width:100%;
       & .hsfc-ProgressBar__Text {
-        font-size:1rem; color:var(--color-hs-form-label-text);
+        font-size:var(--font-hs-form-size); color:var(--color-hs-form-label-text);
         &:before {
           content:'Form Progress:';
         }
@@ -525,7 +572,7 @@ div[data-hsfc-id=Renderer] {
       }
     }
     & .hsfc-CustomValidationError {
-      display:block; margin-top:1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background-color:var(--color-hs-form-error-box-bg); border:1px solid var(--color-hs-form-error-box-border); font-size:0.875rem; line-height:1.375; color:var(--color-hs-form-error-box-text); 
+      display:block; margin-top:1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background-color:var(--color-hs-form-error-box-bg); border:1px solid var(--color-hs-form-error-box-border); font-size:var(--font-hs-form-error-size); line-height:1.375; color:var(--color-hs-form-error-box-text); 
       order:1; /* Ensure validation error appears before progress bar (order:2) but after intro content (order:0) */
       & > div {
         display:flex; flex-direction:row; align-items:center; font-weight:bold; margin-bottom:0.5rem;
@@ -537,11 +584,11 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & ul  {
-        list-style-type:disc; padding-left:1.25rem;
+        list-style-type:disc; padding-left:1.25rem; margin-bottom:0;
         & li {
           margin-bottom:0.25rem; color:var(--color-hs-form-error-box-text);
           & a {
-            color:var(--color-hs-form-error-box-text); font-size:0.875rem; text-decoration:none; cursor:pointer;
+            color:var(--color-hs-form-error-box-text); font-size:var(--font-hs-form-error-size); text-decoration:none; cursor:pointer;
             & span.customValidationErrorLabel {
               font-weight:bold;
             }
@@ -561,6 +608,9 @@ div[data-hsfc-id=Renderer] {
       & + .hsfc-FormField, & + .hsfc-Row { margin-top:0; }
     }
   }
+
+
+  
   /* Reverse theme styles (for dark backgrounds) */
   .hs-form-reverse & {
     & form {
@@ -568,15 +618,25 @@ div[data-hsfc-id=Renderer] {
         & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
           background-color:var(--color-hs-form-reverse-field-bg);
         }
+        & input[type=checkbox], & input[type=radio] {
+          background: var(--color-hs-form-reverse-field-bg);
+          border-color: var(--color-hs-form-reverse-field-checked-bg);
+        }
         & input[type=checkbox]:checked, & input[type=radio]:checked {
-          background-color:var(--color-hs-form-reverse-field-checked-bg);
-          accent-color:var(--color-hs-form-reverse-field-checked-bg);
+          background:var(--color-hs-form-reverse-field-checked-bg);
+          border-color:var(--color-hs-form-reverse-field-checked-bg);
+        }
+        & input[type=checkbox]:checked::after {
+          border-color: var(--color-hs-form-neutral-dk);
+        }
+        & input[type=radio]:checked::after {
+          background: var(--color-hs-form-neutral-dk);
         }
         & .hsfc-FieldLabel, & .hsfc-ErrorAlert, & .hsfc-InfoAlert, & .hsfc-FieldDescription, .hsfc-FieldDescription span, & .hsfc-FileInput, & .hsfc-RichText, & .hsfc-FieldLabel:not(:has(.hsfc-FieldLabel__RequiredIndicator)) > span::after, & .hsfc-ProgressBar .hsfc-ProgressBar__Text, & h1, & h2, & h3, & p, & a {
           color:var(--color-hs-form-reverse-text);
         }
         & .hsfc-FieldLabel__RequiredIndicator {
-          color:var(--color-hs-form-attention-2);
+          color:var(--color-hs-form-reverse-attention);
         }
         & .hsfc-RichText a {
           color:var(--color-hs-form-reverse-link);
@@ -594,7 +654,7 @@ div[data-hsfc-id=Renderer] {
           }
         }
         & .hsfc-FileInput {
-          display:flex; flex-direction:column; font-size:0.875rem;
+          display:flex; flex-direction:column; font-size:var(--font-hs-form-fileinput-size);
           &::file-selector-button {
             margin-right:0.5rem; padding-top:0.25rem; padding-bottom:0.25rem; padding-left:1rem; padding-right:1rem; background-color:var(--color-hs-form-reverse-btn-ancillary-bg); color:var(--color-hs-form-reverse-btn-ancillary-text); /* hover/focus handled below */
           }
@@ -603,12 +663,19 @@ div[data-hsfc-id=Renderer] {
           color:var(--color-hs-form-reverse-text) !important;
         }
         & .hsfc-ErrorAlert {
-          color:var(--color-hs-form-attention-2);
+          color:var(--color-hs-form-reverse-error);
           &::before {
             content:'';
-            background-color:var(--color-hs-form-attention-2);
+            background-color:var(--color-hs-form-reverse-error);
             mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
             -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M11.001 10h2v5h-2zm0 7h2v2h-2z'/%3E%3Cpath fill='white' d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3C/svg%3E");
+          }
+        }
+        & .hsfc-TextField, & .hsfc-EmailField, & .hsfc-PhoneField, & .hsfc-DropdownField, & .hsfc-CheckboxField, & .hsfc-TextareaField {
+          &:has(.hsfc-ErrorAlert) {
+            & .hsfc-TextInput, & .hsfc-EmailInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-CheckboxInput, & .hsfc-TextareaInput {
+              border-color: var(--color-hs-form-reverse-error);
+            }
           }
         }
       }
