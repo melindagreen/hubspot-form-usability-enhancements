@@ -1112,7 +1112,20 @@ const HubSpotFormValidator = {
           const fieldLabel =
             this.getFieldLabel(field) ||
             `Field "${field.name || field.id || "unknown"}"`;
-          const errorText = errorEl.textContent.trim();
+          let errorText = errorEl.textContent.trim();
+          
+          // Replace known HubSpot error messages with custom ones
+          if (errorText.toLowerCase().includes("please complete this required field") || 
+              errorText.toLowerCase().includes("this field is required") ||
+              errorText === "Please complete this required field.") {
+            errorText = ErrorMessageConfig.getMessage('required');
+          } else if (errorText.toLowerCase().includes("email") && 
+                     (errorText.toLowerCase().includes("valid") || errorText.toLowerCase().includes("format"))) {
+            errorText = ErrorMessageConfig.getMessage('email');
+          } else if (errorText.toLowerCase().includes("must be formatted correctly") ||
+                     errorText.toLowerCase().includes("invalid format")) {
+            errorText = ErrorMessageConfig.getMessage('pattern');
+          }
 
           fieldsWithErrors.push({
             field: field,
