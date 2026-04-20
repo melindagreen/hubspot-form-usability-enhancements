@@ -1648,6 +1648,87 @@ const HubSpotFormManager = {
 
     // Setup file upload validation
     FileUploadValidator.setup(formContainer);
+
+    // Setup native error message replacement
+    this.setupNativeErrorMessageReplacement(formContainer, cleanup);
+  },
+
+  // Setup replacement of native HubSpot field error messages
+  setupNativeErrorMessageReplacement(formContainer, cleanup) {
+    // Function to replace error text in native HubSpot error elements
+    const replaceNativeErrorText = (errorElement) => {
+      // Skip our custom validation error box - don't touch it!
+      if (errorElement.classList.contains('hsfc-CustomValidationError')) {
+        return;
+      }
+
+      // Skip file validation errors - they have their own system
+      if (errorElement.classList.contains('hsfc-FileError')) {
+        return;
+      }
+
+      const originalText = errorElement.textContent.trim();
+      let newText = originalText;
+
+      // Replace known HubSpot error messages with custom ones
+      if (originalText.toLowerCase().includes("please complete this required field") || 
+          originalText.toLowerCase().includes("this field is required") ||
+          originalText === "Please complete this required field.") {
+        newText = ErrorMessageConfig.getMessage('required');
+      } else if (originalText.toLowerCase().includes("email") && 
+                 (originalText.toLowerCase().includes("valid") || originalText.toLowerCase().includes("format"))) {
+        newText = ErrorMessageConfig.getMessage('email');
+      } else if (originalText.toLowerCase().includes("must be formatted correctly") ||
+                 originalText.toLowerCase().includes("invalid format")) {
+        newText = ErrorMessageConfig.getMessage('pattern');
+      }
+
+      // Only update if we have a replacement
+      if (newText !== originalText) {
+        errorElement.textContent = newText;
+      }
+    };
+
+    // Replace any existing error messages on setup
+    const existingErrors = formContainer.querySelectorAll('.hsfc-ErrorAlert');
+    existingErrors.forEach(replaceNativeErrorText);
+
+    // Set up observer to catch new error messages as they appear
+    const errorObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        // Check added nodes
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            // Check if the added node is an error element
+            if (node.classList && node.classList.contains('hsfc-ErrorAlert')) {
+              replaceNativeErrorText(node);
+            }
+            
+            // Check for error elements within the added node
+            const errorElements = node.querySelectorAll && node.querySelectorAll('.hsfc-ErrorAlert');
+            if (errorElements) {
+              errorElements.forEach(replaceNativeErrorText);
+            }
+          }
+        });
+
+        // Check modified nodes for text content changes
+        if (mutation.type === 'childList' && mutation.target.classList && 
+            mutation.target.classList.contains('hsfc-ErrorAlert')) {
+          replaceNativeErrorText(mutation.target);
+        }
+      });
+    });
+
+    // Observe the form container for error message changes
+    errorObserver.observe(formContainer, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    // Track observer for cleanup
+    cleanup.observers.push(errorObserver);
   },
 
   // Initialize Next button state
