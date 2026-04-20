@@ -95,7 +95,68 @@ The pattern above:
 2. Waits 500ms for hydration to complete
 3. Dynamically imports and initializes the module
 
-## Step 3: Configure Vite
+## Step 3: Configure File Upload Validation (Optional)
+
+Control which file types are allowed in HubSpot file upload fields:
+
+```javascript
+// In resources/js/site.js, BEFORE the dynamic import
+
+// Configure allowed file types
+window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 'pdf,doc,docx,jpg,jpeg,png,gif,txt';
+// Or as an array:
+window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+
+// Configure maximum file size
+window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB'; // Supports: KB, MB, GB
+
+// IMPORTANT: Prevent auto-initialization (required for SSR/React hydration safety)
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+// Your other imports and setup code...
+import Alpine from "alpinejs";
+// ... etc
+
+// Initialize Alpine or other frameworks
+window.Alpine = Alpine;
+Alpine.start();
+
+// Delay HubSpot module import until after page hydration
+// The 500ms delay ensures React/Alpine hydration completes first
+setTimeout(async () => {
+  const module =
+    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
+
+  // Manually trigger initialization
+  if (module.init) {
+    module.init();
+  }
+}, 500);
+```
+
+### File Upload Configuration Options
+
+| Setting | Purpose | Format | Default |
+|---------|---------|--------|---------|
+| `HUBSPOT_FORMS_ALLOWED_EXTENSIONS` | File types to accept | String or Array | `'pdf,doc,docx,jpg,jpeg,png,gif,txt'` |
+| `HUBSPOT_FORMS_MAX_FILE_SIZE` | Maximum file size | Human readable (e.g., `'5MB'`, `'2GB'`) | `'10MB'` |
+
+### Alternative: Runtime Configuration
+
+You can also configure after the module loads:
+
+```javascript
+// After the module is imported
+const { FileUploadValidator } = await import('@fahlgren-mortine/hubspot-form-usability-enhancements');
+
+// Set allowed extensions
+FileUploadValidator.allowedExtensions = ['pdf', 'jpg', 'png'];
+
+// Set max file size (in bytes)
+FileUploadValidator.maxFileSize = 5 * 1024 * 1024; // 5MB
+```
+
+## Step 4: Configure Vite
 
 Your `vite.config.js` should include both CSS and JS entry points:
 
@@ -113,7 +174,7 @@ export default defineConfig({
 });
 ```
 
-## Step 4: Load Assets in Layout
+## Step 5: Load Assets in Layout
 
 In your Antlers layout template (e.g., `resources/views/layout.antlers.html`):
 

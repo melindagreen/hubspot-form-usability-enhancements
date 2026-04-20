@@ -74,7 +74,105 @@ The HubSpot WordPress plugin renders forms using React. If this module manipulat
 
 The delayed import pattern ensures React completes before DOM enhancements begin.
 
-## Step 2: Enqueue Assets in functions.php
+## Step 2: Configure File Upload Validation (Optional)
+
+Control which file types are allowed in HubSpot file upload fields.
+
+### Method 1: JavaScript Configuration
+
+In your theme's main JavaScript file (e.g., `assets/js/main.js`):
+
+```javascript
+// Import the module's CSS first
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+
+// Configure file upload validation BEFORE setting no-auto-init
+window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 'pdf,doc,docx,jpg,jpeg,png,gif,txt';
+window.HUBSPOT_FORMS_MAX_FILE_SIZE = '5MB';
+
+// IMPORTANT: Prevent auto-initialization (required for HubSpot plugin's React rendering)
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
+
+// Rest of your setup...
+```
+
+### Method 2: PHP Configuration (Recommended)
+
+Add to your theme's `functions.php` for easier content editor control:
+
+```php
+<?php
+/**
+ * Configure HubSpot form file upload validation
+ */
+function configure_hubspot_file_validation() {
+    // Get settings from WordPress options, theme customizer, or ACF
+    $allowed_extensions = get_theme_mod('hubspot_allowed_extensions', 'pdf,doc,docx,jpg,jpeg,png,gif,txt');
+    $max_file_size = get_theme_mod('hubspot_max_file_size', '10MB');
+    
+    // Output JavaScript configuration
+    ?>
+    <script>
+        window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = <?php echo json_encode($allowed_extensions); ?>;
+        window.HUBSPOT_FORMS_MAX_FILE_SIZE = <?php echo json_encode($max_file_size); ?>;
+    </script>
+    <?php
+}
+add_action('wp_head', 'configure_hubspot_file_validation', 5); // Run early
+```
+
+### Method 3: Theme Customizer Integration
+
+Add file upload settings to the WordPress Customizer:
+
+```php
+<?php
+/**
+ * Add HubSpot file upload settings to theme customizer
+ */
+function hubspot_customizer_settings($wp_customize) {
+    // Add HubSpot section
+    $wp_customize->add_section('hubspot_forms', [
+        'title' => 'HubSpot Forms',
+        'description' => 'Configure file upload validation for HubSpot forms.',
+        'priority' => 120,
+    ]);
+    
+    // Allowed file extensions
+    $wp_customize->add_setting('hubspot_allowed_extensions', [
+        'default' => 'pdf,doc,docx,jpg,jpeg,png,gif,txt',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    $wp_customize->add_control('hubspot_allowed_extensions', [
+        'label' => 'Allowed File Extensions',
+        'description' => 'Comma-separated list (e.g., pdf,jpg,png)',
+        'section' => 'hubspot_forms',
+        'type' => 'text',
+    ]);
+    
+    // Maximum file size
+    $wp_customize->add_setting('hubspot_max_file_size', [
+        'default' => '10MB',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    $wp_customize->add_control('hubspot_max_file_size', [
+        'label' => 'Maximum File Size',
+        'description' => 'Use format like 5MB, 2GB, etc.',
+        'section' => 'hubspot_forms',
+        'type' => 'text',
+    ]);
+}
+add_action('customize_register', 'hubspot_customizer_settings');
+```
+
+### File Upload Configuration Options
+
+| Setting | Purpose | Format | Default |
+|---------|---------|--------|---------|
+| `HUBSPOT_FORMS_ALLOWED_EXTENSIONS` | File types to accept | String or Array | `'pdf,doc,docx,jpg,jpeg,png,gif,txt'` |
+| `HUBSPOT_FORMS_MAX_FILE_SIZE` | Maximum file size | Human readable (e.g., `'5MB'`, `'2GB'`) | `'10MB'` |
+
+## Step 3: Enqueue Assets in functions.php
 
 The **CSS load order is critical** — your custom overrides must load _after_ the module's styles.
 
@@ -152,7 +250,7 @@ function theme_enqueue_assets() {
 add_action('wp_enqueue_scripts', 'theme_enqueue_assets');
 ```
 
-## Step 3: Configure Build Tool
+## Step 4: Configure Build Tool
 
 ### Vite Configuration
 
@@ -206,7 +304,7 @@ module.exports = {
 };
 ```
 
-## Step 4: Add Custom Style Overrides
+## Step 5: Add Custom Style Overrides
 
 Create a CSS file for your HubSpot form customizations:
 
@@ -238,7 +336,7 @@ Import in your main CSS:
 /* Rest of your theme styles... */
 ```
 
-## Step 5: Place HubSpot Forms
+## Step 6: Place HubSpot Forms
 
 Use the **manual embed code** from HubSpot (not the WordPress plugin).
 

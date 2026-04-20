@@ -43,7 +43,55 @@ Add CSS variable overrides after the stylesheet link:
 <script src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/index.cdn.js"></script>
 ```
 
-See the main [README](../README.md) for all available CSS variables.
+### Configuring File Upload Validation
+
+Control which file types are allowed in form upload fields:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css"
+/>
+<script>
+  // Configure file upload validation
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 'pdf,doc,docx,jpg,jpeg,png,gif,txt';
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB';
+  
+  // Customize form colors
+  document.documentElement.style.setProperty('--color-hs-form-primary', '#0056b3');
+  document.documentElement.style.setProperty('--color-hs-form-error', '#dc3545');
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/index.cdn.js"></script>
+```
+
+#### File Upload Configuration Options
+
+| Setting | Purpose | Format | Default |
+|---------|---------|--------|---------|
+| `HUBSPOT_FORMS_ALLOWED_EXTENSIONS` | File types to accept | String or Array | `'pdf,doc,docx,jpg,jpeg,png,gif,txt'` |
+| `HUBSPOT_FORMS_MAX_FILE_SIZE` | Maximum file size | Human readable (e.g., `'5MB'`, `'2GB'`) | `'10MB'` |
+
+#### Examples:
+
+```html
+<!-- Only allow PDF and image files -->
+<script>
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif'];
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = '5MB';
+</script>
+
+<!-- Allow documents only -->
+<script>
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 'pdf,doc,docx,txt';
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = '2MB';
+</script>
+
+<!-- Large file uploads -->
+<script>
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 'pdf,zip,docx';
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = '50MB';
+</script>
+```
 
 ---
 

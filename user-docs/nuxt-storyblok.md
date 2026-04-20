@@ -55,7 +55,143 @@ Add these fields to your Storyblok **site globals** (or a settings content type)
 
 This allows content editors to configure HubSpot credentials without code changes.
 
-## Step 3: Create the HubSpot Form Storyblok Component
+## Step 3: Configure File Upload Validation (Optional)
+
+Control which file types are allowed in HubSpot file upload fields.
+
+### Method 1: Global Configuration
+
+Set in your default layout (e.g., `app/layouts/default.vue`):
+
+```vue
+<script setup lang="ts">
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+
+// Configure file upload validation globally
+if (typeof window !== 'undefined') {
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 'pdf,doc,docx,jpg,jpeg,png,gif,txt';
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB';
+}
+
+// ... rest of your layout script
+</script>
+
+<template>
+  <Navigation />
+  <slot />
+  <Footer />
+</template>
+```
+
+### Method 2: Storyblok-based Configuration
+
+Add file upload settings to your Storyblok **site globals**:
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `hubspot_portal_id` | Text | Your HubSpot portal ID |
+| `hubspot_region` | Text | Region (e.g., `na1`, `eu1`) |
+| `hubspot_allowed_file_types` | Text | Allowed extensions (e.g., `pdf,doc,jpg`) |
+| `hubspot_max_file_size` | Text | Max file size (e.g., `5MB`) |
+
+Then update your `HubspotForm.vue` component:
+
+```vue
+<script lang="ts" setup>
+// ... existing imports and props ...
+
+// Get HubSpot config from your site globals composable
+const siteGlobals = await useAsyncData("globals", () => {
+  return fetchStoryblokGlobals();
+});
+
+const hubspotPortalId = computed(
+  () => siteGlobals.data.value?.hubspot_portal_id,
+);
+const hubspotRegion = computed(
+  () => siteGlobals.data.value?.hubspot_region || "na1",
+);
+
+// File upload configuration
+const allowedFileTypes = computed(
+  () => siteGlobals.data.value?.hubspot_allowed_file_types || 'pdf,doc,docx,jpg,jpeg,png,gif,txt',
+);
+const maxFileSize = computed(
+  () => siteGlobals.data.value?.hubspot_max_file_size || '10MB',
+);
+
+// Configure before loading HubSpot script
+const configureFileValidation = () => {
+  if (typeof window === 'undefined') return;
+  
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = allowedFileTypes.value;
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = maxFileSize.value;
+};
+
+const setupHubspotForms = async () => {
+  if (typeof window === "undefined" || !canRenderForm.value) return;
+
+  await nextTick();
+
+  const container = document.getElementById(formContainerId);
+  if (!container) return;
+
+  // Configure file validation BEFORE loading script
+  configureFileValidation();
+
+  // ... rest of existing setup code ...
+};
+
+// ... rest of component ...
+</script>
+```
+
+### Method 3: Component-level Configuration
+
+Add file validation props to your Storyblok component schema:
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `form_id` | Text | The HubSpot form GUID |
+| `allowed_file_types` | Text | Override allowed extensions |
+| `max_file_size` | Text | Override max file size |
+
+Then use in the component:
+
+```vue
+<script lang="ts" setup>
+interface HubspotBlok {
+  form_id: string;
+  allowed_file_types?: string;
+  max_file_size?: string;
+  _uid: string;
+}
+
+const props = defineProps<{ blok: HubspotBlok }>();
+
+// Configure per-form settings
+const configureFileValidation = () => {
+  if (typeof window === 'undefined') return;
+  
+  // Use component settings or fallback to defaults
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = 
+    props.blok.allowed_file_types || 'pdf,doc,docx,jpg,jpeg,png,gif,txt';
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = 
+    props.blok.max_file_size || '10MB';
+};
+
+// ... rest of component setup ...
+</script>
+```
+
+### File Upload Configuration Options
+
+| Setting | Purpose | Format | Default |
+|---------|---------|--------|---------|
+| `HUBSPOT_FORMS_ALLOWED_EXTENSIONS` | File types to accept | String or Array | `'pdf,doc,docx,jpg,jpeg,png,gif,txt'` |
+| `HUBSPOT_FORMS_MAX_FILE_SIZE` | Maximum file size | Human readable (e.g., `'5MB'`, `'2GB'`) | `'10MB'` |
+
+## Step 4: Create the HubSpot Form Storyblok Component
 
 ### 3a. Create the Storyblok Schema
 
@@ -265,14 +401,14 @@ watch([canRenderForm, () => props.blok.form_id], ([value]) => {
 | **Scoped theming**       | CSS variables in component's `<style>` block                           |
 | **Error handling**       | Try/catch with console logging                                         |
 
-## Step 4: Register the Component
+## Step 5: Register the Component
 
 The `@storyblok/nuxt` module auto-registers components in `app/components/storyblok/`. Just ensure your file is named to match the Storyblok component:
 
 - Storyblok component: `hubspot_form`
 - Vue file: `HubspotForm.vue` (PascalCase) or `hubspot_form.vue` (snake_case)
 
-## Step 5: Add Forms in Storyblok
+## Step 6: Add Forms in Storyblok
 
 Content editors can now:
 

@@ -625,15 +625,29 @@ const FileUploadValidator = {
     maxFileSize: null,
   },
 
-  // Get configuration from runtime config, environment variables, or use defaults
+  // Get configuration from runtime config, window globals, or use defaults
   get allowedExtensions() {
     if (this._config.allowedExtensions) {
       return this._config.allowedExtensions;
     }
-    const envExtensions = import.meta.env.VITE_UPLOAD_ALLOWED_EXTENSIONS;
-    if (envExtensions) {
-      return envExtensions.split(",").map((ext) => ext.trim().toLowerCase());
+    
+    // Check for runtime configuration via window global
+    if (typeof window !== 'undefined' && window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS) {
+      const extensions = window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS;
+      if (typeof extensions === 'string') {
+        return extensions.split(",").map((ext) => ext.trim().toLowerCase());
+      }
+      if (Array.isArray(extensions)) {
+        return extensions.map((ext) => ext.toString().trim().toLowerCase());
+      }
     }
+    
+    // DEPRECATED: Environment variable approach no longer works in production
+    // const envExtensions = import.meta.env.VITE_UPLOAD_ALLOWED_EXTENSIONS;
+    // if (envExtensions) {
+    //   return envExtensions.split(",").map((ext) => ext.trim().toLowerCase());
+    // }
+    
     return ["pdf", "doc", "docx", "jpg", "jpeg", "png", "gif", "txt"];
   },
 
@@ -645,18 +659,37 @@ const FileUploadValidator = {
     if (this._config.maxFileSize) {
       return this._config.maxFileSize;
     }
-    const envSize = import.meta.env.VITE_UPLOAD_MAX_SIZE;
-    if (envSize) {
-      // Parse size like "10MB", "5GB", etc.
-      const size = envSize.toString().toUpperCase();
-      const number = parseFloat(size);
+    
+    // Check for runtime configuration via window global
+    if (typeof window !== 'undefined' && window.HUBSPOT_FORMS_MAX_FILE_SIZE) {
+      const envSize = window.HUBSPOT_FORMS_MAX_FILE_SIZE;
+      if (envSize) {
+        // Parse size like "10MB", "5GB", etc.
+        const size = envSize.toString().toUpperCase();
+        const number = parseFloat(size);
 
-      if (size.includes("GB")) return number * 1024 * 1024 * 1024;
-      if (size.includes("MB")) return number * 1024 * 1024;
-      if (size.includes("KB")) return number * 1024;
+        if (size.includes("GB")) return number * 1024 * 1024 * 1024;
+        if (size.includes("MB")) return number * 1024 * 1024;
+        if (size.includes("KB")) return number * 1024;
 
-      return number; // Assume bytes if no unit
+        return number; // Assume bytes if no unit
+      }
     }
+    
+    // DEPRECATED: Environment variable approach no longer works in production
+    // const envSize = import.meta.env.VITE_UPLOAD_MAX_SIZE;
+    // if (envSize) {
+    //   // Parse size like "10MB", "5GB", etc.
+    //   const size = envSize.toString().toUpperCase();
+    //   const number = parseFloat(size);
+    //
+    //   if (size.includes("GB")) return number * 1024 * 1024 * 1024;
+    //   if (size.includes("MB")) return number * 1024 * 1024;
+    //   if (size.includes("KB")) return number * 1024;
+    //
+    //   return number; // Assume bytes if no unit
+    // }
+    
     return 10 * 1024 * 1024; // 10MB default
   },
 
