@@ -145,6 +145,9 @@
   --color-hs-form-success-box-border:var(--color-hs-form-success-dk);
   --color-hs-form-success-box-text:var(--color-hs-form-success);
 
+  --color-hs-form-postsubmit-text:var(--color-hs-form-neutral);
+  --color-hs-form-postsubmit-link:var(--color-hs-form-neutral);
+
   --color-hs-form-field-focus-outline:var(--color-hs-form-primary-dk);
   --width-hs-form-field-focus-outline:2px;
   --offset-hs-form-field-focus-outline:2px;
@@ -200,6 +203,9 @@
   --color-hs-form-reverse-success-box-bg:var(--color-hs-form-success-lt);
   --color-hs-form-reverse-success-box-border:var(--color-hs-form-success-dk);
   --color-hs-form-reverse-success-box-text:var(--color-hs-form-success);
+
+  --color-hs-form-reverse-postsubmit-text:var(--color-hs-form-white);
+  --color-hs-form-reverse-postsubmit-link:var(--color-hs-form-white);
 
   --color-hs-form-reverse-field-focus-outline:var(--color-hs-form-primary-lt);
 }
@@ -608,12 +614,25 @@ div[data-hsfc-id=Renderer] {
       & + .hsfc-FormField, & + .hsfc-Row { margin-top:0; }
     }
   }
+  & .hsfc-PostSubmit {
+    color:var(--color-hs-form-postsubmit-text);
+      & a {
+      color:var(--color-hs-form-postsubmit-link);
+      text-decoration:underline;
+      transition-property:text-decoration-color;
+      transition-duration:300ms;
+      &:hover {
+        text-decoration-color:transparent;
+      }
+    }
+  }
 
 
   
   /* Reverse theme styles (for dark backgrounds) */
   .hs-form-reverse & {
     & form {
+      color:var(--color-hs-form-reverse-text);
       & .hsfc-Row {
         & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
           background-color:var(--color-hs-form-reverse-field-bg);
@@ -717,6 +736,12 @@ div[data-hsfc-id=Renderer] {
             background-color:var(--color-hs-form-reverse-progress-bar-fill);
           }
         }
+      }
+    }
+    & .hsfc-PostSubmit {
+      color:var(--color-hs-form-reverse-postsubmit-text);
+       & a {
+        color:var(--color-hs-form-reverse-postsubmit-link);
       }
     }
   }
