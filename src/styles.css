@@ -213,6 +213,7 @@
 
 /* Main form container styling */
 div[data-hsfc-id=Renderer] {
+  * {box-sizing:border-box; }
   form {
     position:relative; margin-left:auto; margin-right:auto; color:var(--color-hs-form-text); font-family:var(--font-hs-form-base);
     & .hsfc-Step {
@@ -303,7 +304,7 @@ div[data-hsfc-id=Renderer] {
 
       /* Basic Input Elements */
       & input[type=text], & input[type=email], & input[type=tel], & select, & textarea, & .hsfc-DropdownInput input[type=button] {
-        display:block; text-align:left; padding:0.5rem 1rem; border:1px solid var(--color-hs-form-field-border); font-size:var(--font-hs-form-size); color:var(--color-hs-form-field-text); border-radius:var(--radius-hs-form-field, 0.25rem); background-color:var(--color-hs-form-field-bg); transition-property:border-color,background-color,color; transition-duration:200ms;
+        box-sizing:border-box; display:block; text-align:left; padding:0.5rem 1rem; border:1px solid var(--color-hs-form-field-border); font-size:var(--font-hs-form-size); color:var(--color-hs-form-field-text); border-radius:var(--radius-hs-form-field, 0.25rem); background-color:var(--color-hs-form-field-bg); transition-property:border-color,background-color,color; transition-duration:200ms;
         &::placeholder { color:var(--color-hs-form-placeholder-text); }
       }
       & input[type=checkbox], & input[type=radio] {
@@ -347,6 +348,9 @@ div[data-hsfc-id=Renderer] {
         border-radius: 50%;
         background: var(--color-hs-form-white);
       }
+      & .hsfc-PhoneInput .hsfc-PhoneInput__FlagAndCaret {
+        border-radius:var(--radius-hs-form-field);
+      }
       & .hsfc-DropdownInput {
         position:relative;
         & input[type=button], & input[type=text] { padding-right:2.5rem; }
@@ -373,21 +377,10 @@ div[data-hsfc-id=Renderer] {
       &:has(input, select, textarea, .hsfc-RichText) {
         order:3;
       }
-      & .hsfc-TextField, & .hsfc-EmailField, & .hsfc-PhoneField, & .hsfc-DropdownField, & .hsfc-CheckboxField, & .hsfc-TextareaField {
+      & .hsfc-TextField, & .hsfc-EmailField, & .hsfc-PhoneField, & .hsfc-DropdownField, & .hsfc-CheckboxField, & .hsfc-TextareaField, & .hsfc-DateField {
         &:has(.hsfc-ErrorAlert) {
-          & .hsfc-TextInput, & .hsfc-EmailInput, & .hsfc-PhoneInput, & .hsfc-Select, & .hsfc-CheckboxInput, & .hsfc-TextareaInput {
+          & .hsfc-TextInput, & .hsfc-EmailInput, & .hsfc-Select, & .hsfc-CheckboxInput, & .hsfc-TextareaInput, & .hsfc-PhoneInput .hsfc-PhoneInput__FlagAndCaret {
             border:2px solid var(--color-hs-form-error-box-border);
-            & .hsfc-TextInput {
-              border:none;
-            }
-          }
-          & .hsfc-PhoneInput {
-            & .hsfc-PhoneInput__FlagAndCaret {
-              border:none;
-            }
-            & .hsfc-TextInput {
-              border-left:revert-layer;
-            }
           }
         }
       }

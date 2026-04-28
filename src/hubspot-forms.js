@@ -144,6 +144,18 @@ const FieldValidator = {
   _validateTextBasedField(field) {
     const hasContent = field.value && field.value.trim() !== "";
 
+    // Special handling for HubSpot date fields
+    if (field.classList?.contains('hsfc-DateInput') || field.closest('.hsfc-DateField')) {
+      // If HubSpot has already marked this field as invalid, trust that
+      if (field.getAttribute('aria-invalid') === 'true') {
+        return false;
+      }
+      // If field has placeholder text, treat as empty
+      if (hasContent && this._isHubSpotDateFieldWithPlaceholder(field)) {
+        return false; 
+      }
+    }
+
     // For textarea elements, also check character limit
     if (field.tagName.toLowerCase() === "textarea") {
       const characterLimit =
@@ -153,6 +165,27 @@ const FieldValidator = {
     }
 
     return hasContent;
+  },
+
+  // Helper to detect HubSpot date fields with placeholder text
+  _isHubSpotDateFieldWithPlaceholder(field) {
+    // Check if this is a HubSpot date field
+    const isDateField = 
+      field.classList?.contains('hsfc-DateInput') ||
+      field.closest('.hsfc-DateField');
+
+    if (!isDateField) {
+      return false;
+    }
+
+    // If the field value matches the placeholder attribute, it's placeholder text
+    if (field.placeholder && field.value === field.placeholder) {
+      return true;
+    }
+
+    // Fallback: Check for common date format patterns (letters, numbers, separators)
+    const dateFormatPattern = /^[MDYmdyHhSsAaPp\s\-\/\.\,\:]+$/;
+    return dateFormatPattern.test(field.value.trim());
   },
 };
 
@@ -1256,6 +1289,11 @@ const HubSpotFormValidator = {
           this.getFieldLabel(field) ||
           `Field "${field.name || field.id || "unknown"}"`;
 
+        // For date fields with existing errors, don't add duplicate mandatory message
+        if (field.classList?.contains('hsfc-DateInput') && field.getAttribute('aria-invalid') === 'true') {
+          continue; // Skip - HubSpot error message should already be in the list
+        }
+
         const customMessage = ErrorMessageConfig.getMessage('required');
         const errorMessage = customMessage || "Please complete this required field.";
         const errorDescription = `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`;
@@ -2045,8 +2083,15 @@ const HubSpotFormManager = {
       }
 
       if (needsValidation(field)) {
-        // For tel fields, use more aggressive validation triggering
-        if (field.type === "tel") {
+        // Special handling for HubSpot date fields - don't clear value to preserve date picker
+        if (field.classList?.contains('hsfc-DateInput')) {
+          // For date fields, just trigger validation events without clearing the value
+          field.focus();
+          field.dispatchEvent(new Event("input", { bubbles: true }));
+          field.dispatchEvent(new Event("change", { bubbles: true }));
+          field.dispatchEvent(new Event("invalid", { bubbles: true }));
+          field.blur();
+        } else if (field.type === "tel") {
           // Tel fields need special handling to trigger HubSpot's validation
           field.focus();
           field.dispatchEvent(new Event("input", { bubbles: true }));
