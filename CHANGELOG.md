@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Internal refactor**: Extracted shared logic to `src/core.js` for consistency between npm and CDN builds
 - **Node requirement raised to ≥20** (from ≥18) due to @rollup/plugin-terser v1.0.0
 - **@rollup/plugin-terser upgraded to v1.0.0** — fixes serialize-javascript vulnerability
 - Replaced `concurrently` with `nodemon` for simpler dev watch mode
@@ -28,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **WCAG AA Compliance**: Progress bar elements now receive unique IDs to prevent duplicate ID violations
+- **WCAG AA Compliance**: Primary color contrast ratio improved to 4.5:1 minimum for white text
 - Removed stray `console.log()` in validation error handling
 - Fixed incorrect `@theme` directive references in README (Tailwind v4 artifact)
 - Fixed misleading environment variable documentation in examples.js

@@ -1,134 +1,73 @@
 # @fahlgren-mortine/hubspot-form-usability-enhancements
 
-Enhanced HubSpot form usability, validation and styling with React hydration support and accessibility improvements.
+Enhanced HubSpot form validation, accessibility (WCAG 2.1 AA), and styling. React/SSR compatible.
 
-**This is intended to be used with developer-declared color values, overriding the values in HubSpot. The intent is to have a color palette that is tightly branded, not changeable on the fly by a CMS user. HubSpot color values are removed by this plugin.**
+Overrides HubSpot's default color values. Use developer-defined color palette via CSS custom properties.
 
 ## Features
 
-- 🚀 **React Hydration Support** - Works seamlessly with SSR and React hydration
-- ♿ **Accessibility Enhanced** - WCAG 2.1 compliant with improved keyboard navigation- 🌓 **Dark Background Support** - Automatic reverse theme with `.hs-form-reverse` class for forms on dark backgrounds
-- ✅ **Advanced Validation** - Custom validation with enhanced error handling
-- 📁 **File Upload Validation** - Configurable file type and size validation
-- 📝 **Character Limit Validation** - Smart character counting with custom error handling
-- 📱 **Mobile Optimized** - Responsive design with touch-friendly interactions
-- 🎯 **TypeScript Support** - Full type definitions included
+- React/SSR hydration safe
+- WCAG 2.1 AA compliant
+- Dark background support (`.hs-form-reverse`)
+- File upload validation (type, size)
+- Character limit validation
+- TypeScript definitions included
+
+## Browser Support
+
+- Chrome/Edge 105+
+- Firefox 121+
+- Safari 15.4+
+- Older browsers: graceful degradation (`:has()` selector fallback)
 
 ## Installation
 
+### npm/Bundlers
+
 ```bash
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
-### CSS Styles
-
-The module requires CSS styles to be imported separately for proper styling:
-
 ```javascript
-// Always import the CSS styles
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-```
-
-**Important**: The styles import is separate from the JavaScript module import. This allows you to:
-
-- Import styles once in your main CSS/JS file
-- Customize or replace styles without affecting functionality
-- Optimize bundle splitting in build tools
-
-```javascript
-// Example: Import both module and styles
 import "@fahlgren-mortine/hubspot-form-usability-enhancements";
 import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 ```
 
-## Quick Start
+### CDN (jsdelivr)
 
-For most users, this is all you need:
-
-```bash
-# Install the package (includes all necessary styles pre-compiled)
-npm install @fahlgren-mortine/hubspot-form-usability-enhancements
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/styles.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/index.cdn.js"></script>
 ```
 
-```javascript
-// Import in your main JavaScript file
-import "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+Configure via window globals before script load:
 
-// That's it! The module will auto-initialize when HubSpot forms are detected.
+```html
+<script>
+window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'png'];
+window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB';
+</script>
 ```
-
-**Minimal CSS required in your project!** The package comes with pre-compiled CSS that includes all necessary styles. You can still customize colors by overriding CSS variables in `:root`.
-
-**For forms on dark backgrounds**: Simply add the class `.hs-form-reverse` to any parent container for automatic white text and inverted colors. See [Reverse Theme for Dark Backgrounds](#reverse-theme-for-dark-backgrounds).
-
-For React/SSR applications, see the [React/Hydration-Safe Usage](#reacthydration-safe-usage) section below.
 
 ## Platform-Specific Guides
 
-Detailed implementation guides for popular platforms:
+| Platform | Guide |
+|----------|-------|
+| HubSpot CMS | [user-docs/hubspot-cms.md](user-docs/hubspot-cms.md) |
+| Nuxt + Storyblok | [user-docs/nuxt-storyblok.md](user-docs/nuxt-storyblok.md) |
+| Statamic | [user-docs/statamic.md](user-docs/statamic.md) |
+| WordPress | [user-docs/wordpress.md](user-docs/wordpress.md) |
 
-| Platform                          | Guide                                                      |
-| --------------------------------- | ---------------------------------------------------------- |
-| **HubSpot CMS**                   | [user-docs/hubspot-cms.md](user-docs/hubspot-cms.md)       |
-| **Nuxt + Storyblok**              | [user-docs/nuxt-storyblok.md](user-docs/nuxt-storyblok.md) |
-| **Statamic** (with Vite)          | [user-docs/statamic.md](user-docs/statamic.md)             |
-| **WordPress** (with Vite/webpack) | [user-docs/wordpress.md](user-docs/wordpress.md)           |
+## Usage
 
-Each guide covers CSS load order, hydration-safe initialization, and platform-specific configuration.
-
-## Complete Setup Guide
-
-### Step 1: Install the Package
-
-```bash
-npm install @fahlgren-mortine/hubspot-form-usability-enhancements
-```
-
-### Step 2: Import Styles
-
-Import the CSS styles in your main stylesheet or JavaScript entry point:
+### Auto-Initialization
 
 ```javascript
-// Method 1: Import in JavaScript
-import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
-
-// Method 2: Import in CSS
-@import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
-```
-
-```html
-<!-- Method 3: Link in HTML -->
-<link
-  rel="stylesheet"
-  href="node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/dist/styles.css"
-/>
-```
-
-### Step 3: Add HubSpot Form Embed Code
-
-Add your HubSpot form embed code to your HTML. The module will automatically detect and enhance any forms with the class `.hsfc-Form`.
-
-```html
-<!-- Example HubSpot form embed -->
-<div id="hubspot-form-container">
-  <!-- Your HubSpot form embed script goes here -->
-</div>
-```
-
-### Step 4: Initialize the Module
-
-Choose the initialization method that best fits your platform:
-
-#### Option A: Auto-Initialization (Simplest)
-
-```javascript
-// Import and let the module initialize automatically
 import "@fahlgren-mortine/hubspot-form-usability-enhancements";
 import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 ```
 
-#### Option B: Manual Initialization (More Control)
+### Manual Configuration
 
 ```javascript
 import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
@@ -141,12 +80,10 @@ hubspotForms({
 });
 ```
 
-#### Option C: Delayed Initialization (React/SSR Safe)
+### React/SSR Safe
 
 ```javascript
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-
-// Prevent auto-initialization
+// Disable auto-init
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
 // Initialize after framework hydration
@@ -210,83 +147,65 @@ For environments without React or hydration concerns:
 
 ```javascript
 // Import the module and styles - forms will initialize automatically
-import "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-```
 
-### React/Hydration-Safe Usage
-
-For React applications or environments with hydration (SSR/SSG):
-
-```javascript
-// Import CSS styles first
+import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
 import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
-// Prevent auto-initialization to avoid React hydration conflicts
-window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
-
-// Initialize after framework hydration completes
-setTimeout(async () => {
-  const module =
-    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
-
-  // Manually trigger initialization after module loads
-  if (module.init) {
-    module.init();
-  }
-}, 500);
+// Delay until framework hydrates
+setTimeout(() => hubspotForms(), 500);
 ```
 
-### React Component Usage
+### React Component
 
 ```jsx
 import { useEffect } from "react";
 import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
 import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
-function MyFormComponent() {
+function FormComponent() {
   useEffect(() => {
-    // Initialize forms after component mounts
     hubspotForms({
       characterLimit: 1000,
       allowedExtensions: ["pdf", "docx", "jpg", "png"],
-      maxFileSize: 5 * 1024 * 1024, // 5MB
+      maxFileSize: 5 * 1024 * 1024,
     });
   }, []);
 
-  return (
-    <div id="hubspot-form-container">
-      {/* HubSpot form embed code goes here */}
-    </div>
-  );
+  return <div id="hubspot-form-container"></div>;
 }
 ```
 
-### Custom Configuration
+## Configuration
+
+### Options
 
 ```javascript
-import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-
 hubspotForms({
-  characterLimit: 1000, // Custom character limit for textareas
-  allowedExtensions: [
-    // Allowed file extensions
-    "pdf",
-    "doc",
-    "docx",
-    "jpg",
-    "jpeg",
-    "png",
-    "gif",
-  ],
-  maxFileSize: 10 * 1024 * 1024, // 10MB file size limit
+  characterLimit: 500,              // Max characters for textareas
+  allowedExtensions: ['pdf', 'jpg'], // File types allowed
+  maxFileSize: 10 * 1024 * 1024,    // Max file size in bytes (10MB)
+  errorMessages: {                   // Custom error messages
+    required: "Field required",
+    email: "Invalid email",
+    fileType: "File type: {allowedTypes}"
+  }
 });
+```
+
+### Window Globals (CDN)
+
+```javascript
+window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'doc', 'jpg'];
+window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB';
+window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+  required: "Required",
+  email: "Invalid email"
+};
 ```
 
 ## Advanced Usage
 
-### Granular Control
+### Manual Control
 
 ```javascript
 import {
@@ -294,23 +213,13 @@ import {
   CharacterLimitValidator,
   FileUploadValidator,
 } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
 
-// Manual form setup
+// Setup all forms
 HubSpotFormManager.setupAllForms();
 
 // Setup specific form
-const formElement = document.querySelector(".hsfc-Form");
-HubSpotFormManager.setupSingleForm(formElement);
-
-// Custom character limit for specific textarea
-const textarea = document.querySelector("#my-textarea");
-CharacterLimitValidator.setupSingleTextarea(textarea, cleanupController);
-```
-
-### Preventing Auto-initialization
-
-```javascript
+const form = document.querySelector(".hsfc-Form");
+HubSpotFormManager.setupSingleForm(form);
 // Set flag before importing to prevent auto-initialization
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
@@ -338,107 +247,93 @@ module.exports = {
   resolve: {
     alias: {
       "@hubspot-forms": "@fahlgren-mortine/hubspot-form-usability-enhancements",
-    },
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"],
-      },
-    ],
-  },
-};
 ```
 
-### Vite
+### Disable Auto-Init
 
 ```javascript
-// vite.config.js
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  // ... your config
-  resolve: {
-    alias: {
-      "@hubspot-forms": "@fahlgren-mortine/hubspot-form-usability-enhancements",
-    },
-  },
-  css: {
-    postcss: "./postcss.config.js",
-  },
-});
+window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 ```
 
-### Rollup
+## Styling
 
-```javascript
-// rollup.config.js
-import resolve from "@rollup/plugin-node-resolve";
-import postcss from "rollup-plugin-postcss";
+### Dark Backgrounds
 
-export default {
-  // ... your config
-  plugins: [
-    resolve(),
-    postcss({
-      extract: true,
-      minimize: true,
-    }),
-  ],
-};
+Add `.hs-form-reverse` to parent container:
+
+```html
+<div class="hs-form-reverse">
+  <!-- HubSpot form here - auto-applies white text -->
+</div>
 ```
 
-### Parcel
+### Color Customization
 
-```json
-// package.json
-{
-  "browserslist": ["defaults"],
-  "@parcel/resolver-default": {
-    "packageExports": true
-  }
+Override CSS variables in `:root`:
+
+```css
+:root {
+  --color-hs-form-primary: oklch(0.50 0.16 250.88);
+  --color-hs-form-danger: oklch(0.55 0.22 25);
 }
 ```
 
-No additional configuration needed - Parcel handles the module automatically.
+See [theme-template.css](theme-template.css) for all variables.
 
-### esbuild
+## Error Messages
+
+### Customization
 
 ```javascript
-// build.js
-const esbuild = require("esbuild");
-
-esbuild.build({
-  entryPoints: ["src/main.js"],
-  bundle: true,
-  outdir: "dist",
-  loader: {
-    ".css": "css",
-  },
-  external: ["@fahlgren-mortine/hubspot-form-usability-enhancements"],
+hubspotForms({
+  errorMessages: {
+    required: "Required",
+    email: "Invalid email",
+    fileType: "Allowed: {allowedTypes}",
+    characterLimit: "Max {limit} chars. {overBy} over."
+  }
 });
 ```
 
-## Configuration Options
+### Interpolation
 
-| Option              | Type       | Default                                                      | Description                                 |
-| ------------------- | ---------- | ------------------------------------------------------------ | ------------------------------------------- |
-| `characterLimit`    | `number`   | `500`                                                        | Default character limit for textarea fields |
-| `allowedExtensions` | `string[]` | `['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'txt']` | Allowed file extensions for upload fields   |
-| `maxFileSize`       | `number`   | `10485760` (10MB)                                            | Maximum file size in bytes                  |
-| `errorMessages`     | `object`   | See below                                                    | Custom error messages for validation        |
+| Key | Variables | Example |
+|-----|-----------|---------|
+| `characterLimit` | `{limit}`, `{overBy}`, `{plural}` | "Max 500 chars" |
+| `fileSize` | `{maxSize}` | "Max 10 MB" |
+| `fileType` | `{allowedTypes}` | "Only .pdf, .jpg" |
 
-## Custom Error Messages
+### Available Types
 
-You can customize all form validation error messages to match your brand voice, support multiple languages, or provide more helpful guidance to users.
+| Type | Default |
+|------|---------|
+| `required` | "Please complete this required field." |
+| `email` | "must be formatted correctly" |
+| `pattern` | "must be formatted correctly" |
+| `characterLimit` | "Enter {limit} characters or fewer..." |
+| `date` | "Please enter a valid date." |
+| `phone` | "Please enter a valid phone number." |
+| `file` | "File type not allowed." |
+| `fileSize` | "File size exceeds {maxSize} limit" |
+| `fileType` | "File type not allowed. Allowed: {allowedTypes}" |
+| `url` | "Please enter a valid URL" |
+| `number` | "Please enter a valid number" |
 
-### Available Error Types
+## API
 
-All error message types that can be customized:
+### Exports
 
-| Error Type        | Description                    | Supports Interpolation |
-| ----------------- | ------------------------------ | ----------------------- |
+```javascript
+import {
+  init,                      // Main init function
+  HubSpotFormManager,        // Form management
+  HubSpotFormValidator,      // Validation
+  CharacterLimitValidator,   // Character limits
+  FileUploadValidator,       // File validation
+  ErrorMessageConfig,        // Error messages
+  FieldValidator,            // Field validation
+  removeHubSpotFormStyles    // Style removal
+} from "@fahlgren-mortine/hubspot-form-usability-enhancements";
 | `required`        | Required field validation      | No                     |
 | `email`           | Email format validation        | No                     |
 | `pattern`         | Pattern/format validation      | No                     |
@@ -452,107 +347,19 @@ All error message types that can be customized:
 | `number`          | Number format validation       | No                     |
 | `confirmation`    | Confirmation field mismatch    | No                     |
 | `captcha`         | CAPTCHA/verification required  | No                     |
-| `submission`      | Form submission errors         | No                     |
-| `network`         | Network/connection errors      | No                     |
-
-### Configuration Methods
-
-Choose the method that works best for your project:
-
-#### Method 1: Window Globals (Before Import)
-
-```javascript
-// Set before importing the module
-window.HUBSPOT_FORMS_ERROR_MESSAGES = {
-  required: "This field is mandatory.",
-  email: "Please enter a valid email address.",
-  pattern: "The format is incorrect.",
-  characterLimit: "Maximum {limit} characters allowed. You have {overBy} character{plural} too many.",
-  date: "Please provide a valid date.",
-  phone: "Please enter a valid phone number.",
-  file: "File type not supported.",
-  fileSize: "File exceeds maximum size of {maxSize}.",
-  fileType: "Only these file types are allowed: {allowedTypes}",
-  url: "Please enter a valid web address.",
-  number: "Please enter a valid number.",
-  confirmation: "The confirmation does not match.",
-  captcha: "Please complete the security verification.",
-  submission: "Form submission failed. Please try again.",
-  network: "Network error. Please check your connection.",
-};
-
-// Then import the module
-import "@fahlgren-mortine/hubspot-form-usability-enhancements";
 ```
 
-#### Method 2: Direct Property Assignment
+## Development
 
-```javascript
-import { ErrorMessageConfig } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
 
-// Override specific messages
-ErrorMessageConfig.messages = {
-  required: "Este campo es obligatorio.",
-  email: "debe tener el formato correcto",
-  pattern: "el formato es incorrecto",
-  // Only include the messages you want to customize
-};
-```
+## License
 
-#### Method 3: Initialization Options
+MIT
 
-```javascript
-import { init } from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+## Support
 
-// Disable auto-init and configure manually
-window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
-
-init({
-  characterLimit: 500,
-  errorMessages: {
-    required: "This field is mandatory.",
-    email: "Please enter a valid email address.",
-    characterLimit: "Maximum {limit} characters. You have {overBy} extra character{plural}.",
-  },
-});
-```
-
-### Multi-language Support
-
-```javascript
-// Detect user language and set appropriate messages
-const userLang = navigator.language || 'en-US';
-
-let errorMessages;
-if (userLang.startsWith('es')) {
-  errorMessages = {
-    required: "Este campo es obligatorio.",
-    email: "debe tener el formato correcto de email",
-    pattern: "el formato es incorrecto",
-  };
-} else if (userLang.startsWith('fr')) {
-  errorMessages = {
-    required: "Ce champ est obligatoire.",
-    email: "doit avoir le bon format d'email",
-    pattern: "le format est incorrect",
-  };
-} else {
-  errorMessages = {
-    required: "This field is required.",
-    email: "must be formatted correctly",
-    pattern: "format is incorrect",
-  };
-}
-
-window.HUBSPOT_FORMS_ERROR_MESSAGES = errorMessages;
-```
-
-### Interpolation Values
-
-Some error messages support dynamic values:
-
-- **`characterLimit`**: `{limit}`, `{overBy}`, `{plural}`
-- **`fileSize`**: `{maxSize}` (e.g., "10 MB")
+[GitHub Issues](https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements/issues)
 - **`fileType`**: `{allowedTypes}` (e.g., ".pdf, .doc, .jpg")
 
 ```javascript
