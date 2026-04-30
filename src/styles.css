@@ -41,9 +41,9 @@
   --radius-hs-form-field: .25rem;
   --radius-hs-form-button: .25rem;
   
-  --color-hs-form-primary:oklch(0.5835 0.1505 250.88);
+  --color-hs-form-primary:oklch(0.50 0.16 250.88);
   --color-hs-form-primary-lt:oklch(0.9200 0.0800 250.88);
-  --color-hs-form-primary-dk:oklch(0.3835 0.1705 250.88);
+  --color-hs-form-primary-dk:oklch(0.37 0.18 250.88);
   --color-hs-form-secondary:oklch(0.6500 0.1400 195.00);
   --color-hs-form-secondary-lt:oklch(0.9200 0.0600 195.00);
   --color-hs-form-secondary-dk:oklch(0.4500 0.1600 195.00);
