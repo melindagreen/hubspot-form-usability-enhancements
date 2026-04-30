@@ -1,8 +1,8 @@
 /**
  * @fahlgren-mortine/hubspot-form-usability-enhancements
- * Enhanced usability, validation, accessibility, and styling for HubSpot forms implemented with the "Developer Code" script block
+ * Enhanced usability, validation, accessibility, and styling for HubSpot forms
  * 
- * Main entry point for the module
+ * NPM/Bundler Entry Point
  */
 
 import { 
@@ -18,84 +18,12 @@ import {
   setupFieldValidation
 } from './hubspot-forms.js';
 
-// Import LOCAL styles
-// import './styles.css';
+import { initializeCore } from './core.js';
 
 /**
  * Main initialization function that accepts configuration options
  */
 const init = (options = {}) => {
-      // Hide native HubSpot character limit errors (was CSS :has-text)
-      function hideNativeCharLimitErrors(root = document) {
-        root.querySelectorAll('.hsfc-hs-form-errorAlert').forEach(el => {
-          if (
-            el.textContent.includes('Enter 500 characters or fewer') ||
-            el.textContent.includes('enter 500 characters or fewer')
-          ) {
-            el.style.display = 'none';
-          }
-        });
-      }
-    // Utility: Toggle classes that replace :has() selectors
-    function toggleHasReplacementClasses(root = document) {
-      // 1. .hsfc-Step
-      root.querySelectorAll('.hsfc-Step').forEach(step => {
-        const hasValidation = step.querySelector('.hsfc-CustomValidationError, .hsfc-ProgressBar--repositioned');
-        step.classList.toggle('hsfc-step-with-validation-and-progress', !!hasValidation);
-      });
-
-      // 2. .hsfc-Step__Content
-      root.querySelectorAll('.hsfc-Step__Content').forEach(content => {
-        const hasValidation = content.querySelector('.hsfc-CustomValidationError, .hsfc-ProgressBar--repositioned');
-        content.classList.toggle('hsfc-content-with-validation-and-progress', !!hasValidation);
-      });
-
-      // 3. label:not(:has(.hsfc-FieldLabel__RequiredIndicator))
-      root.querySelectorAll('label').forEach(label => {
-        const hasRequired = label.querySelector('.hsfc-FieldLabel__RequiredIndicator');
-        label.classList.toggle('hsfc-label-without-required', !hasRequired);
-      });
-
-      // 4. .hsfc-Row:has(input, select, textarea)
-      root.querySelectorAll('.hsfc-Row').forEach(row => {
-        const hasInput = row.querySelector('input, select, textarea');
-        row.classList.toggle('hsfc-row-with-form-inputs', !!hasInput);
-      });
-    }
-
-    // Initial run
-    if (typeof window !== 'undefined') {
-      toggleHasReplacementClasses();
-      hideNativeCharLimitErrors();
-    }
-
-    // Observe DOM mutations to keep classes in sync
-    if (typeof window !== 'undefined') {
-      const hasClassObserver = new MutationObserver(mutations => {
-        for (const mutation of mutations) {
-          if (mutation.type === 'childList') {
-            mutation.addedNodes.forEach(node => {
-              if (node.nodeType === Node.ELEMENT_NODE) {
-                toggleHasReplacementClasses(node);
-                hideNativeCharLimitErrors(node);
-              }
-            });
-          } else if (mutation.type === 'attributes') {
-            // If attributes change, re-check the affected element
-            if (mutation.target && mutation.target.nodeType === Node.ELEMENT_NODE) {
-              toggleHasReplacementClasses(mutation.target);
-              hideNativeCharLimitErrors(mutation.target);
-            }
-          }
-        }
-      });
-      hasClassObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class', 'id', 'type', 'name']
-      });
-    }
   if (typeof window === 'undefined') {
     return {
       HubSpotFormManager: null,
@@ -104,171 +32,8 @@ const init = (options = {}) => {
     };
   }
 
-  // Always remove HubSpot injected styles on init
-  removeHubSpotFormStyles();
-
-  // Apply configuration if provided
-  if (options.characterLimit) {
-    CharacterLimitValidator.DEFAULT_LIMIT = options.characterLimit;
-  }
-  
-  if (options.allowedExtensions) {
-    FileUploadValidator.allowedExtensions = options.allowedExtensions;
-  }
-  
-  if (options.maxFileSize) {
-    FileUploadValidator.maxFileSize = options.maxFileSize;
-  }
-  
-  if (options.errorMessages) {
-    ErrorMessageConfig.messages = options.errorMessages;
-  }
-
-  // Position elements immediately to prevent layout shifts
-  const positionElementsImmediately = () => {
-    // Find and reposition progress bars immediately
-    document.querySelectorAll('.hsfc-ProgressBar').forEach(progressBar => {
-      if (progressBar.hasAttribute('data-repositioned')) return;
-      
-      const step = progressBar.closest('.hsfc-Step');
-      if (!step) return;
-      
-      progressBar.setAttribute('data-repositioned', 'true');
-      progressBar.remove();
-      
-      const stepContent = step.querySelector('.hsfc-Step__Content') || step;
-      const firstFormField = stepContent.querySelector('.hsfc-Row:has(input, select, textarea), .hsfc-FormField, .hs-form-field, input, select, textarea');
-      const existingValidationError = stepContent.querySelector('.hsfc-CustomValidationError');
-      
-      if (existingValidationError) {
-        existingValidationError.insertAdjacentElement('afterend', progressBar);
-      } else if (firstFormField) {
-        stepContent.insertBefore(progressBar, firstFormField);
-      } else if (stepContent.firstChild) {
-        stepContent.insertBefore(progressBar, stepContent.firstChild);
-      } else {
-        stepContent.appendChild(progressBar);
-      }
-      
-      progressBar.classList.add('hsfc-ProgressBar--repositioned');
-    });
-  };
-
-  // Run positioning immediately when module loads
-  positionElementsImmediately();
-  
-  // Set up observer for new elements
-      // Add class to character limit warning elements for styling
-      document.querySelectorAll('.hsfc-CustomValidationError').forEach(el => {
-        if (
-          el.textContent.includes('Enter 500 characters or fewer') ||
-          el.textContent.includes('enter 500 characters or fewer')
-        ) {
-          el.classList.add('has-500-char-warning');
-        }
-      });
-  const positioningObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.type === 'childList') {
-        for (const addedNode of mutation.addedNodes) {
-          if (addedNode.nodeType === Node.ELEMENT_NODE) {
-            if (addedNode.classList?.contains('hsfc-ProgressBar')) {
-              positionElementsImmediately();
-            }
-            const progressBars = addedNode.querySelectorAll?.('.hsfc-ProgressBar');
-            if (progressBars?.length > 0) {
-              positionElementsImmediately();
-            }
-          }
-        }
-      }
-    }
-  });
-
-  positioningObserver.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-
-  // Initialize forms when safe, but positioning happens immediately
-  const whenSafeToInitialize = (callback) => {
-    if (typeof window === 'undefined') return;
-    
-    const executeCallback = () => {
-      // Ensure we don't interfere with any ongoing hydration
-      const isHydrationSafe = () => {
-        // Check that the page is fully loaded
-        if (document.readyState !== 'complete') return false;
-        
-        // Wait for any active React transitions to complete
-        if (document.documentElement.classList.contains('react-hydrating')) return false;
-        
-        // Ensure no React hydration errors are present
-        if (document.querySelector('[data-react-hydration-error]')) return false;
-        
-        return true;
-      };
-      
-      if (isHydrationSafe()) {
-        // Use requestIdleCallback to run during browser idle time
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(() => {
-            // Final safety delay
-            setTimeout(callback, 50);
-          });
-        } else {
-          setTimeout(callback, 100);
-        }
-      } else {
-        // Re-check in 100ms
-        setTimeout(executeCallback, 100);
-      }
-    };
-    
-    executeCallback();
-  };
-
-  whenSafeToInitialize(() => {
-    // Try to find and setup forms immediately
-    const hubspotForms = document.querySelectorAll('.hsfc-Form');
-    
-    if (hubspotForms.length > 0) {
-      HubSpotFormManager.setupAllForms();
-      return;
-    }
-
-    // If no forms found immediately, set up observer for dynamic forms
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type !== 'childList') continue;
-        
-        for (const addedNode of mutation.addedNodes) {
-          if (addedNode.nodeType === Node.ELEMENT_NODE) {
-            // Check if added node is a form or contains forms
-            const newForms = addedNode.classList?.contains('hsfc-Form') ? 
-              [addedNode] : 
-              addedNode.querySelectorAll?.('.hsfc-Form') || [];
-            
-            if (newForms.length > 0) {
-              observer.disconnect();
-              HubSpotFormManager.setupAllForms();
-              return;
-            }
-          }
-        }
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-
-    // Cleanup observer after timeout
-    setTimeout(() => {
-      observer.disconnect();
-    }, 10000);
-  });
+  // Initialize all core functionality
+  initializeCore(options);
 
   // Return the managers and validators for advanced usage
   return {
@@ -282,10 +47,9 @@ const init = (options = {}) => {
   };
 };
 
-// Auto-initialization is completely disabled to prevent React hydration conflicts
-// Users must explicitly call init() to initialize the module
-// This ensures no interference with React hydration or other frameworks
-// Export the initialization function for manual use
+/**
+ * Two-phase initialization for React/SSR environments
+ */
 export const initializeWithTwoPhases = async (options = {}) => {
   const defaultOptions = {
     characterLimit: 500,
@@ -300,6 +64,7 @@ export const initializeWithTwoPhases = async (options = {}) => {
 
   // Always remove HubSpot injected styles on two-phase init
   removeHubSpotFormStyles();
+  
   // Phase 1: Apply CSS-only positioning to prevent layout shifts
   const applyImmediateCSS = () => {
     const style = document.createElement('style');
@@ -380,46 +145,3 @@ export {
 
 // Default export for simple usage
 export default init;
-
-/**
- * Usage Examples:
- * 
- * // Simple auto-initialization (happens automatically)
- * import '@fahlgren-mortine/hubspot-form-usability-enhancements';
- * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
- * 
- * // Custom configuration
- * import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
- * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
- * 
- * hubspotForms({
- *   characterLimit: 1000,
- *   allowedExtensions: ['pdf', 'docx', 'jpg', 'png'],
- *   maxFileSize: 5 * 1024 * 1024 // 5MB
- * });
- * 
- * // Granular control
- * import { HubSpotFormManager, CharacterLimitValidator } from '@fahlgren-mortine/hubspot-form-usability-enhancements';
- * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
- * 
- * // Prevent auto-initialization
- * window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
- * import '@fahlgren-mortine/hubspot-form-usability-enhancements';
- * 
- * // Manual initialization with custom settings
- * HubSpotFormManager.setupAllForms();
- * 
- * // React usage
- * import { useEffect } from 'react';
- * import hubspotForms from '@fahlgren-mortine/hubspot-form-usability-enhancements';
- * import '@fahlgren-mortine/hubspot-form-usability-enhancements/styles';
- * 
- * function MyComponent() {
- *   useEffect(() => {
- *     // Initialize forms after component mounts
- *     hubspotForms();
- *   }, []);
- *   
- *   return <div id="hubspot-form-container"></div>;
- * }
- */
