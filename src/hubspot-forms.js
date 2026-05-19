@@ -658,6 +658,40 @@ const FileUploadValidator = {
     maxFileSize: null,
   },
 
+  // Default max file size (10 MB) used only when no site-level override is provided
+  DEFAULT_MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024,
+
+  // Parse max file size from number/string into bytes
+  parseMaxFileSize(value) {
+    if (typeof value === "number") {
+      return Number.isFinite(value) && value > 0 ? value : null;
+    }
+
+    if (typeof value !== "string") {
+      return null;
+    }
+
+    // Normalize common input formats like "10MB", "10 MB", "10mb"
+    const normalized = value.trim().toUpperCase();
+    const match = normalized.match(/^(\d+(?:\.\d+)?)\s*(B|KB|MB|GB)?$/);
+
+    if (!match) {
+      return null;
+    }
+
+    const number = parseFloat(match[1]);
+    const unit = match[2] || "B";
+
+    if (!Number.isFinite(number) || number <= 0) {
+      return null;
+    }
+
+    if (unit === "GB") return number * 1024 * 1024 * 1024;
+    if (unit === "MB") return number * 1024 * 1024;
+    if (unit === "KB") return number * 1024;
+    return number;
+  },
+
   // Get configuration from runtime config, window globals, or use defaults
   get allowedExtensions() {
     if (this._config.allowedExtensions) {
@@ -690,22 +724,23 @@ const FileUploadValidator = {
 
   get maxFileSize() {
     if (this._config.maxFileSize) {
-      return this._config.maxFileSize;
+      const configuredSize = this.parseMaxFileSize(this._config.maxFileSize);
+      if (configuredSize) {
+        return configuredSize;
+      }
     }
     
     // Check for runtime configuration via window global
-    if (typeof window !== 'undefined' && window.HUBSPOT_FORMS_MAX_FILE_SIZE) {
-      const envSize = window.HUBSPOT_FORMS_MAX_FILE_SIZE;
+    if (typeof window !== 'undefined') {
+      const envSize =
+        window.HS_MAX_FILE_SIZE ||
+        window.HUBSPOT_FORMS_MAX_FILE_SIZE ||
+        window.HUBSPOT_MAX_FILE_SIZE;
       if (envSize) {
-        // Parse size like "10MB", "5GB", etc.
-        const size = envSize.toString().toUpperCase();
-        const number = parseFloat(size);
-
-        if (size.includes("GB")) return number * 1024 * 1024 * 1024;
-        if (size.includes("MB")) return number * 1024 * 1024;
-        if (size.includes("KB")) return number * 1024;
-
-        return number; // Assume bytes if no unit
+        const parsedSize = this.parseMaxFileSize(envSize);
+        if (parsedSize) {
+          return parsedSize;
+        }
       }
     }
     
@@ -723,20 +758,21 @@ const FileUploadValidator = {
     //   return number; // Assume bytes if no unit
     // }
     
-    return 10 * 1024 * 1024; // 10MB default
+    return this.DEFAULT_MAX_FILE_SIZE_BYTES;
   },
 
   set maxFileSize(value) {
-    this._config.maxFileSize = value;
+    const parsedSize = this.parseMaxFileSize(value);
+    this._config.maxFileSize = parsedSize || null;
   },
 
   // Validate a file input
   validateFile(fileInput) {
     if (!fileInput.files || fileInput.files.length === 0) {
-      return { valid: true, errors: [] };
+      return { valid: true, errors: [], errorDetails: [] };
     }
 
-    const errors = [];
+    const errorDetails = [];
 
     // Validate each selected file
     for (let i = 0; i < fileInput.files.length; i++) {
@@ -744,34 +780,43 @@ const FileUploadValidator = {
 
       // Check file size
       if (file.size > this.maxFileSize) {
-        errors.push(
-          `File "${file.name}" size exceeds ${this.formatFileSize(this.maxFileSize)} limit`,
-        );
+        errorDetails.push({
+          type: "fileSize",
+          message: `File "${file.name}" size exceeds ${this.formatFileSize(this.maxFileSize)} limit`,
+        });
       }
 
       // Check file extension
       const extension = file.name.split(".").pop().toLowerCase();
       if (!this.allowedExtensions.includes(extension)) {
-        errors.push(
-          `File "${file.name}" type ".${extension}" is not allowed. Allowed types: ${this.allowedExtensions.map((ext) => "." + ext).join(", ")}`,
-        );
+        errorDetails.push({
+          type: "fileType",
+          message: `File "${file.name}" type ".${extension}" is not allowed. Allowed types: ${this.allowedExtensions.map((ext) => "." + ext).join(", ")}`,
+        });
       }
     }
 
-    return { valid: errors.length === 0, errors };
+    const errors = errorDetails.map((errorDetail) => errorDetail.message);
+
+    return { valid: errors.length === 0, errors, errorDetails };
   },
 
   // Format file size for display
   formatFileSize(bytes) {
-    if (bytes === 0) return "0 Bytes";
+    if (!Number.isFinite(bytes) || bytes <= 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   },
 
+  // Return the currently resolved max file size as display text
+  getResolvedMaxFileSizeLabel() {
+    return this.formatFileSize(this.maxFileSize);
+  },
+
   // Show error message
-  showError(fileInput, errors) {
+  showError(fileInput, errors, errorDetails = []) {
     this.hideError(fileInput);
 
     if (errors.length === 0) return;
@@ -779,6 +824,12 @@ const FileUploadValidator = {
     const errorDiv = document.createElement("div");
     errorDiv.className = "hsfc-ErrorAlert hsfc-FileError";
     errorDiv.setAttribute("role", "alert");
+
+    const errorTypes = [...new Set(errorDetails.map((detail) => detail.type))];
+    if (errorTypes.length > 0) {
+      errorDiv.setAttribute("data-hsfc-file-error-types", errorTypes.join(","));
+    }
+
     errorDiv.innerHTML = errors.join("<br/>");
     fileInput.parentElement.appendChild(errorDiv);
   },
@@ -845,11 +896,34 @@ const FileUploadValidator = {
     }
   },
 
+  // Show max file size note near the file input
+  showFileSizeNote(fileInput) {
+    const existingNote = fileInput.parentElement.querySelector(
+      '[data-hsfc-file-size-note="true"]',
+    );
+
+    const noteText = `Max file size: ${this.formatFileSize(this.maxFileSize)}`;
+
+    if (existingNote) {
+      existingNote.textContent = noteText;
+      return;
+    }
+
+    const noteDiv = document.createElement("div");
+    noteDiv.className = "hsfc-FieldNote";
+    noteDiv.setAttribute("data-hsfc-file-size-note", "true");
+    noteDiv.textContent = noteText;
+
+    fileInput.parentElement.appendChild(noteDiv);
+  },
+
   // Setup validation for file inputs
   setup(formContainer) {
     const fileInputs = formContainer.querySelectorAll('input[type="file"]');
 
     fileInputs.forEach((fileInput, index) => {
+      this.showFileSizeNote(fileInput);
+
       fileInput.addEventListener("change", () => {
         const validation = this.validateFile(fileInput);
 
@@ -859,8 +933,11 @@ const FileUploadValidator = {
         if (validation.valid) {
           this.hideError(fileInput);
         } else {
-          this.showError(fileInput, validation.errors);
-          // Don't clear files - let user see which ones have errors and manually reselect
+          this.showError(fileInput, validation.errors, validation.errorDetails);
+          // Clear the file input if invalid (reject selection)
+          fileInput.value = "";
+          // Also hide accepted files list since nothing is selected now
+          this.hideAcceptedFiles(fileInput);
         }
       });
     });
@@ -938,6 +1015,54 @@ const HubSpotFormValidator = {
   // HubSpot uses both 'required' and 'aria-required="true"' attributes
   REQUIRED_FIELD_SELECTOR:
     'input[required], select[required], textarea[required], input[aria-required="true"], select[aria-required="true"], textarea[aria-required="true"]',
+
+  getFileErrorTypes(errorElement) {
+    if (!errorElement || !errorElement.getAttribute) {
+      return [];
+    }
+
+    const rawTypes = errorElement.getAttribute("data-hsfc-file-error-types");
+    if (!rawTypes) {
+      return [];
+    }
+
+    return rawTypes
+      .split(",")
+      .map((type) => type.trim())
+      .filter(Boolean);
+  },
+
+  getFileErrorInterpolationValues() {
+    const maxSize = FileUploadValidator.getResolvedMaxFileSizeLabel();
+    const allowedTypes = FileUploadValidator.allowedExtensions
+      .map((ext) => `.${ext}`)
+      .join(", ");
+
+    return { maxSize, allowedTypes };
+  },
+
+  getCustomFileErrorMessage(errorElement) {
+    const fileErrorTypes = this.getFileErrorTypes(errorElement);
+    if (fileErrorTypes.length === 0) {
+      return null;
+    }
+
+    const interpolationValues = this.getFileErrorInterpolationValues();
+
+    if (fileErrorTypes.includes("fileSize")) {
+      return ErrorMessageConfig.getMessage("fileSize", {
+        maxSize: interpolationValues.maxSize,
+      });
+    }
+
+    if (fileErrorTypes.includes("fileType")) {
+      return ErrorMessageConfig.getMessage("fileType", {
+        allowedTypes: interpolationValues.allowedTypes,
+      });
+    }
+
+    return ErrorMessageConfig.getMessage("file");
+  },
 
   // Helper to find navigation button (not Previous)
   findNavigationButton(step) {
@@ -1186,51 +1311,35 @@ const HubSpotFormValidator = {
                      (errorText.toLowerCase().includes("invalid") || errorText.toLowerCase().includes("wrong format"))) {
             const customMessage = ErrorMessageConfig.getMessage('phone');
             if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("file") && 
-                     errorText.toLowerCase().includes("size") && 
-                     errorText.toLowerCase().includes("exceeds")) {
-            // Extract file size info if possible for interpolation
-            const sizeMatch = errorText.match(/exceeds ([0-9.]+ [A-Z]+)/i);
-            const maxSize = sizeMatch ? sizeMatch[1] : "limit";
-            const customMessage = ErrorMessageConfig.getMessage('fileSize', { maxSize });
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("file") && 
-                     (errorText.toLowerCase().includes("not allowed") || errorText.toLowerCase().includes("type"))) {
-            // Check if it's about file types/extensions
-            if (errorText.toLowerCase().includes("allowed types")) {
-              // Extract allowed types if possible
-              const typesMatch = errorText.match(/allowed types: (.+)$/i);
-              const allowedTypes = typesMatch ? typesMatch[1] : "see form requirements";
-              const customMessage = ErrorMessageConfig.getMessage('fileType', { allowedTypes });
+          } else {
+            const customFileMessage = this.getCustomFileErrorMessage(errorEl);
+            if (customFileMessage) {
+              errorText = customFileMessage;
+            } else if (errorText.toLowerCase().includes("url") || 
+                       errorText.toLowerCase().includes("website")) {
+              const customMessage = ErrorMessageConfig.getMessage('url');
               if (customMessage) errorText = customMessage;
-            } else {
-              const customMessage = ErrorMessageConfig.getMessage('file');
+            } else if (errorText.toLowerCase().includes("number") || 
+                       errorText.toLowerCase().includes("numeric")) {
+              const customMessage = ErrorMessageConfig.getMessage('number');
+              if (customMessage) errorText = customMessage;
+            } else if (errorText.toLowerCase().includes("confirmation") || 
+                       errorText.toLowerCase().includes("match")) {
+              const customMessage = ErrorMessageConfig.getMessage('confirmation');
+              if (customMessage) errorText = customMessage;
+            } else if (errorText.toLowerCase().includes("captcha") || 
+                       errorText.toLowerCase().includes("verification")) {
+              const customMessage = ErrorMessageConfig.getMessage('captcha');
+              if (customMessage) errorText = customMessage;
+            } else if (errorText.toLowerCase().includes("submit") || 
+                       errorText.toLowerCase().includes("error")) {
+              const customMessage = ErrorMessageConfig.getMessage('submission');
+              if (customMessage) errorText = customMessage;
+            } else if (errorText.toLowerCase().includes("connection") || 
+                       errorText.toLowerCase().includes("network")) {
+              const customMessage = ErrorMessageConfig.getMessage('network');
               if (customMessage) errorText = customMessage;
             }
-          } else if (errorText.toLowerCase().includes("url") || 
-                     errorText.toLowerCase().includes("website")) {
-            const customMessage = ErrorMessageConfig.getMessage('url');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("number") || 
-                     errorText.toLowerCase().includes("numeric")) {
-            const customMessage = ErrorMessageConfig.getMessage('number');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("confirmation") || 
-                     errorText.toLowerCase().includes("match")) {
-            const customMessage = ErrorMessageConfig.getMessage('confirmation');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("captcha") || 
-                     errorText.toLowerCase().includes("verification")) {
-            const customMessage = ErrorMessageConfig.getMessage('captcha');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("submit") || 
-                     errorText.toLowerCase().includes("error")) {
-            const customMessage = ErrorMessageConfig.getMessage('submission');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("connection") || 
-                     errorText.toLowerCase().includes("network")) {
-            const customMessage = ErrorMessageConfig.getMessage('network');
-            if (customMessage) errorText = customMessage;
           }
 
           fieldsWithErrors.push({
@@ -1802,51 +1911,35 @@ const HubSpotFormManager = {
                  (originalText.toLowerCase().includes("invalid") || originalText.toLowerCase().includes("wrong format"))) {
         const customMessage = ErrorMessageConfig.getMessage('phone');
         if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("file") && 
-                 originalText.toLowerCase().includes("size") && 
-                 originalText.toLowerCase().includes("exceeds")) {
-        // Extract file size info if possible for interpolation
-        const sizeMatch = originalText.match(/exceeds ([0-9.]+ [A-Z]+)/i);
-        const maxSize = sizeMatch ? sizeMatch[1] : "limit";
-        const customMessage = ErrorMessageConfig.getMessage('fileSize', { maxSize });
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("file") && 
-                 (originalText.toLowerCase().includes("not allowed") || originalText.toLowerCase().includes("type"))) {
-        // Check if it's about file types/extensions
-        if (originalText.toLowerCase().includes("allowed types")) {
-          // Extract allowed types if possible
-          const typesMatch = originalText.match(/allowed types: (.+)$/i);
-          const allowedTypes = typesMatch ? typesMatch[1] : "see form requirements";
-          const customMessage = ErrorMessageConfig.getMessage('fileType', { allowedTypes });
+      } else {
+        const customFileMessage = HubSpotFormValidator.getCustomFileErrorMessage(errorElement);
+        if (customFileMessage) {
+          newText = customFileMessage;
+        } else if (originalText.toLowerCase().includes("url") || 
+                   originalText.toLowerCase().includes("website")) {
+          const customMessage = ErrorMessageConfig.getMessage('url');
           if (customMessage) newText = customMessage;
-        } else {
-          const customMessage = ErrorMessageConfig.getMessage('file');
+        } else if (originalText.toLowerCase().includes("number") || 
+                   originalText.toLowerCase().includes("numeric")) {
+          const customMessage = ErrorMessageConfig.getMessage('number');
+          if (customMessage) newText = customMessage;
+        } else if (originalText.toLowerCase().includes("confirmation") || 
+                   originalText.toLowerCase().includes("match")) {
+          const customMessage = ErrorMessageConfig.getMessage('confirmation');
+          if (customMessage) newText = customMessage;
+        } else if (originalText.toLowerCase().includes("captcha") || 
+                   originalText.toLowerCase().includes("verification")) {
+          const customMessage = ErrorMessageConfig.getMessage('captcha');
+          if (customMessage) newText = customMessage;
+        } else if (originalText.toLowerCase().includes("submit") || 
+                   originalText.toLowerCase().includes("error")) {
+          const customMessage = ErrorMessageConfig.getMessage('submission');
+          if (customMessage) newText = customMessage;
+        } else if (originalText.toLowerCase().includes("connection") || 
+                   originalText.toLowerCase().includes("network")) {
+          const customMessage = ErrorMessageConfig.getMessage('network');
           if (customMessage) newText = customMessage;
         }
-      } else if (originalText.toLowerCase().includes("url") || 
-                 originalText.toLowerCase().includes("website")) {
-        const customMessage = ErrorMessageConfig.getMessage('url');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("number") || 
-                 originalText.toLowerCase().includes("numeric")) {
-        const customMessage = ErrorMessageConfig.getMessage('number');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("confirmation") || 
-                 originalText.toLowerCase().includes("match")) {
-        const customMessage = ErrorMessageConfig.getMessage('confirmation');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("captcha") || 
-                 originalText.toLowerCase().includes("verification")) {
-        const customMessage = ErrorMessageConfig.getMessage('captcha');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("submit") || 
-                 originalText.toLowerCase().includes("error")) {
-        const customMessage = ErrorMessageConfig.getMessage('submission');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("connection") || 
-                 originalText.toLowerCase().includes("network")) {
-        const customMessage = ErrorMessageConfig.getMessage('network');
-        if (customMessage) newText = customMessage;
       }
 
       // Only update if we have a replacement

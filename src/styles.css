@@ -281,7 +281,7 @@ div[data-hsfc-id=Renderer] {
       /* Form Labels and Descriptions */
       & .hsfc-FieldLabel {
         display:inline-block; max-width:100%; font-size:var(--font-hs-form-label-size); color:var(--color-hs-form-label-text); font-weight:var(--font-hs-form-label-weight); font-family:var(--font-hs-form-label);
-        &+ .hsfc-FieldDescription {
+        &+ .hsfc-FieldDescription{
           width:auto !important; font-size:var(--font-hs-form-description-size); color:var(--color-hs-form-label-description-text); font-weight:normal;
           @media screen and (min-width:768px) {
             display:inline-block; margin-left:.5rem;
@@ -300,6 +300,12 @@ div[data-hsfc-id=Renderer] {
       }
       & .hsfc-FieldLabel__RequiredIndicator {
         margin-left:0.25rem; color:var(--color-hs-form-attention);
+      }
+      & .hsfc-FieldDescription span {
+        color:var(--color-hs-form-label-description-text) !important;
+      }
+      .hsfc-FieldNote {
+        width:auto !important; font-size:var(--font-hs-form-description-size); color:var(--color-hs-form-label-description-text); font-weight:normal;
       }
 
       /* Basic Input Elements */

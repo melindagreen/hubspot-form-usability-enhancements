@@ -1,523 +1,133 @@
 # @fahlgren-mortine/hubspot-form-usability-enhancements
 
-Enhanced HubSpot form validation, accessibility (WCAG 2.1 AA), and styling. React/SSR compatible.
+Accessible usability and validation enhancements for HubSpot Developer Code forms.
 
-Overrides HubSpot's default color values. Use developer-defined color palette via CSS custom properties.
+This package ships pre-compiled CSS. Consumers do not need Tailwind, PostCSS, or custom build configuration for package styles.
 
-## Features
+## What it adds
 
-- React/SSR hydration safe
-- WCAG 2.1 AA compliant
-- Dark background support (`.hs-form-reverse`)
-- File upload validation (type, size)
-- Character limit validation
-- TypeScript definitions included
-
-## Browser Support
-
-- Chrome/Edge 105+
-- Firefox 121+
-- Safari 15.4+
-- Older browsers: graceful degradation (`:has()` selector fallback)
+- Step-level validation summary with field links
+- File validation for extension and size
+- Character counters and character-limit messaging
+- Progress-bar repositioning for better step UX
+- Dark-background support via hs-form-reverse
+- React and SSR-safe initialization pattern
 
 ## Installation
 
-### npm/Bundlers
+### npm or bundlers
 
 ```bash
 npm install @fahlgren-mortine/hubspot-form-usability-enhancements
 ```
 
-```javascript
-import "@fahlgren-mortine/hubspot-form-usability-enhancements";
+```js
 import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+import init from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+
+init();
 ```
 
-### CDN (jsdelivr)
+### CDN
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/styles.css">
-<script type="module" src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/index.cdn.js"></script>
-```
-
-Configure via window globals before script load:
-
-```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/styles.css" />
 <script>
-window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'png'];
-window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB';
+  window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ["pdf", "doc", "docx", "jpg", "png"];
+  window.HUBSPOT_FORMS_MAX_FILE_SIZE = "10MB";
+  window.HUBSPOT_FORMS_ERROR_MESSAGES = {
+    required: "This field is required.",
+    fileSize: "Maximum file size is {maxSize}.",
+  };
 </script>
-```
-
-## Platform-Specific Guides
-
-| Platform | Guide |
-|----------|-------|
-| HubSpot CMS | [user-docs/hubspot-cms.md](user-docs/hubspot-cms.md) |
-| Nuxt + Storyblok | [user-docs/nuxt-storyblok.md](user-docs/nuxt-storyblok.md) |
-| Statamic | [user-docs/statamic.md](user-docs/statamic.md) |
-| WordPress | [user-docs/wordpress.md](user-docs/wordpress.md) |
-
-## Usage
-
-### Auto-Initialization
-
-```javascript
-import "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-```
-
-### Manual Configuration
-
-```javascript
-import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-
-hubspotForms({
-  characterLimit: 1000,
-  allowedExtensions: ["pdf", "docx", "jpg", "png"],
-  maxFileSize: 5 * 1024 * 1024, // 5MB
-});
-```
-
-### React/SSR Safe
-
-```javascript
-// Disable auto-init
-window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
-
-// Initialize after framework hydration
-setTimeout(async () => {
-  const module =
-    await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
-  if (module.init) {
-    module.init({
-      characterLimit: 1000,
-      allowedExtensions: ["pdf", "docx", "jpg", "png"],
-      maxFileSize: 5 * 1024 * 1024,
-    });
-  }
-}, 500);
-```
-
-### Step 5: Test Your Integration
-
-1. **Load your page** with a HubSpot form
-2. **Check that styles are applied** - forms should have enhanced styling
-3. **Test character limits** - type in textarea fields to see character counters
-4. **Test file uploads** - try uploading files to see validation
-5. **Test form validation** - submit incomplete forms to see enhanced error messages
-6. **Check browser console** - should be free of errors
-7. **Test on mobile devices** - ensure responsive behavior works
-
-### Step 6: Customize (Optional)
-
-If needed, override default styles or configuration:
-
-```css
-/* Custom styling */
-.hsfc-Form {
-  --hsfc-primary-color: #your-brand-color;
-  --hsfc-error-color: #your-error-color;
-}
-```
-
-```javascript
-// Custom configuration
-hubspotForms({
-  characterLimit: 750, // Custom character limit
-  allowedExtensions: [
-    // Custom file types
-    "pdf",
-    "doc",
-    "docx",
-    "jpg",
-    "jpeg",
-    "png",
-    "gif",
-    "svg",
-  ],
-  maxFileSize: 20 * 1024 * 1024, // 20MB limit
-});
-```
-
-### Basic Usage (Auto-initialization)
-
-For environments without React or hydration concerns:
-
-```javascript
-// Import the module and styles - forms will initialize automatically
-
-import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-
-// Delay until framework hydrates
-setTimeout(() => hubspotForms(), 500);
-```
-
-### React Component
-
-```jsx
-import { useEffect } from "react";
-import hubspotForms from "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-
-function FormComponent() {
-  useEffect(() => {
-    hubspotForms({
-      characterLimit: 1000,
-      allowedExtensions: ["pdf", "docx", "jpg", "png"],
-      maxFileSize: 5 * 1024 * 1024,
-    });
-  }, []);
-
-  return <div id="hubspot-form-container"></div>;
-}
+<script type="module" src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/index.cdn.js"></script>
 ```
 
 ## Configuration
 
-### Options
+You can configure in two ways:
 
-```javascript
-hubspotForms({
-  characterLimit: 500,              // Max characters for textareas
-  allowedExtensions: ['pdf', 'jpg'], // File types allowed
-  maxFileSize: 10 * 1024 * 1024,    // Max file size in bytes (10MB)
-  errorMessages: {                   // Custom error messages
-    required: "Field required",
-    email: "Invalid email",
-    fileType: "File type: {allowedTypes}"
-  }
+- Programmatic options via init
+- Window globals for CDN and runtime overrides
+
+Programmatic example:
+
+```js
+import init from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
+
+init({
+  characterLimit: 500,
+  allowedExtensions: ["pdf", "jpg", "png"],
+  maxFileSize: "5MB",
+  errorMessages: {
+    fileSize: "File exceeds {maxSize}",
+    fileType: "Allowed types: {allowedTypes}",
+  },
 });
 ```
 
-### Window Globals (CDN)
+Window globals:
 
-```javascript
-window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ['pdf', 'doc', 'jpg'];
-window.HUBSPOT_FORMS_MAX_FILE_SIZE = '10MB';
+```js
+window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS = ["pdf", "jpg", "png"];
+window.HUBSPOT_FORMS_MAX_FILE_SIZE = "5MB";
 window.HUBSPOT_FORMS_ERROR_MESSAGES = {
-  required: "Required",
-  email: "Invalid email"
+  fileSize: "File exceeds {maxSize}",
 };
 ```
 
-## Advanced Usage
+### Precedence and defaults
 
-### Manual Control
+- Site or app config overrides package defaults.
+- Default max file size is 10MB when no override is provided.
+- maxSize interpolation is sourced from resolved config value, not parsed from text.
 
-```javascript
-import {
-  HubSpotFormManager,
-  CharacterLimitValidator,
-  FileUploadValidator,
-} from "@fahlgren-mortine/hubspot-form-usability-enhancements";
+## React and SSR-safe usage
 
-// Setup all forms
-HubSpotFormManager.setupAllForms();
-
-// Setup specific form
-const form = document.querySelector(".hsfc-Form");
-HubSpotFormManager.setupSingleForm(form);
-// Set flag before importing to prevent auto-initialization
+```js
 window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
 
-import "@fahlgren-mortine/hubspot-form-usability-enhancements";
-import "@fahlgren-mortine/hubspot-form-usability-enhancements/styles";
-
-// Manual initialization with custom timing
-setTimeout(() => {
-  import("@fahlgren-mortine/hubspot-form-usability-enhancements").then(
-    ({ HubSpotFormManager }) => {
-      HubSpotFormManager.setupAllForms();
-    },
-  );
-}, 1000);
+setTimeout(async () => {
+  const module = await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
+  module.init({
+    maxFileSize: "4MB",
+  });
+}, 500);
 ```
 
-## Build System Integration
+## Error message placeholders
 
-### Webpack
-
-```javascript
-// webpack.config.js
-module.exports = {
-  // ... your config
-  resolve: {
-    alias: {
-      "@hubspot-forms": "@fahlgren-mortine/hubspot-form-usability-enhancements",
-```
-
-### Disable Auto-Init
-
-```javascript
-window.HUBSPOT_FORMS_NO_AUTO_INIT = true;
-```
+- characterLimit supports limit, overBy, plural
+- fileSize supports maxSize
+- fileType supports allowedTypes
 
 ## Styling
 
-### Dark Backgrounds
+Override root-level CSS variables in your app stylesheet. See theme-template.css for the full variable list.
 
-Add `.hs-form-reverse` to parent container:
+For dark sections, wrap the form in hs-form-reverse.
 
 ```html
 <div class="hs-form-reverse">
-  <!-- HubSpot form here - auto-applies white text -->
+  <!-- HubSpot form -->
 </div>
 ```
 
-### Color Customization
+## Platform guides
 
-Override CSS variables in `:root`:
-
-```css
-:root {
-  --color-hs-form-primary: oklch(0.50 0.16 250.88);
-  --color-hs-form-danger: oklch(0.55 0.22 25);
-}
-```
-
-See [theme-template.css](theme-template.css) for all variables.
-
-## Error Messages
-
-### Customization
-
-```javascript
-hubspotForms({
-  errorMessages: {
-    required: "Required",
-    email: "Invalid email",
-    fileType: "Allowed: {allowedTypes}",
-    characterLimit: "Max {limit} chars. {overBy} over."
-  }
-});
-```
-
-### Interpolation
-
-| Key | Variables | Example |
-|-----|-----------|---------|
-| `characterLimit` | `{limit}`, `{overBy}`, `{plural}` | "Max 500 chars" |
-| `fileSize` | `{maxSize}` | "Max 10 MB" |
-| `fileType` | `{allowedTypes}` | "Only .pdf, .jpg" |
-
-### Available Types
-
-| Type | Default |
-|------|---------|
-| `required` | "Please complete this required field." |
-| `email` | "must be formatted correctly" |
-| `pattern` | "must be formatted correctly" |
-| `characterLimit` | "Enter {limit} characters or fewer..." |
-| `date` | "Please enter a valid date." |
-| `phone` | "Please enter a valid phone number." |
-| `file` | "File type not allowed." |
-| `fileSize` | "File size exceeds {maxSize} limit" |
-| `fileType` | "File type not allowed. Allowed: {allowedTypes}" |
-| `url` | "Please enter a valid URL" |
-| `number` | "Please enter a valid number" |
-
-## API
-
-### Exports
-
-```javascript
-import {
-  init,                      // Main init function
-  HubSpotFormManager,        // Form management
-  HubSpotFormValidator,      // Validation
-  CharacterLimitValidator,   // Character limits
-  FileUploadValidator,       // File validation
-  ErrorMessageConfig,        // Error messages
-  FieldValidator,            // Field validation
-  removeHubSpotFormStyles    // Style removal
-} from "@fahlgren-mortine/hubspot-form-usability-enhancements";
-| `required`        | Required field validation      | No                     |
-| `email`           | Email format validation        | No                     |
-| `pattern`         | Pattern/format validation      | No                     |
-| `characterLimit`  | Character limit exceeded       | Yes (`{limit}`, `{overBy}`, `{plural}`) |
-| `date`            | Date format validation         | No                     |
-| `phone`           | Phone number validation        | No                     |
-| `file`            | File type not allowed          | No                     |
-| `fileSize`        | File size exceeded             | Yes (`{maxSize}`)      |
-| `fileType`        | Detailed file type error       | Yes (`{allowedTypes}`) |
-| `url`             | URL format validation          | No                     |
-| `number`          | Number format validation       | No                     |
-| `confirmation`    | Confirmation field mismatch    | No                     |
-| `captcha`         | CAPTCHA/verification required  | No                     |
-```
+- HubSpot CMS: user-docs/hubspot-cms.md
+- Statamic: user-docs/statamic.md
+- Nuxt and Storyblok: user-docs/nuxt-storyblok.md
+- WordPress: user-docs/wordpress.md
 
 ## Development
 
-See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
+See docs/DEVELOPMENT.md.
 
 ## License
 
 MIT
-
-## Support
-
-[GitHub Issues](https://github.com/FahlgrenMortineDigital/hubspot-form-usability-enhancements/issues)
-- **`fileType`**: `{allowedTypes}` (e.g., ".pdf, .doc, .jpg")
-
-```javascript
-// Example with interpolation
-window.HUBSPOT_FORMS_ERROR_MESSAGES = {
-  characterLimit: "Please keep it under {limit} characters. You're {overBy} character{plural} over.",
-  fileSize: "Maximum file size is {maxSize}. Please choose a smaller file.",
-  fileType: "We accept these file types: {allowedTypes}",
-};
-```
-
-### Fallback Behavior
-
-If you don't define a custom message for a specific error type, the original HubSpot error message will be preserved. This allows you to customize only the messages you care about while keeping the defaults for everything else.
-
-## Environment Variables
-
-You can also configure the module using environment variables:
-
-```bash
-# .env
-VITE_UPLOAD_ALLOWED_EXTENSIONS=pdf,doc,docx,jpg,jpeg,png
-VITE_UPLOAD_MAX_SIZE=10MB
-```
-
-## Styling Customization
-
-The module provides a flexible color system that works out of the box. The pre-compiled CSS is included.
-
-### Color System Architecture
-
-The styling system uses a two-tier architecture:
-
-- **Base colors** defined in `:root` - these are the colors you override
-- **Component colors** reference base colors using `var()` and cascade automatically
-
-This cascading design means you typically only need to override base colors, and all components automatically update.
-
-### Theme Template
-
-For detailed theming, copy the included `theme-template.css` from your `node_modules`:
-
-```bash
-cp node_modules/@fahlgren-mortine/hubspot-form-usability-enhancements/theme-template.css ./my-theme.css
-```
-
-This file contains all CSS variables, commented out and organized by component. Uncomment only what you need to override.
-
-### CSS Variables Cascade Reference
-
-The following shows which base colors cascade to which component variables. Override base colors first; only override component variables when you need to break from the cascade.
-
-<details>
-<summary><strong>Primary Color Cascade</strong></summary>
-
-| Base Color                   | Cascades To                                                                                                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--color-hs-form-primary`    | `btn-primary-bg`, `btn-primary-border`, `field-checked-bg`, `link`, `progress-bar-fill`, `reverse-btn-primary-text`                                                 |
-| `--color-hs-form-primary-lt` | `reverse-btn-primary-hover-bg`, `reverse-btn-primary-focus-bg`, `reverse-field-focus-outline`                                                                       |
-| `--color-hs-form-primary-dk` | `btn-primary-hover-bg`, `btn-primary-hover-border`, `btn-primary-focus-*`, `btn-primary-active-*`, `link-hover`, `link-focus`, `link-active`, `field-focus-outline` |
-
-</details>
-
-<details>
-<summary><strong>Secondary Color Cascade</strong></summary>
-
-| Base Color                     | Cascades To                                                                                               |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `--color-hs-form-secondary`    | `btn-ancillary-bg`, `btn-ancillary-border`, `reverse-btn-ancillary-text`                                  |
-| `--color-hs-form-secondary-lt` | `reverse-btn-ancillary-hover-bg`, `reverse-btn-ancillary-focus-bg`                                        |
-| `--color-hs-form-secondary-dk` | `btn-ancillary-hover-bg`, `btn-ancillary-hover-border`, `btn-ancillary-focus-*`, `btn-ancillary-active-*` |
-
-</details>
-
-<details>
-<summary><strong>Neutral Color Cascade</strong></summary>
-
-| Base Color                    | Cascades To                                                                                                                                                                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--color-hs-form-neutral`     | `btn-disabled-bg`, `text`, `field-text`, `label-text`, `selectlist-item-text`, `progress-bar-border`, `reverse-btn-disabled-text`                                                                                                    |
-| `--color-hs-form-neutral-hlt` | `selectlist-item-hover-bg`, `selectlist-item-focus-bg`, `selectlist-item-active-bg`                                                                                                                                                  |
-| `--color-hs-form-neutral-lt`  | `btn-disabled-text`, `field-border`, `field-hover-border`, `placeholder-text`, `selectlist-border`, `label-description-text`, `label-optional-text`, `reverse-field-checked-bg`, `reverse-progress-bar-*`, `reverse-btn-disabled-bg` |
-| `--color-hs-form-neutral-dk`  | `headings`, `selectlist-caret-color`, `reverse-btn-*-hover-text`, `reverse-btn-*-focus-text`, `reverse-btn-*-active-text`                                                                                                            |
-
-</details>
-
-<details>
-<summary><strong>Status Color Cascades (Error, Warning, Success)</strong></summary>
-
-| Base Color                   | Cascades To                                               |
-| ---------------------------- | --------------------------------------------------------- |
-| `--color-hs-form-error`      | `required-indicator`, `error-message`, `error-box-border` |
-| `--color-hs-form-error-lt`   | `error-box-bg`                                            |
-| `--color-hs-form-error-dk`   | `error-box-text`                                          |
-| `--color-hs-form-warning`    | `warning-message`                                         |
-| `--color-hs-form-warning-dk` | `warning-border`                                          |
-| `--color-hs-form-success`    | `success-message`, `success-box-text`                     |
-| `--color-hs-form-success-lt` | `success-box-bg`                                          |
-| `--color-hs-form-success-dk` | `success-box-border`                                      |
-
-</details>
-
-<details>
-<summary><strong>White/Black Cascade</strong></summary>
-
-| Base Color              | Cascades To                                                                                                                                                                                           |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--color-hs-form-white` | `btn-primary-text`, `btn-ancillary-text`, `selectlist-bg`, `selectlist-item-bg`, `progress-bar-bg`, `reverse-text`, `reverse-link`, `reverse-field-bg`, `reverse-btn-*-bg`, `reverse-progress-bar-bg` |
-| `--color-hs-form-black` | `headings`, `field-bg`                                                                                                                                                                                |
-
-</details>
-
-<details>
-<summary><strong>Common Override Scenarios</strong></summary>
-
-**Progress bar fill should NOT be primary color:**
-
-```css
-:root {
-  --color-hs-form-progress-bar-fill: #custom-color;
-}
-```
-
-**Hover borders should be gray, not match default:**
-
-```css
-:root {
-  --color-hs-form-field-hover-border: var(--color-hs-form-neutral);
-}
-```
-
-**Button hover should be lighter, not darker:**
-
-```css
-:root {
-  --color-hs-form-btn-primary-hover-bg: var(--color-hs-form-primary-lt);
-  --color-hs-form-btn-primary-hover-border: var(--color-hs-form-primary-lt);
-  --color-hs-form-btn-primary-hover-text: var(--color-hs-form-neutral-dk);
-}
-```
-
-**Links should be different from primary:**
-
-```css
-:root {
-  --color-hs-form-link: #0066cc;
-  --color-hs-form-link-hover: #004499;
-}
-```
-
-</details>
-
-### Customizing Colors
-
-You can fully customize colors by overriding base color variables in your project's CSS:
-
-```css
-/* your-styles.css */
 :root {
   /* Primary brand colors */
   --color-hs-form-primary: oklch(0.55 0.2 340);

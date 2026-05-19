@@ -1,223 +1,56 @@
-# Development & Publishing Guide
+# Development and Publishing Guide
 
-This document covers the build process, local development workflow, and NPM publishing for `@fahlgren-mortine/hubspot-form-usability-enhancements`.
+This package publishes pre-built JS and CSS artifacts from dist.
 
 ## Prerequisites
 
-- Node.js 18+
-- npm 9+
-- NPM registry access for `@fahlgren-mortine` scope
+- Node.js 20+
+- npm 10+
 
-## Build System Overview
+## Build commands
 
-The package uses a dual-output build system producing both ESM and CJS bundles:
+| Command | Purpose | Output |
+| --- | --- | --- |
+| npm run build | Full build | dist JS, CSS, and d.ts |
+| npm run build:js | Rollup bundles | dist/index.esm.js, dist/index.js, dist/index.cdn.js |
+| npm run build:css | PostCSS build | dist/styles.css |
+| npm run build:types | Types copy | dist/index.d.ts |
 
-| Command               | Description              | Output                               |
-| --------------------- | ------------------------ | ------------------------------------ |
-| `npm run build`       | Full production build    | All dist files                       |
-| `npm run build:js`    | JavaScript only (Rollup) | `dist/index.esm.js`, `dist/index.js` |
-| `npm run build:css`   | CSS only (PostCSS)       | `dist/styles.css`                    |
-| `npm run build:types` | TypeScript definitions   | `dist/index.d.ts`                    |
-| `npm run dev`         | Watch mode (nodemon)     | Live rebuilds                        |
+## Important integration detail
 
-### Output Files
+Consumer apps using file dependency install from package exports in dist, not src.
 
-After running `npm run build`, the `dist/` directory contains:
+If you change src, run npm run build in this repo before testing in a consumer app.
 
-```
-dist/
-├── index.esm.js      # ES Module (for modern bundlers)
-├── index.js          # CommonJS (for Node/older bundlers)
-├── index.d.ts        # TypeScript definitions
-└── styles.css        # Compiled CSS (no Tailwind dependency for consumers)
-```
+## Local workflow with hsforms-sbx
 
-## Local Development Workflow
+1. In this repo, run npm run build.
+2. In hsforms-sbx, keep dependency as file:../hubspot-form-usability-enhancements.
+3. In hsforms-sbx, run npm install and npm run build.
+4. Verify behavior in browser.
 
-### Working with a Consumer Project (e.g., hsforms-sbx)
+## Publish workflow
 
-When developing the package alongside a project that consumes it:
-
-#### 1. Build the Package
-
-```bash
-cd /path/to/hubspot-form-usability-enhancements
-npm run build
-```
-
-#### 2. Link to Consumer Project
-
-The consumer project should have a `file:` reference in its `package.json`:
-
-```json
-{
-  "dependencies": {
-    "@fahlgren-mortine/hubspot-form-usability-enhancements": "file:../hubspot-form-usability-enhancements"
-  }
-}
-```
-
-#### 3. Reinstall in Consumer Project
-
-After building the package:
-
-```bash
-cd /path/to/consumer-project
-npm uninstall @fahlgren-mortine/hubspot-form-usability-enhancements
-npm install ../hubspot-form-usability-enhancements
-npm run build
-```
-
-Or use a convenience script (if available):
-
-```bash
-./upgrade_enhancements_local
-```
-
-#### 4. Iterate
-
-1. Make changes to source files in `src/`
-2. Run `npm run build` in this package
-3. Run `npm run build` in consumer project
-4. Test changes
-
-### Watch Mode (Development)
-
-For faster iteration during active development:
-
-```bash
-npm run dev
-```
-
-This watches both JS and CSS files and rebuilds on changes. Note: You'll still need to rebuild the consumer project to see changes.
-
-## Publishing to NPM
-
-### Pre-Publish Checklist
-
-1. **Ensure all changes are committed**
-
-   ```bash
-   git status
-   ```
-
-2. **Test the build**
-
-   ```bash
-   npm run build
-   ```
-
-3. **Verify dist/ contents**
-
-   ```bash
-   ls -la dist/
-   # Should contain: index.esm.js, index.js, index.d.ts, styles.css
-   ```
-
-4. **Test in consumer project with local link**
-   - Ensure the package works correctly before publishing
-
-### Version Bump
-
-Follow [Semantic Versioning](https://semver.org/):
-
-- **Patch** (1.0.x): Bug fixes, no API changes
-- **Minor** (1.x.0): New features, backward compatible
-- **Major** (x.0.0): Breaking changes
-
-```bash
-# Patch release
-npm version patch
-
-# Minor release
-npm version minor
-
-# Major release
-npm version major
-```
-
-This automatically:
-
-- Updates `package.json` version
-- Creates a git commit
-- Creates a git tag
-
-### Publish
-
-```bash
-npm publish
-```
-
-The `prepublishOnly` script automatically runs `npm run build` before publishing.
-
-### Post-Publish
-
-1. **Push git tags**
-
-   ```bash
-   git push && git push --tags
-   ```
-
-2. **Update consumer projects** to use the new NPM version:
-   ```bash
-   # In consumer project
-   npm install @fahlgren-mortine/hubspot-form-usability-enhancements@latest
-   ```
-
-## Complete Release Workflow
-
-Here's the full workflow for releasing a new version:
-
-```bash
-# 1. Ensure working directory is clean
-git status
-
-# 2. Build and test
-npm run build
-
-# 3. Bump version (choose one)
-npm version patch  # or minor/major
-
-# 4. Publish to NPM
-npm publish
-
-# 5. Push to git
-git push && git push --tags
-
-# 6. Notify consumer projects to update
-```
-
-## Source File Reference
-
-| File                   | Purpose                                      |
-| ---------------------- | -------------------------------------------- |
-| `src/hubspot-forms.js` | Core form manager and validators             |
-| `src/index.js`         | Main entry point, exports, auto-init logic   |
-| `src/index.d.ts`       | TypeScript type definitions                  |
-| `src/styles.css`       | CSS styles (uses postcss-nested for nesting) |
-| `theme-template.css`   | Theme template for implementers (published)  |
-| `rollup.config.js`     | JavaScript bundling configuration            |
-| `postcss.config.js`    | CSS processing configuration                 |
+1. Run npm run build.
+2. Verify dist files exist:
+   - dist/index.esm.js
+   - dist/index.js
+   - dist/index.cdn.js
+   - dist/styles.css
+   - dist/index.d.ts
+3. Bump version using npm version patch, minor, or major.
+4. Publish with npm publish.
+5. Push commit and tags.
 
 ## Troubleshooting
 
-### Build Fails with CSS Errors
+### Consumer app still shows old behavior
 
-Ensure dependencies are installed:
+1. Rebuild this package with npm run build.
+2. Reinstall dependency in consumer app with npm install.
+3. Rebuild consumer app with npm run build.
 
-```bash
-npm install
-npm run build:css
-```
+### Package publish fails
 
-### Consumer Project Doesn't See Changes
-
-1. Ensure the package was rebuilt: `npm run build`
-2. Reinstall in consumer: `npm uninstall && npm install <path>`
-3. Rebuild consumer project: `npm run build`
-
-### NPM Publish Fails
-
-- Verify you're logged in: `npm whoami`
-- Verify scope access: Check `@fahlgren-mortine` organization membership
-- Check for version conflicts: Ensure version doesn't already exist
+1. Check npm login using npm whoami.
+2. Confirm target version is not already published.
