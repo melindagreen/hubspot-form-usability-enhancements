@@ -1331,8 +1331,12 @@ const HubSpotFormValidator = {
                        errorText.toLowerCase().includes("verification")) {
               const customMessage = ErrorMessageConfig.getMessage('captcha');
               if (customMessage) errorText = customMessage;
-            } else if (errorText.toLowerCase().includes("submit") || 
-                       errorText.toLowerCase().includes("error")) {
+            } else if ((errorText.toLowerCase().includes("submit") ||
+                        errorText.toLowerCase().includes("submission")) &&
+                       (errorText.toLowerCase().includes("fail") ||
+                        errorText.toLowerCase().includes("error") ||
+                        errorText.toLowerCase().includes("unable") ||
+                        errorText.toLowerCase().includes("problem"))) {
               const customMessage = ErrorMessageConfig.getMessage('submission');
               if (customMessage) errorText = customMessage;
             } else if (errorText.toLowerCase().includes("connection") || 
@@ -1931,8 +1935,12 @@ const HubSpotFormManager = {
                    originalText.toLowerCase().includes("verification")) {
           const customMessage = ErrorMessageConfig.getMessage('captcha');
           if (customMessage) newText = customMessage;
-        } else if (originalText.toLowerCase().includes("submit") || 
-                   originalText.toLowerCase().includes("error")) {
+        } else if ((originalText.toLowerCase().includes("submit") ||
+                    originalText.toLowerCase().includes("submission")) &&
+                   (originalText.toLowerCase().includes("fail") ||
+                    originalText.toLowerCase().includes("error") ||
+                    originalText.toLowerCase().includes("unable") ||
+                    originalText.toLowerCase().includes("problem"))) {
           const customMessage = ErrorMessageConfig.getMessage('submission');
           if (customMessage) newText = customMessage;
         } else if (originalText.toLowerCase().includes("connection") || 
@@ -1999,15 +2007,29 @@ const HubSpotFormManager = {
           (step) => getComputedStyle(step).display !== "none",
         );
 
-    if (!visibleStep) return;
+    const navigationButtons = visibleStep
+      ? [HubSpotFormValidator.findNavigationButton(visibleStep)].filter(Boolean)
+      : Array.from(
+          formContainer.querySelectorAll(
+            '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]',
+          ),
+        ).filter((button) => {
+          const buttonText = button.textContent.trim().toLowerCase();
+          return !buttonText.includes("previous") && !buttonText.includes("back");
+        });
 
-    const nextButton = HubSpotFormValidator.findNavigationButton(visibleStep);
-    if (!nextButton) return;
+    // Keep navigation clickable so click-based validation/error summary can run.
+    navigationButtons.forEach((button) => {
+      button.disabled = false;
+      button.removeAttribute("disabled");
+      button.removeAttribute("aria-disabled");
 
-    const requiredFields = visibleStep.querySelectorAll(
-      HubSpotFormValidator.REQUIRED_FIELD_SELECTOR,
-    );
-    // Button is now always enabled - validation moved to click handler
+      // Some form runtimes disable the ancestor fieldset instead of the button itself.
+      const disabledFieldset = button.closest("fieldset[disabled]");
+      if (disabledFieldset) {
+        disabledFieldset.removeAttribute("disabled");
+      }
+    });
   },
 
   // Add all event listeners
@@ -2022,6 +2044,10 @@ const HubSpotFormManager = {
 
       // Attach listener to any button that is NOT a previous button
       if (!buttonText.includes("previous") && !buttonText.includes("back")) {
+        if (button.hasAttribute("data-hsfc-next-handler-bound")) {
+          return;
+        }
+
         button.addEventListener(
           "click",
           (event) => this.handleNextButtonClick(event, formContainer, cleanup),
@@ -2029,6 +2055,8 @@ const HubSpotFormManager = {
             signal: cleanup.abortController.signal,
           },
         );
+
+        button.setAttribute("data-hsfc-next-handler-bound", "true");
       }
     });
 
@@ -2260,6 +2288,7 @@ const HubSpotFormManager = {
     const observer = new MutationObserver((mutations) => {
       let shouldRevalidate = false;
       let shouldAddListeners = false;
+      let shouldRefreshNavigation = false;
 
       for (const mutation of mutations) {
         if (!formContainer.contains(mutation.target)) continue;
@@ -2291,6 +2320,18 @@ const HubSpotFormManager = {
           this.initializeButtonState(formContainer, cleanup);
         }
 
+        // If HubSpot toggles button disabled state, immediately restore click path.
+        if (
+          mutation.type === "attributes" &&
+          (mutation.attributeName === "disabled" ||
+            mutation.attributeName === "aria-disabled") &&
+          mutation.target.matches?.(
+            '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]',
+          )
+        ) {
+          this.initializeButtonState(formContainer, cleanup);
+        }
+
         // New form fields
         if (
           mutation.type === "childList" &&
@@ -2302,6 +2343,19 @@ const HubSpotFormManager = {
         ) {
           shouldAddListeners = true;
         }
+
+        // Navigation buttons may be injected after initial setup.
+        if (
+          mutation.type === "childList" &&
+          [...mutation.addedNodes].some(
+            (node) =>
+              node.nodeType === Node.ELEMENT_NODE &&
+              (node.matches?.('.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]') ||
+                node.querySelector?.('.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]')),
+          )
+        ) {
+          shouldRefreshNavigation = true;
+        }
       }
 
       if (shouldAddListeners) {
@@ -2309,6 +2363,12 @@ const HubSpotFormManager = {
           () => this.addFieldListeners(formContainer, validator, cleanup),
           100,
         );
+      }
+      if (shouldRefreshNavigation) {
+        setTimeout(() => {
+          this.initializeButtonState(formContainer, cleanup);
+          this.addEventListeners(formContainer, validator, cleanup);
+        }, 50);
       }
       if (shouldRevalidate) {
         setTimeout(() => validator.validateVisibleStep(), 50);
@@ -2322,7 +2382,7 @@ const HubSpotFormManager = {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["style", "class"],
+      attributeFilter: ["style", "class", "disabled", "aria-disabled"],
     });
   },
 

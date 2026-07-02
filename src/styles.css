@@ -518,11 +518,10 @@ div[data-hsfc-id=Renderer] {
       text-align:right; margin-top:1rem;
       order:4; /* Ensure navigation appears after all form content */
       
-      & button {
-        padding:0.25rem 1.5rem; background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); border-radius:var(--radius-hs-form-button, 0.25rem); color:var(--color-hs-form-btn-primary-text); font-size:var(--font-hs-form-button-size); font-weight:var(--font-hs-form-button-weight); text-transform:var(--font-hs-form-button-case); transition-property:color, background-color, border-color, text-decoration-color, fill, stroke; transition-duration:300ms;
-        &[type="submit"], &[type="button"] {
-          background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); color:var(--color-hs-form-btn-primary-text);
-        }
+      & button,
+      & input[type="submit"],
+      & input[type="button"] {
+        padding:0.25rem 1.5rem; background-color:var(--color-hs-form-btn-primary-bg); border:2px solid var(--color-hs-form-btn-primary-border); border-radius:var(--radius-hs-form-button, 0.25rem); color:var(--color-hs-form-btn-primary-text); font-size:var(--font-hs-form-button-size); font-weight:var(--font-hs-form-button-weight); text-transform:var(--font-hs-form-button-case); transition-property:color, background-color, border-color, text-decoration-color, fill, stroke; transition-duration:300ms; cursor:pointer;
         &:hover {
           background-color:var(--color-hs-form-btn-primary-hover-bg); border-color:var(--color-hs-form-btn-primary-hover-border); color:var(--color-hs-form-btn-primary-hover-text);
         }
@@ -536,7 +535,9 @@ div[data-hsfc-id=Renderer] {
         &:disabled {
           background-color:var(--color-hs-form-btn-disabled-bg); border-color:var(--color-hs-form-btn-disabled-border); color:var(--color-hs-form-btn-disabled-text); cursor:not-allowed;
         }
-        &+ button {
+        & + button,
+        & + input[type="submit"],
+        & + input[type="button"] {
           margin-left:1rem;
         }
       }
@@ -698,11 +699,11 @@ div[data-hsfc-id=Renderer] {
         }
       }
       & .hsfc-NavigationRow {
-        & button { 
+        & button,
+        & input[type="submit"],
+        & input[type="button"] { 
           background-color:var(--color-hs-form-reverse-btn-primary-bg); border:2px solid var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text); 
-          &[type="submit"], &[type="button"] {
-            background-color:var(--color-hs-form-reverse-btn-primary-bg); border-color:var(--color-hs-form-reverse-btn-primary-border); color:var(--color-hs-form-reverse-btn-primary-text);
-          }
+          cursor:pointer;
           &:hover {
             background-color:var(--color-hs-form-reverse-btn-primary-hover-bg); border-color:var(--color-hs-form-reverse-btn-primary-hover-border); color:var(--color-hs-form-reverse-btn-primary-hover-text);
           }
