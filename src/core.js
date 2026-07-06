@@ -12,6 +12,24 @@ import {
   removeHubSpotFormStyles,
 } from './hubspot-forms.js';
 
+const CORE_STATE_KEY = '__HUBSPOT_FORMS_CORE_STATE__';
+
+function getCoreState() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  if (!window[CORE_STATE_KEY]) {
+    window[CORE_STATE_KEY] = {
+      classObserver: null,
+      positioningObserver: null,
+      pendingInitialization: false,
+    };
+  }
+
+  return window[CORE_STATE_KEY];
+}
+
 /**
  * Hide native HubSpot character limit errors
  */
@@ -268,23 +286,37 @@ export function applyConfiguration(options = {}) {
  */
 export function initializeCore(options = {}) {
   if (typeof window === 'undefined') return;
-  
-  // Initial setup
-  toggleHasReplacementClasses();
-  hideNativeCharLimitErrors();
-  setupClassObserver();
-  
+
   // Always remove HubSpot injected styles
   removeHubSpotFormStyles();
-  
+
   // Apply configuration
   applyConfiguration(options);
-  
-  // Position elements immediately
-  positionElementsImmediately();
-  styleCharacterLimitWarnings();
-  setupPositioningObserver();
-  
-  // Setup forms when safe
-  whenSafeToInitialize(setupForms);
+
+  const coreState = getCoreState();
+  if (!coreState || coreState.pendingInitialization) {
+    return;
+  }
+
+  coreState.pendingInitialization = true;
+
+  // Defer all DOM mutations until hydration-safe state.
+  whenSafeToInitialize(() => {
+    toggleHasReplacementClasses();
+    hideNativeCharLimitErrors();
+
+    if (!coreState.classObserver) {
+      coreState.classObserver = setupClassObserver();
+    }
+
+    positionElementsImmediately();
+    styleCharacterLimitWarnings();
+
+    if (!coreState.positioningObserver) {
+      coreState.positioningObserver = setupPositioningObserver();
+    }
+
+    setupForms();
+    coreState.pendingInitialization = false;
+  });
 }

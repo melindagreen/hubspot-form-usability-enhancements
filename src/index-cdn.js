@@ -19,10 +19,20 @@ import {
 
 import { initializeCore } from './core.js';
 
+const CDN_AUTO_INIT_RAN_FLAG = '__HUBSPOT_FORMS_CDN_AUTO_INIT_RAN__';
+
 /**
  * Auto-initialization for CDN usage
  */
 const autoInit = () => {
+  if (typeof window !== 'undefined' && window[CDN_AUTO_INIT_RAN_FLAG]) {
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    window[CDN_AUTO_INIT_RAN_FLAG] = true;
+  }
+
   // Apply configuration from window globals if provided
   const options = {};
   

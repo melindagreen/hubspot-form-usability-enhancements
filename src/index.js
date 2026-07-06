@@ -20,6 +20,10 @@ import {
 
 import { initializeCore } from './core.js';
 
+const AUTO_INIT_ATTACHED_FLAG = '__HUBSPOT_FORMS_AUTO_INIT_ATTACHED__';
+const AUTO_INIT_RAN_FLAG = '__HUBSPOT_FORMS_AUTO_INIT_RAN__';
+const MANUAL_INIT_FLAG = '__HUBSPOT_FORMS_MANUAL_INIT__';
+
 /**
  * Main initialization function that accepts configuration options
  */
@@ -31,6 +35,8 @@ const init = (options = {}) => {
       CharacterLimitValidator: null
     };
   }
+
+  window[MANUAL_INIT_FLAG] = true;
 
   // Initialize all core functionality
   initializeCore(options);
@@ -117,9 +123,26 @@ export const initializeWithTwoPhases = async (options = {}) => {
 
 // Auto-initialization (unless disabled)
 if (typeof window !== 'undefined' && !window.HUBSPOT_FORMS_NO_AUTO_INIT) {
-  window.addEventListener('load', () => {
-    setTimeout(initializeWithTwoPhases, 1000);
-  });
+  const runAutoInit = () => {
+    if (window[MANUAL_INIT_FLAG] || window[AUTO_INIT_RAN_FLAG]) {
+      return;
+    }
+
+    window[AUTO_INIT_RAN_FLAG] = true;
+    setTimeout(() => {
+      initializeWithTwoPhases();
+    }, 1000);
+  };
+
+  if (!window[AUTO_INIT_ATTACHED_FLAG]) {
+    window[AUTO_INIT_ATTACHED_FLAG] = true;
+
+    if (document.readyState === 'complete') {
+      runAutoInit();
+    } else {
+      window.addEventListener('load', runAutoInit, { once: true });
+    }
+  }
 }
 
 // Named exports for granular control
