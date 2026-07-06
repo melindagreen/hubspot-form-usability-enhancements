@@ -1138,6 +1138,35 @@ const HubSpotFormValidator = {
     );
   },
 
+  getSelectionLimitInterpolations(text = "") {
+    const normalized = text.toLowerCase();
+    const numberMatch = normalized.match(/\b(\d+)\b/);
+
+    const interpolations = {};
+    if (numberMatch && numberMatch[1]) {
+      interpolations.limit = numberMatch[1];
+      interpolations.plural = numberMatch[1] === "1" ? "" : "s";
+    }
+
+    if (
+      normalized.includes("at least") ||
+      normalized.includes("minimum") ||
+      normalized.includes("at minimum") ||
+      normalized.includes("min ") ||
+      normalized.includes("must select")
+    ) {
+      interpolations.constraint = "minimum";
+    } else if (
+      normalized.includes("up to") ||
+      normalized.includes("at most") ||
+      normalized.includes("no more than")
+    ) {
+      interpolations.constraint = "maximum";
+    }
+
+    return interpolations;
+  },
+
   // Helper to find navigation button (not Previous)
   findNavigationButton(step) {
     const buttons = step.querySelectorAll(
@@ -1488,8 +1517,9 @@ const HubSpotFormValidator = {
               errorText = customFileMessage;
             } else if (this.isSelectionLimitErrorText(errorText)) {
               const normalizedSelectionLimitText = errorText.replace(/Error:\s*/g, "Error: ");
+              const selectionLimitInterpolations = this.getSelectionLimitInterpolations(errorText);
               const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
-                ? ErrorMessageConfig.getMessage('selectionLimit')
+                ? ErrorMessageConfig.getMessage('selectionLimit', selectionLimitInterpolations)
                 : null;
               errorText = customMessage || normalizedSelectionLimitText;
             } else if (errorText.toLowerCase().includes("url") || 
@@ -2239,8 +2269,9 @@ const HubSpotFormManager = {
           newText = customFileMessage;
         } else if (HubSpotFormValidator.isSelectionLimitErrorText(originalText)) {
           const normalizedSelectionLimitText = originalText.replace(/Error:\s*/g, "Error: ");
+          const selectionLimitInterpolations = HubSpotFormValidator.getSelectionLimitInterpolations(originalText);
           const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
-            ? ErrorMessageConfig.getMessage('selectionLimit')
+            ? ErrorMessageConfig.getMessage('selectionLimit', selectionLimitInterpolations)
             : null;
           newText = customMessage || normalizedSelectionLimitText;
         } else if (originalText.toLowerCase().includes("url") || 
