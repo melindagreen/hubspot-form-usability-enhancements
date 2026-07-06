@@ -1017,6 +1017,29 @@ const HubSpotFormValidator = {
   REQUIRED_FIELD_SELECTOR:
     'input[required], select[required], textarea[required], input[aria-required="true"], select[aria-required="true"], textarea[aria-required="true"]',
 
+  _config: {
+    strictErrorSummaryOrdering: null,
+  },
+
+  get strictErrorSummaryOrdering() {
+    if (typeof this._config.strictErrorSummaryOrdering === "boolean") {
+      return this._config.strictErrorSummaryOrdering;
+    }
+
+    if (
+      typeof window !== "undefined" &&
+      typeof window.HUBSPOT_FORMS_STRICT_ERROR_SUMMARY_ORDERING === "boolean"
+    ) {
+      return window.HUBSPOT_FORMS_STRICT_ERROR_SUMMARY_ORDERING;
+    }
+
+    return false;
+  },
+
+  set strictErrorSummaryOrdering(value) {
+    this._config.strictErrorSummaryOrdering = !!value;
+  },
+
   getFileErrorTypes(errorElement) {
     if (!errorElement || !errorElement.getAttribute) {
       return [];
@@ -1288,6 +1311,103 @@ const HubSpotFormValidator = {
   // Get fields with errors and their descriptions
   getFieldsWithErrors(step) {
     const fieldsWithErrors = [];
+    const useStrictOrdering = this.strictErrorSummaryOrdering;
+    const normalizeLabel = (text) =>
+      (text || "")
+        .normalize("NFKD")
+        .replace(/\s+/g, " ")
+        .replace(/\s*\*\s*$/, "")
+        .replace(/\s*:\s*$/, "")
+        .replace(/[^a-zA-Z0-9]+/g, " ")
+        .trim()
+        .toLowerCase();
+
+    const isElementVisible = (element) => {
+      if (!(element instanceof Element)) {
+        return false;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+
+      return (
+        element.isConnected &&
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        rect.width > 0 &&
+        rect.height > 0
+      );
+    };
+
+    const fieldContainers = Array.from(
+      step.querySelectorAll(
+        ".hsfc-TextField, .hsfc-EmailField, .hsfc-FileField, .hsfc-PhoneField, .hsfc-DateField, .hsfc-CheckboxFieldGroup, .hsfc-RadioFieldGroup, .hsfc-FormField, .hs-form-field, [data-hsfc-id$='Field'], [data-hsfc-id$='FieldGroup']",
+      ),
+    );
+
+    const getContainerLabel = (container) => {
+      if (!(container instanceof Element)) {
+        return "";
+      }
+
+      const labelElement = container.querySelector(
+        ':scope > [data-hsfc-id="FieldLabel"]:not(.hsfc-label-without-required), :scope > .hsfc-FieldLabel:not(.hsfc-label-without-required), :scope > legend, [data-hsfc-id="FieldLabel"]:not(.hsfc-label-without-required), .hsfc-FieldLabel:not(.hsfc-label-without-required), legend',
+      );
+
+      return labelElement?.textContent?.trim() || "";
+    };
+
+    const visualContainerOrder = new Map();
+    fieldContainers.forEach((container) => {
+      if (!isElementVisible(container) || visualContainerOrder.has(container)) {
+        return;
+      }
+
+      visualContainerOrder.set(container, visualContainerOrder.size);
+    });
+
+    const visualFieldOrder = new Map();
+    const visibleFieldLabels = Array.from(
+      step.querySelectorAll(
+        '[data-hsfc-id="FieldLabel"]:not(.hsfc-label-without-required), .hsfc-FieldLabel:not(.hsfc-label-without-required), legend',
+      ),
+    )
+      .map((labelElement) => {
+        const parentFieldContainer = labelElement.closest(
+          ".hsfc-TextField, .hsfc-EmailField, .hsfc-FileField, .hsfc-PhoneField, .hsfc-DateField, .hsfc-CheckboxFieldGroup, .hsfc-RadioFieldGroup, .hsfc-FormField, .hs-form-field, [data-hsfc-id$='Field'], [data-hsfc-id$='FieldGroup']",
+        );
+
+        if (!parentFieldContainer || !isElementVisible(parentFieldContainer)) {
+          return "";
+        }
+
+        return normalizeLabel(labelElement.textContent);
+      })
+      .filter(Boolean);
+
+    visibleFieldLabels.forEach((label) => {
+      if (!label || visualFieldOrder.has(label)) {
+        return;
+      }
+
+      visualFieldOrder.set(label, visualFieldOrder.size);
+    });
+
+    const strictFieldOrder = new Map();
+    if (useStrictOrdering) {
+      fieldContainers.forEach((container) => {
+        if (!isElementVisible(container)) {
+          return;
+        }
+
+        const label = normalizeLabel(getContainerLabel(container));
+        if (!label || strictFieldOrder.has(label)) {
+          return;
+        }
+
+        strictFieldOrder.set(label, strictFieldOrder.size);
+      });
+    }
 
     // Find all visible error messages
     const errorElements = step.querySelectorAll(
@@ -1366,6 +1486,7 @@ const HubSpotFormValidator = {
 
           fieldsWithErrors.push({
             field: field,
+            fieldLabel,
             description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorText}</span>`,
             errorElement: errorEl,
           });
@@ -1385,6 +1506,7 @@ const HubSpotFormValidator = {
         ) {
           fieldsWithErrors.push({
             field: textarea,
+            fieldLabel: this.getFieldLabel(textarea) || "",
             description: errorMessage,
             errorElement: step.querySelector(".hsfc-CustomCharacterError"),
           });
@@ -1431,6 +1553,7 @@ const HubSpotFormValidator = {
 
         fieldsWithErrors.push({
           field: field,
+          fieldLabel,
           description: errorDescription,
           errorElement: null,
         });
@@ -1483,6 +1606,7 @@ const HubSpotFormValidator = {
       if (formatError) {
         fieldsWithErrors.push({
           field: field,
+          fieldLabel,
           description: formatError,
           errorElement: null,
         });
@@ -1513,13 +1637,150 @@ const HubSpotFormValidator = {
         const errorMessage = customMessage || "Please complete this required field.";
         fieldsWithErrors.push({
           field: field,
+          fieldLabel,
           description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`,
           errorElement: null,
         });
       }
     }
 
-    return fieldsWithErrors;
+    // Sort by visual DOM order so the error summary matches form field order.
+    // Use stable field containers as anchors to avoid hidden/re-rendered input drift.
+    const getSortAnchor = (field) => {
+      if (!(field instanceof Element)) {
+        return null;
+      }
+
+      const isGroupField = field.type === "radio" || field.type === "checkbox";
+
+      if (isGroupField) {
+        const groupContainer = field.closest(
+          ".hsfc-RadioFieldGroup, .hsfc-CheckboxFieldGroup, .hs-fieldtype-radio, .hs-fieldtype-checkbox",
+        );
+
+        if (groupContainer) {
+          return groupContainer;
+        }
+      }
+
+      const fileContainer = field.closest(
+        ".hsfc-FileField, .hs-fieldtype-file",
+      );
+
+      if (fileContainer) {
+        return fileContainer;
+      }
+
+      const fieldContainer = field.closest(
+        ".hs-form-field, .hsfc-FormField, [data-hsfc-id*='Field']",
+      );
+
+      if (fieldContainer) {
+        return fieldContainer;
+      }
+
+      return field;
+    };
+
+    const getAnchorMetrics = (anchor) => {
+      if (!(anchor instanceof Element) || !isElementVisible(anchor)) {
+        return null;
+      }
+
+      const rect = anchor.getBoundingClientRect();
+
+      return {
+        top: rect.top,
+        left: rect.left,
+      };
+    };
+
+    const getSortLabel = (entry) => {
+      if (entry.fieldLabel) {
+        return entry.fieldLabel;
+      }
+
+      if (typeof entry.description !== "string") {
+        return "";
+      }
+
+      const temp = document.createElement("div");
+      temp.innerHTML = entry.description;
+      const labelElement = temp.querySelector(".customValidationErrorLabel");
+
+      if (labelElement?.textContent) {
+        return labelElement.textContent;
+      }
+
+      return temp.textContent || "";
+    };
+
+    return fieldsWithErrors
+      .map((entry, index) => ({
+        entry,
+        index,
+        sortLabel: getSortLabel(entry),
+        anchor: getSortAnchor(entry.field),
+        metrics: getAnchorMetrics(getSortAnchor(entry.field)),
+        strictIndex: strictFieldOrder.has(normalizeLabel(getSortLabel(entry)))
+          ? strictFieldOrder.get(normalizeLabel(getSortLabel(entry)))
+          : Number.MAX_SAFE_INTEGER,
+        containerIndex: visualContainerOrder.has(getSortAnchor(entry.field))
+          ? visualContainerOrder.get(getSortAnchor(entry.field))
+          : Number.MAX_SAFE_INTEGER,
+        visualIndex: visualFieldOrder.has(normalizeLabel(getSortLabel(entry)))
+          ? visualFieldOrder.get(normalizeLabel(getSortLabel(entry)))
+          : Number.MAX_SAFE_INTEGER,
+      }))
+      .sort((a, b) => {
+        if (useStrictOrdering) {
+          const aKnownStrictIndex =
+            a.strictIndex !== Number.MAX_SAFE_INTEGER;
+          const bKnownStrictIndex =
+            b.strictIndex !== Number.MAX_SAFE_INTEGER;
+
+          if (aKnownStrictIndex && bKnownStrictIndex && a.strictIndex !== b.strictIndex) {
+            return a.strictIndex - b.strictIndex;
+          }
+
+          if (aKnownStrictIndex !== bKnownStrictIndex) {
+            return aKnownStrictIndex ? -1 : 1;
+          }
+        }
+
+        if (a.containerIndex !== b.containerIndex) {
+          return a.containerIndex - b.containerIndex;
+        }
+
+        if (a.visualIndex !== b.visualIndex) {
+          return a.visualIndex - b.visualIndex;
+        }
+
+        if (a.metrics && b.metrics) {
+          if (a.metrics.top !== b.metrics.top) {
+            return a.metrics.top - b.metrics.top;
+          }
+
+          if (a.metrics.left !== b.metrics.left) {
+            return a.metrics.left - b.metrics.left;
+          }
+        }
+
+        if (a.anchor && b.anchor && a.anchor !== b.anchor) {
+          const position = a.anchor.compareDocumentPosition(b.anchor);
+
+          if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+            return -1;
+          }
+
+          if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+            return 1;
+          }
+        }
+
+        return a.index - b.index;
+      })
+      .map(({ entry }) => entry);
   },
 
   // Find field associated with an error element

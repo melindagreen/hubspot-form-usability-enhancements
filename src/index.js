@@ -100,6 +100,7 @@ export const initializeWithTwoPhases = async (options = {}) => {
         characterLimit: defaultOptions.characterLimit,
         allowedExtensions: defaultOptions.allowedExtensions,
         maxFileSize: defaultOptions.maxFileSize,
+        strictErrorSummaryOrdering: defaultOptions.strictErrorSummaryOrdering,
       });
 
       // Remove temporary CSS after proper positioning is done

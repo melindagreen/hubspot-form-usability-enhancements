@@ -36,6 +36,9 @@ const autoInit = () => {
     if (window.HUBSPOT_FORMS_ERROR_MESSAGES) {
       options.errorMessages = window.HUBSPOT_FORMS_ERROR_MESSAGES;
     }
+    if (typeof window.HUBSPOT_FORMS_STRICT_ERROR_SUMMARY_ORDERING === 'boolean') {
+      options.strictErrorSummaryOrdering = window.HUBSPOT_FORMS_STRICT_ERROR_SUMMARY_ORDERING;
+    }
   }
 
   // Initialize all core functionality

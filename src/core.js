@@ -5,6 +5,7 @@
 
 import {
   HubSpotFormManager,
+  HubSpotFormValidator,
   CharacterLimitValidator,
   FileUploadValidator,
   ErrorMessageConfig,
@@ -255,6 +256,10 @@ export function applyConfiguration(options = {}) {
   
   if (options.errorMessages) {
     ErrorMessageConfig.messages = options.errorMessages;
+  }
+
+  if (typeof options.strictErrorSummaryOrdering === 'boolean') {
+    HubSpotFormValidator.strictErrorSummaryOrdering = options.strictErrorSummaryOrdering;
   }
 }
 

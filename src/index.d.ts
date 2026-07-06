@@ -49,6 +49,8 @@ export interface HubSpotFormsConfig {
   maxFileSize?: number;
   /** Custom error messages for validation */
   errorMessages?: ErrorMessages;
+  /** Enable strict visual ordering for error summary rows */
+  strictErrorSummaryOrdering?: boolean;
 }
 
 // Validation result interface
