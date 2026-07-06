@@ -1140,28 +1140,42 @@ const HubSpotFormValidator = {
 
   getSelectionLimitInterpolations(text = "") {
     const normalized = text.toLowerCase();
-    const numberMatch = normalized.match(/\b(\d+)\b/);
+    const maxMatch = normalized.match(/(?:up to|at most|no more than|maximum|max)\s+(\d+)/);
+    const minMatch = normalized.match(/(?:at least|minimum|at minimum|min|must select)\s+(\d+)/);
 
     const interpolations = {};
-    if (numberMatch && numberMatch[1]) {
-      interpolations.limit = numberMatch[1];
-      interpolations.plural = numberMatch[1] === "1" ? "" : "s";
+    if (maxMatch && maxMatch[1]) {
+      interpolations.constraint = "maximum";
+      interpolations.limit = maxMatch[1];
+    } else if (minMatch && minMatch[1]) {
+      interpolations.constraint = "minimum";
+      interpolations.limit = minMatch[1];
+    } else {
+      const numberMatch = normalized.match(/\b(\d+)\b/);
+      if (numberMatch && numberMatch[1]) {
+        interpolations.limit = numberMatch[1];
+      }
+
+      if (
+        normalized.includes("up to") ||
+        normalized.includes("at most") ||
+        normalized.includes("no more than") ||
+        normalized.includes("maximum") ||
+        normalized.includes("max")
+      ) {
+        interpolations.constraint = "maximum";
+      } else if (
+        normalized.includes("at least") ||
+        normalized.includes("minimum") ||
+        normalized.includes("at minimum") ||
+        normalized.includes("must select")
+      ) {
+        interpolations.constraint = "minimum";
+      }
     }
 
-    if (
-      normalized.includes("at least") ||
-      normalized.includes("minimum") ||
-      normalized.includes("at minimum") ||
-      normalized.includes("min ") ||
-      normalized.includes("must select")
-    ) {
-      interpolations.constraint = "minimum";
-    } else if (
-      normalized.includes("up to") ||
-      normalized.includes("at most") ||
-      normalized.includes("no more than")
-    ) {
-      interpolations.constraint = "maximum";
+    if (interpolations.limit) {
+      interpolations.plural = interpolations.limit === "1" ? "" : "s";
     }
 
     return interpolations;
