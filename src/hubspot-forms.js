@@ -978,6 +978,7 @@ const ErrorMessageConfig = {
       fileType: "📄 File type not allowed. Allowed types: {allowedTypes}",
       url: "🔗 Please enter a valid URL",
       number: "🔢 Please enter a valid number",
+      selectionLimit: "☑️ Please choose fewer options.",
       confirmation: "🔄 Confirmation does not match",
       captcha: "🤖 Please complete the verification",
       submission: "⚠️ There was an error submitting the form. Please try again.",
@@ -1062,6 +1063,20 @@ const HubSpotFormValidator = {
     }
 
     return ErrorMessageConfig.getMessage("file");
+  },
+
+  isSelectionLimitErrorText(text = "") {
+    const normalized = text.toLowerCase();
+
+    return (
+      normalized.includes("choose one or two") ||
+      normalized.includes("choose up to") ||
+      normalized.includes("select up to") ||
+      normalized.includes("at most") ||
+      normalized.includes("no more than") ||
+      normalized.includes("too many options") ||
+      normalized.includes("too many selected")
+    );
   },
 
   // Helper to find navigation button (not Previous)
@@ -1315,6 +1330,9 @@ const HubSpotFormValidator = {
             const customFileMessage = this.getCustomFileErrorMessage(errorEl);
             if (customFileMessage) {
               errorText = customFileMessage;
+            } else if (this.isSelectionLimitErrorText(errorText)) {
+              const customMessage = ErrorMessageConfig.getMessage('selectionLimit');
+              if (customMessage) errorText = customMessage;
             } else if (errorText.toLowerCase().includes("url") || 
                        errorText.toLowerCase().includes("website")) {
               const customMessage = ErrorMessageConfig.getMessage('url');
@@ -1919,6 +1937,9 @@ const HubSpotFormManager = {
         const customFileMessage = HubSpotFormValidator.getCustomFileErrorMessage(errorElement);
         if (customFileMessage) {
           newText = customFileMessage;
+        } else if (HubSpotFormValidator.isSelectionLimitErrorText(originalText)) {
+          const customMessage = ErrorMessageConfig.getMessage('selectionLimit');
+          if (customMessage) newText = customMessage;
         } else if (originalText.toLowerCase().includes("url") || 
                    originalText.toLowerCase().includes("website")) {
           const customMessage = ErrorMessageConfig.getMessage('url');

@@ -139,6 +139,7 @@ hubspotForms({
     fileType: "Only these file types are allowed: {allowedTypes}",
     url: "Please enter a valid web address.",
     number: "Please enter a valid number.",
+    selectionLimit: "Please choose no more than the allowed number of options.",
     confirmation: "The confirmation does not match.",
     captcha: "Please complete the security verification.",
     submission: "Form submission failed. Please try again.",

@@ -27,6 +27,8 @@ export interface ErrorMessages {
   url?: string;
   /** Message for number validation */
   number?: string;
+  /** Message for checkbox/radio selection limit validation */
+  selectionLimit?: string;
   /** Message for confirmation field validation */
   confirmation?: string;
   /** Message for CAPTCHA validation */
