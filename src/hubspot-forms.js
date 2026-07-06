@@ -951,21 +951,7 @@ const ErrorMessageConfig = {
     messages: null,
   },
 
-  // Get configuration from runtime config, window globals, or use defaults
-  get messages() {
-    if (this._config.messages) {
-      return this._config.messages;
-    }
-
-    // Check for runtime configuration via window global
-    if (
-      typeof window !== "undefined" &&
-      window.HUBSPOT_FORMS_ERROR_MESSAGES
-    ) {
-      return window.HUBSPOT_FORMS_ERROR_MESSAGES;
-    }
-
-    // Default messages
+  get defaultMessages() {
     return {
       required: "⚠️ Please complete this required field.",
       email: "📧 must be formatted correctly",
@@ -978,7 +964,7 @@ const ErrorMessageConfig = {
       fileType: "📄 File type not allowed. Allowed types: {allowedTypes}",
       url: "🔗 Please enter a valid URL",
       number: "🔢 Please enter a valid number",
-      selectionLimit: "☑️ Please choose fewer options.",
+      selectionLimit: "Please choose fewer options.",
       confirmation: "🔄 Confirmation does not match",
       captcha: "🤖 Please complete the verification",
       submission: "⚠️ There was an error submitting the form. Please try again.",
@@ -986,8 +972,51 @@ const ErrorMessageConfig = {
     };
   },
 
+  // Get configuration from runtime config, window globals, or use defaults
+  get messages() {
+    const windowMessages =
+      typeof window !== "undefined" &&
+      window.HUBSPOT_FORMS_ERROR_MESSAGES &&
+      typeof window.HUBSPOT_FORMS_ERROR_MESSAGES === "object"
+        ? window.HUBSPOT_FORMS_ERROR_MESSAGES
+        : null;
+
+    const configuredMessages =
+      this._config.messages && typeof this._config.messages === "object"
+        ? this._config.messages
+        : null;
+
+    return {
+      ...this.defaultMessages,
+      ...(windowMessages || {}),
+      ...(configuredMessages || {}),
+    };
+  },
+
   set messages(value) {
     this._config.messages = value;
+  },
+
+  hasExplicitMessage(messageType) {
+    const hasOwn = (obj, key) =>
+      !!obj && Object.prototype.hasOwnProperty.call(obj, key);
+
+    const configuredMessages =
+      this._config.messages && typeof this._config.messages === "object"
+        ? this._config.messages
+        : null;
+
+    const windowMessages =
+      typeof window !== "undefined" &&
+      window.HUBSPOT_FORMS_ERROR_MESSAGES &&
+      typeof window.HUBSPOT_FORMS_ERROR_MESSAGES === "object"
+        ? window.HUBSPOT_FORMS_ERROR_MESSAGES
+        : null;
+
+    return (
+      hasOwn(configuredMessages, messageType) ||
+      hasOwn(windowMessages, messageType)
+    );
   },
 
   // Get a specific message with optional interpolation
@@ -1095,6 +1124,13 @@ const HubSpotFormValidator = {
       normalized.includes("choose one or two") ||
       normalized.includes("choose up to") ||
       normalized.includes("select up to") ||
+      normalized.includes("choose at least") ||
+      normalized.includes("select at least") ||
+      normalized.includes("at least") ||
+      normalized.includes("minimum") ||
+      normalized.includes("at minimum") ||
+      normalized.includes("min ") ||
+      normalized.includes("must select") ||
       normalized.includes("at most") ||
       normalized.includes("no more than") ||
       normalized.includes("too many options") ||
@@ -1451,8 +1487,11 @@ const HubSpotFormValidator = {
             if (customFileMessage) {
               errorText = customFileMessage;
             } else if (this.isSelectionLimitErrorText(errorText)) {
-              const customMessage = ErrorMessageConfig.getMessage('selectionLimit');
-              if (customMessage) errorText = customMessage;
+              const normalizedSelectionLimitText = errorText.replace(/Error:\s*/g, "Error: ");
+              const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
+                ? ErrorMessageConfig.getMessage('selectionLimit')
+                : null;
+              errorText = customMessage || normalizedSelectionLimitText;
             } else if (errorText.toLowerCase().includes("url") || 
                        errorText.toLowerCase().includes("website")) {
               const customMessage = ErrorMessageConfig.getMessage('url');
@@ -2199,8 +2238,11 @@ const HubSpotFormManager = {
         if (customFileMessage) {
           newText = customFileMessage;
         } else if (HubSpotFormValidator.isSelectionLimitErrorText(originalText)) {
-          const customMessage = ErrorMessageConfig.getMessage('selectionLimit');
-          if (customMessage) newText = customMessage;
+          const normalizedSelectionLimitText = originalText.replace(/Error:\s*/g, "Error: ");
+          const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
+            ? ErrorMessageConfig.getMessage('selectionLimit')
+            : null;
+          newText = customMessage || normalizedSelectionLimitText;
         } else if (originalText.toLowerCase().includes("url") || 
                    originalText.toLowerCase().includes("website")) {
           const customMessage = ErrorMessageConfig.getMessage('url');
