@@ -3578,6 +3578,9 @@ const HubSpotFormManager = {
       /^\+\d{1,4}$/.test(initialValue.trim());
     let lastKnownValue = initialValue;
 
+    // E.164 max (15 digits) + country code + typical formatting chars (spaces, parens, dashes) ≤ 25
+    phoneInput.setAttribute('maxlength', 25);
+
     // Mark when user selects a country via dropdown
     const markCountrySelected = () => {
       userSelectedCountry = true;
