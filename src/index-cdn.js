@@ -49,6 +49,9 @@ const autoInit = () => {
     if (typeof window.HUBSPOT_FORMS_STRICT_ERROR_SUMMARY_ORDERING === 'boolean') {
       options.strictErrorSummaryOrdering = window.HUBSPOT_FORMS_STRICT_ERROR_SUMMARY_ORDERING;
     }
+    if (window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET !== undefined) {
+      options.mobileStepScrollReset = window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET;
+    }
   }
 
   // Initialize all core functionality

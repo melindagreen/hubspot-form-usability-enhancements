@@ -39,6 +39,13 @@ init();
     required: "This field is required.",
     fileSize: "Maximum file size is {maxSize}.",
   };
+  window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
+    enabled: true,
+    breakpoint: 768,
+    onlyWhenFormTopAboveViewport: true,
+    behavior: "smooth",
+    respectReducedMotion: true,
+  };
 </script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/index.cdn.js"></script>
 ```
@@ -60,6 +67,13 @@ init({
   characterLimit: 500,
   allowedExtensions: ["pdf", "jpg", "png"],
   maxFileSize: "5MB",
+  mobileStepScrollReset: {
+    enabled: true,
+    breakpoint: 768,
+    onlyWhenFormTopAboveViewport: true,
+    behavior: "smooth",
+    respectReducedMotion: true,
+  },
   errorMessages: {
     fileSize: "File exceeds {maxSize}",
     fileType: "Allowed types: {allowedTypes}",
@@ -75,6 +89,33 @@ window.HUBSPOT_FORMS_MAX_FILE_SIZE = "5MB";
 window.HUBSPOT_FORMS_ERROR_MESSAGES = {
   fileSize: "File exceeds {maxSize}",
 };
+window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
+  enabled: true,
+  breakpoint: 768,
+  onlyWhenFormTopAboveViewport: true,
+  behavior: "smooth",
+  respectReducedMotion: true,
+};
+```
+
+### Mobile step-change scroll reset
+
+For multi-step forms on small screens, this option resets scroll to the form top when users move between steps.
+
+If `enabled` is set to `false`, the package does not force any step-change repositioning and suppresses HubSpot renderer auto-jumps, so the browser keeps the natural scroll offset.
+
+- `enabled` default: `true`
+- `breakpoint` default: `768`
+- `onlyWhenFormTopAboveViewport` default: `true`
+- `behavior` default: `"smooth"`
+- `respectReducedMotion` default: `true` (uses non-animated scroll when `prefers-reduced-motion: reduce` is set)
+
+You can also pass a boolean for quick control:
+
+```js
+init({
+  mobileStepScrollReset: false,
+});
 ```
 
 ### Precedence and defaults
@@ -284,6 +325,9 @@ const config: HubSpotFormsConfig = {
   characterLimit: 1000,
   allowedExtensions: ["pdf", "docx"],
   maxFileSize: 5 * 1024 * 1024,
+  mobileStepScrollReset: {
+    breakpoint: 767,
+  },
 };
 
 const instance = hubspotForms(config);

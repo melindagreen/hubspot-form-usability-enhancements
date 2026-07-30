@@ -2277,6 +2277,70 @@ const HubSpotFormManager = {
   // Track cleanup resources for each form
   formCleanupMap: new WeakMap(),
 
+  // Temporary suppression set for native HubSpot renderer scroll jumps
+  rendererScrollSuppressedForms: new Set(),
+  _rendererScrollPatchInstalled: false,
+  _originalScrollIntoView: null,
+
+  // Configuration for mobile step-change scroll behavior
+  mobileStepScrollResetConfig: {
+    enabled: true,
+    breakpoint: 768,
+    onlyWhenFormTopAboveViewport: true,
+    behavior: "smooth",
+    respectReducedMotion: true,
+  },
+
+  configureMobileStepScrollReset(configOption) {
+    const defaults = {
+      enabled: true,
+      breakpoint: 768,
+      onlyWhenFormTopAboveViewport: true,
+      behavior: "smooth",
+      respectReducedMotion: true,
+    };
+
+    if (typeof configOption === "boolean") {
+      this.mobileStepScrollResetConfig = {
+        ...defaults,
+        enabled: configOption,
+      };
+      return;
+    }
+
+    if (configOption && typeof configOption === "object") {
+      const safeBreakpoint =
+        Number.isFinite(configOption.breakpoint) && configOption.breakpoint > 0
+          ? configOption.breakpoint
+          : defaults.breakpoint;
+
+      const safeBehavior =
+        configOption.behavior === "auto" || configOption.behavior === "smooth"
+          ? configOption.behavior
+          : defaults.behavior;
+
+      this.mobileStepScrollResetConfig = {
+        enabled:
+          typeof configOption.enabled === "boolean"
+            ? configOption.enabled
+            : defaults.enabled,
+        breakpoint: safeBreakpoint,
+        onlyWhenFormTopAboveViewport:
+          typeof configOption.onlyWhenFormTopAboveViewport === "boolean"
+            ? configOption.onlyWhenFormTopAboveViewport
+            : defaults.onlyWhenFormTopAboveViewport,
+        behavior: safeBehavior,
+        respectReducedMotion:
+          typeof configOption.respectReducedMotion === "boolean"
+            ? configOption.respectReducedMotion
+            : defaults.respectReducedMotion,
+      };
+      return;
+    }
+
+    this.mobileStepScrollResetConfig = defaults;
+  },
+
   // Create cleanup controller for a form
   createFormCleanup(formContainer) {
     const cleanup = {
@@ -2287,6 +2351,10 @@ const HubSpotFormManager = {
       // DOM query cache
       _cachedVisibleStep: null,
       _cacheValid: true,
+      _lastVisibleStep: null,
+      _hasTrackedVisibleStep: false,
+      _suppressRendererAutoScrollUntil: 0,
+      _clearSuppressTimer: null,
 
       // Method to get current visible step with caching
       getVisibleStep() {
@@ -2303,6 +2371,12 @@ const HubSpotFormManager = {
       invalidateCache() {
         this._cacheValid = false;
         this._cachedVisibleStep = null;
+      },
+
+      syncVisibleStepTracking() {
+        const visibleStep = this.getVisibleStep();
+        this._lastVisibleStep = visibleStep || null;
+        this._hasTrackedVisibleStep = !!visibleStep;
       },
 
       // Method to cleanup everything for this form
@@ -2324,6 +2398,14 @@ const HubSpotFormManager = {
 
         // Clear cache and arrays
         this.invalidateCache();
+        this._lastVisibleStep = null;
+        this._hasTrackedVisibleStep = false;
+        this._suppressRendererAutoScrollUntil = 0;
+        if (this._clearSuppressTimer) {
+          clearTimeout(this._clearSuppressTimer);
+          this._clearSuppressTimer = null;
+        }
+        HubSpotFormManager.rendererScrollSuppressedForms.delete(formContainer);
         this.observers.length = 0;
         this.globalListeners.length = 0;
       },
@@ -2338,8 +2420,41 @@ const HubSpotFormManager = {
     return this.formCleanupMap.get(formContainer);
   },
 
+  installRendererScrollPatch() {
+    if (this._rendererScrollPatchInstalled || typeof Element === "undefined") {
+      return;
+    }
+
+    this._originalScrollIntoView = Element.prototype.scrollIntoView;
+
+    Element.prototype.scrollIntoView = function patchedRendererScrollIntoView(...args) {
+      if (this?.classList?.contains("hsfc-Renderer")) {
+        for (const formContainer of HubSpotFormManager.rendererScrollSuppressedForms) {
+          if (!this.contains(formContainer)) {
+            continue;
+          }
+
+          const cleanup = HubSpotFormManager.getFormCleanup(formContainer);
+          if (!cleanup) {
+            continue;
+          }
+
+          if (Date.now() <= cleanup._suppressRendererAutoScrollUntil) {
+            return;
+          }
+        }
+      }
+
+      return HubSpotFormManager._originalScrollIntoView.apply(this, args);
+    };
+
+    this._rendererScrollPatchInstalled = true;
+  },
+
   // Setup validation for all forms on page
   setupAllForms() {
+    this.installRendererScrollPatch();
+
     const hubspotForms = document.querySelectorAll(".hsfc-Form");
 
     if (hubspotForms.length > 0) {
@@ -2355,6 +2470,8 @@ const HubSpotFormManager = {
 
   // Setup validation for individual form
   setupSingleForm(formContainer) {
+    this.installRendererScrollPatch();
+
     if (this.initializedForms.has(formContainer)) {
       return;
     }
@@ -2392,6 +2509,9 @@ const HubSpotFormManager = {
 
     // Setup native error message replacement
     this.setupNativeErrorMessageReplacement(formContainer, cleanup);
+
+    // Set baseline visible step so first render does not trigger scroll reset.
+    cleanup.syncVisibleStepTracking();
   },
 
   // Setup replacement of native HubSpot field error messages
@@ -2556,6 +2676,113 @@ const HubSpotFormManager = {
     });
   },
 
+  shouldApplyMobileStepScrollReset(formContainer) {
+    const config = this.mobileStepScrollResetConfig;
+    if (!config.enabled || typeof window === "undefined") {
+      return false;
+    }
+
+    return this.isMobileStepScrollContext(formContainer);
+  },
+
+  isMobileStepScrollContext(formContainer) {
+    const config = this.mobileStepScrollResetConfig;
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    const stepCount = formContainer.querySelectorAll(".hsfc-Step").length;
+    if (stepCount < 2) {
+      return false;
+    }
+
+    if (typeof window.matchMedia === "function") {
+      return window.matchMedia(`(max-width: ${config.breakpoint}px)`).matches;
+    }
+
+    return window.innerWidth <= config.breakpoint;
+  },
+
+  capturePreNavigationScroll(formContainer, cleanup) {
+    if (this.mobileStepScrollResetConfig.enabled) {
+      return;
+    }
+
+    if (!this.isMobileStepScrollContext(formContainer)) {
+      return;
+    }
+
+    cleanup._suppressRendererAutoScrollUntil = Date.now() + 1500;
+    this.rendererScrollSuppressedForms.add(formContainer);
+
+    if (cleanup._clearSuppressTimer) {
+      clearTimeout(cleanup._clearSuppressTimer);
+    }
+
+    cleanup._clearSuppressTimer = setTimeout(() => {
+      this.rendererScrollSuppressedForms.delete(formContainer);
+      cleanup._suppressRendererAutoScrollUntil = 0;
+      cleanup._clearSuppressTimer = null;
+    }, 1700);
+  },
+
+  getMobileStepScrollBehavior() {
+    const config = this.mobileStepScrollResetConfig;
+    if (
+      config.respectReducedMotion &&
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return "auto";
+    }
+
+    return config.behavior;
+  },
+
+  maybeResetScrollForStepChange(formContainer) {
+    if (!this.shouldApplyMobileStepScrollReset(formContainer)) {
+      return;
+    }
+
+    const formRect = formContainer.getBoundingClientRect();
+    const { onlyWhenFormTopAboveViewport } = this.mobileStepScrollResetConfig;
+    if (onlyWhenFormTopAboveViewport && formRect.top >= 0) {
+      return;
+    }
+
+    formContainer.scrollIntoView({
+      behavior: this.getMobileStepScrollBehavior(),
+      block: "start",
+      inline: "nearest",
+    });
+  },
+
+  handleVisibleStepChange(formContainer, cleanup) {
+    const currentVisibleStep = cleanup.getVisibleStep();
+
+    if (!cleanup._hasTrackedVisibleStep) {
+      cleanup._lastVisibleStep = currentVisibleStep || null;
+      cleanup._hasTrackedVisibleStep = !!currentVisibleStep;
+      return;
+    }
+
+    const previousVisibleStep = cleanup._lastVisibleStep;
+    const didStepChange =
+      !!previousVisibleStep &&
+      !!currentVisibleStep &&
+      previousVisibleStep !== currentVisibleStep;
+
+    cleanup._lastVisibleStep = currentVisibleStep || null;
+    cleanup._hasTrackedVisibleStep = !!currentVisibleStep;
+
+    if (didStepChange) {
+      if (this.mobileStepScrollResetConfig.enabled) {
+        this.maybeResetScrollForStepChange(formContainer);
+      }
+    }
+  },
+
   // Add all event listeners
   addEventListeners(formContainer, validator, cleanup) {
     // Navigation button handlers
@@ -2563,6 +2790,18 @@ const HubSpotFormManager = {
 
     navigationButtons.forEach((button, index) => {
       const buttonText = button.textContent.trim().toLowerCase();
+
+      if (!button.hasAttribute("data-hsfc-nav-scroll-capture-bound")) {
+        button.addEventListener(
+          "click",
+          () => this.capturePreNavigationScroll(formContainer, cleanup),
+          {
+            signal: cleanup.abortController.signal,
+          },
+        );
+
+        button.setAttribute("data-hsfc-nav-scroll-capture-bound", "true");
+      }
 
       // Attach listener to any button that is NOT a previous button
       if (!buttonText.includes("previous") && !buttonText.includes("back")) {
@@ -2816,6 +3055,7 @@ const HubSpotFormManager = {
       let shouldRevalidate = false;
       let shouldAddListeners = false;
       let shouldRefreshNavigation = false;
+      let shouldHandleStepChange = false;
 
       for (const mutation of mutations) {
         if (!formContainer.contains(mutation.target)) continue;
@@ -2842,9 +3082,7 @@ const HubSpotFormManager = {
         ) {
           shouldRevalidate = true;
           shouldAddListeners = true;
-          // Invalidate visible step cache when step visibility changes
-          cleanup.invalidateCache();
-          this.initializeButtonState(formContainer, cleanup);
+          shouldHandleStepChange = true;
         }
 
         // If HubSpot toggles button disabled state, immediately restore click path.
@@ -2888,6 +3126,13 @@ const HubSpotFormManager = {
           () => this.addFieldListeners(formContainer, validator, cleanup),
           100,
         );
+      }
+      if (shouldHandleStepChange) {
+        setTimeout(() => {
+          cleanup.invalidateCache();
+          this.handleVisibleStepChange(formContainer, cleanup);
+          this.initializeButtonState(formContainer, cleanup);
+        }, 50);
       }
       if (shouldRefreshNavigation) {
         setTimeout(() => {

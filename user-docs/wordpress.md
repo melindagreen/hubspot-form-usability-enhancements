@@ -22,10 +22,22 @@ window.HUBSPOT_FORMS_MAX_FILE_SIZE = "5MB";
 window.HUBSPOT_FORMS_ERROR_MESSAGES = {
   fileSize: "Max file size is {maxSize}",
 };
+window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
+  enabled: true,
+  breakpoint: 768,
+  onlyWhenFormTopAboveViewport: true,
+  behavior: "smooth",
+  respectReducedMotion: true,
+};
 
 setTimeout(async () => {
   const module = await import("@fahlgren-mortine/hubspot-form-usability-enhancements");
-  module.init();
+  module.init({
+    allowedExtensions: window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS,
+    maxFileSize: window.HUBSPOT_FORMS_MAX_FILE_SIZE,
+    errorMessages: window.HUBSPOT_FORMS_ERROR_MESSAGES,
+    mobileStepScrollReset: window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET,
+  });
 }, 500);
 ```
 
@@ -54,3 +66,4 @@ add_action('wp_enqueue_scripts', function () {
 - No enhancement: confirm the form is inline markup and includes hsfc-Form.
 - Wrong message text: set HUBSPOT_FORMS_ERROR_MESSAGES before module init.
 - Wrong max size in message: set HUBSPOT_FORMS_MAX_FILE_SIZE, for example 4MB.
+- Mobile step scroll reset not applying: confirm mobile breakpoint settings and multi-step form structure.

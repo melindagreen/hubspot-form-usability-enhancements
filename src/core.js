@@ -260,6 +260,8 @@ export function setupForms() {
  * Apply configuration options
  */
 export function applyConfiguration(options = {}) {
+  HubSpotFormManager.configureMobileStepScrollReset(options.mobileStepScrollReset);
+
   if (options.characterLimit) {
     CharacterLimitValidator.DEFAULT_LIMIT = options.characterLimit;
   }
