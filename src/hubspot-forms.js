@@ -962,6 +962,8 @@ const ErrorMessageConfig = {
       file: "📎 File type not allowed. Please select a different file.",
       fileSize: "📁 File size exceeds {maxSize} limit",
       fileType: "📄 File type not allowed. Allowed types: {allowedTypes}",
+      fileReupload: "🔄 Please re-upload your file to resubmit the form.",
+      fileReuploadStep: "🔄 Please re-upload your file on step {step} to resubmit the form.",
       url: "🔗 Please enter a valid URL",
       number: "🔢 Please enter a valid number",
       selectionLimit: "Please choose fewer options.",
@@ -1040,6 +1042,10 @@ const ErrorMessageConfig = {
   },
 };
 
+// Matches all nav/submit buttons HubSpot renders, including submit buttons placed outside .hsfc-NavigationRow
+const NAVIGATION_BUTTON_SELECTOR =
+  '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"], button[type="submit"]';
+
 // HubSpot form validation system - optimized for multiple forms
 const HubSpotFormValidator = {
   // HubSpot uses both 'required' and 'aria-required="true"' attributes
@@ -1102,6 +1108,10 @@ const HubSpotFormValidator = {
 
     const interpolationValues = this.getFileErrorInterpolationValues();
 
+    if (fileErrorTypes.includes("fileReupload")) {
+      return ErrorMessageConfig.getMessage("fileReupload");
+    }
+
     if (fileErrorTypes.includes("fileSize")) {
       return ErrorMessageConfig.getMessage("fileSize", {
         maxSize: interpolationValues.maxSize,
@@ -1115,6 +1125,59 @@ const HubSpotFormValidator = {
     }
 
     return ErrorMessageConfig.getMessage("file");
+  },
+
+  isSubmissionOrNetworkError(text) {
+    const t = (text || '').toLowerCase();
+    return (
+      ((t.includes('submit') || t.includes('submission')) &&
+        (t.includes('fail') || t.includes('error') || t.includes('unable') || t.includes('problem'))) ||
+      t.includes('connection') ||
+      t.includes('network')
+    );
+  },
+
+  resolveErrorText(originalText, errorElement) {
+    const t = originalText.toLowerCase();
+    if (
+      t.includes("please complete this required field") ||
+      t.includes("this field is required") ||
+      originalText === "Please complete this required field."
+    ) {
+      return ErrorMessageConfig.getMessage('required') || originalText;
+    } else if (t.includes("email") && (t.includes("valid") || t.includes("format"))) {
+      return ErrorMessageConfig.getMessage('email') || originalText;
+    } else if (t.includes("must be formatted correctly") || t.includes("invalid format")) {
+      return ErrorMessageConfig.getMessage('pattern') || originalText;
+    } else if (t.includes("please enter a valid date") || t.includes("invalid date")) {
+      return ErrorMessageConfig.getMessage('date') || originalText;
+    } else if (t.includes("phone number") && (t.includes("invalid") || t.includes("wrong format"))) {
+      return ErrorMessageConfig.getMessage('phone') || originalText;
+    } else {
+      const customFileMessage = this.getCustomFileErrorMessage(errorElement);
+      if (customFileMessage) return customFileMessage;
+
+      if (this.isSelectionLimitErrorText(originalText)) {
+        const normalized = originalText.replace(/Error:\s*/g, "Error: ");
+        const interpolations = this.getSelectionLimitInterpolations(originalText);
+        const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
+          ? ErrorMessageConfig.getMessage('selectionLimit', interpolations)
+          : null;
+        return customMessage || normalized;
+      } else if (t.includes("url") || t.includes("website")) {
+        return ErrorMessageConfig.getMessage('url') || originalText;
+      } else if (t.includes("number") || t.includes("numeric")) {
+        return ErrorMessageConfig.getMessage('number') || originalText;
+      } else if (t.includes("confirmation") || t.includes("match")) {
+        return ErrorMessageConfig.getMessage('confirmation') || originalText;
+      } else if (t.includes("captcha") || t.includes("verification")) {
+        return ErrorMessageConfig.getMessage('captcha') || originalText;
+      } else if (this.isSubmissionOrNetworkError(originalText)) {
+        const key = (t.includes('connection') || t.includes('network')) ? 'network' : 'submission';
+        return ErrorMessageConfig.getMessage(key) || originalText;
+      }
+    }
+    return originalText;
   },
 
   isSelectionLimitErrorText(text = "") {
@@ -1183,9 +1246,7 @@ const HubSpotFormValidator = {
 
   // Helper to find navigation button (not Previous)
   findNavigationButton(step) {
-    const buttons = step.querySelectorAll(
-      '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]',
-    );
+    const buttons = step.querySelectorAll(NAVIGATION_BUTTON_SELECTOR);
     for (const button of buttons) {
       const buttonText = button.textContent.trim().toLowerCase();
       // Return any button that is NOT a previous button
@@ -1279,7 +1340,7 @@ const HubSpotFormValidator = {
   },
 
   // Show custom HubSpot-style error message with WCAG compliance
-  showValidationError(step) {
+  showValidationError(step, formContainer = null) {
     // Remove any existing custom error
     const existingError = step.querySelector(".hsfc-CustomValidationError");
     if (existingError) {
@@ -1287,7 +1348,7 @@ const HubSpotFormValidator = {
     }
 
     // Find all fields with errors to create descriptive links
-    const fieldsWithErrors = this.getFieldsWithErrors(step);
+    const fieldsWithErrors = this.getFieldsWithErrors(step, formContainer);
 
     if (fieldsWithErrors.length === 0) {
       // No errors found, don't show error box
@@ -1388,7 +1449,7 @@ const HubSpotFormValidator = {
   },
 
   // Get fields with errors and their descriptions
-  getFieldsWithErrors(step) {
+  getFieldsWithErrors(step, formContainer = null) {
     const fieldsWithErrors = [];
     const useStrictOrdering = this.strictErrorSummaryOrdering;
     const normalizeLabel = (text) =>
@@ -1501,71 +1562,7 @@ const HubSpotFormValidator = {
           const fieldLabel =
             this.getFieldLabel(field) ||
             `Field "${field.name || field.id || "unknown"}"`;
-          let errorText = errorEl.textContent.trim();
-          
-          // Replace known HubSpot error messages with custom ones (only if custom message exists)
-          if (errorText.toLowerCase().includes("please complete this required field") || 
-              errorText.toLowerCase().includes("this field is required") ||
-              errorText === "Please complete this required field.") {
-            const customMessage = ErrorMessageConfig.getMessage('required');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("email") && 
-                     (errorText.toLowerCase().includes("valid") || errorText.toLowerCase().includes("format"))) {
-            const customMessage = ErrorMessageConfig.getMessage('email');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("must be formatted correctly") ||
-                     errorText.toLowerCase().includes("invalid format")) {
-            const customMessage = ErrorMessageConfig.getMessage('pattern');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("please enter a valid date") ||
-                     errorText.toLowerCase().includes("invalid date")) {
-            const customMessage = ErrorMessageConfig.getMessage('date');
-            if (customMessage) errorText = customMessage;
-          } else if (errorText.toLowerCase().includes("phone number") && 
-                     (errorText.toLowerCase().includes("invalid") || errorText.toLowerCase().includes("wrong format"))) {
-            const customMessage = ErrorMessageConfig.getMessage('phone');
-            if (customMessage) errorText = customMessage;
-          } else {
-            const customFileMessage = this.getCustomFileErrorMessage(errorEl);
-            if (customFileMessage) {
-              errorText = customFileMessage;
-            } else if (this.isSelectionLimitErrorText(errorText)) {
-              const normalizedSelectionLimitText = errorText.replace(/Error:\s*/g, "Error: ");
-              const selectionLimitInterpolations = this.getSelectionLimitInterpolations(errorText);
-              const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
-                ? ErrorMessageConfig.getMessage('selectionLimit', selectionLimitInterpolations)
-                : null;
-              errorText = customMessage || normalizedSelectionLimitText;
-            } else if (errorText.toLowerCase().includes("url") || 
-                       errorText.toLowerCase().includes("website")) {
-              const customMessage = ErrorMessageConfig.getMessage('url');
-              if (customMessage) errorText = customMessage;
-            } else if (errorText.toLowerCase().includes("number") || 
-                       errorText.toLowerCase().includes("numeric")) {
-              const customMessage = ErrorMessageConfig.getMessage('number');
-              if (customMessage) errorText = customMessage;
-            } else if (errorText.toLowerCase().includes("confirmation") || 
-                       errorText.toLowerCase().includes("match")) {
-              const customMessage = ErrorMessageConfig.getMessage('confirmation');
-              if (customMessage) errorText = customMessage;
-            } else if (errorText.toLowerCase().includes("captcha") || 
-                       errorText.toLowerCase().includes("verification")) {
-              const customMessage = ErrorMessageConfig.getMessage('captcha');
-              if (customMessage) errorText = customMessage;
-            } else if ((errorText.toLowerCase().includes("submit") ||
-                        errorText.toLowerCase().includes("submission")) &&
-                       (errorText.toLowerCase().includes("fail") ||
-                        errorText.toLowerCase().includes("error") ||
-                        errorText.toLowerCase().includes("unable") ||
-                        errorText.toLowerCase().includes("problem"))) {
-              const customMessage = ErrorMessageConfig.getMessage('submission');
-              if (customMessage) errorText = customMessage;
-            } else if (errorText.toLowerCase().includes("connection") || 
-                       errorText.toLowerCase().includes("network")) {
-              const customMessage = ErrorMessageConfig.getMessage('network');
-              if (customMessage) errorText = customMessage;
-            }
-          }
+          const errorText = this.resolveErrorText(errorEl.textContent.trim(), errorEl);
 
           fieldsWithErrors.push({
             field: field,
@@ -1614,6 +1611,12 @@ const HubSpotFormValidator = {
           continue; // Skip - already processed this field group
         }
         processedFieldGroups.add(field.name);
+      }
+
+      // Skip file fields that are already represented by a re-upload notice
+      if (field.type === 'file' &&
+          field.parentElement?.querySelector('[data-hsfc-file-error-types*="fileReupload"]')) {
+        continue;
       }
 
       // Check if field is invalid and not already in the error list
@@ -1723,6 +1726,23 @@ const HubSpotFormValidator = {
           fieldLabel,
           description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorMessage}</span>`,
           errorElement: null,
+        });
+      }
+    }
+
+    // Collect re-upload errors from file inputs on other steps (file may have been uploaded on an earlier panel)
+    if (formContainer) {
+      for (const fileInput of formContainer.querySelectorAll('input[type="file"]')) {
+        if (step.contains(fileInput)) continue;
+        const reuploadEl = fileInput.parentElement?.querySelector('[data-hsfc-file-error-types*="fileReupload"]');
+        if (!reuploadEl || fieldsWithErrors.some(f => f.field === fileInput)) continue;
+        const errorText = reuploadEl.textContent.trim();
+        const fieldLabel = this.getFieldLabel(fileInput) || `Field "${fileInput.name || fileInput.id || 'unknown'}"`;
+        fieldsWithErrors.push({
+          field: fileInput,
+          fieldLabel,
+          description: `<span class="customValidationErrorLabel">${fieldLabel}:</span> <span class="customValidationErrorText">${errorText}</span>`,
+          errorElement: reuploadEl,
         });
       }
     }
@@ -2247,81 +2267,21 @@ const HubSpotFormManager = {
   setupNativeErrorMessageReplacement(formContainer, cleanup) {
     // Function to replace error text in native HubSpot error elements
     const replaceNativeErrorText = (errorElement) => {
-      // Skip our custom validation error box - don't touch it!
-      if (errorElement.classList.contains('hsfc-CustomValidationError')) {
-        return;
-      }
+      if (errorElement.classList.contains('hsfc-CustomValidationError')) return;
 
       const originalText = errorElement.textContent.trim();
-      let newText = originalText;
+      const newText = HubSpotFormValidator.resolveErrorText(originalText, errorElement);
 
-      // Replace known HubSpot error messages with custom ones (only if custom message exists)
-      if (originalText.toLowerCase().includes("please complete this required field") || 
-          originalText.toLowerCase().includes("this field is required") ||
-          originalText === "Please complete this required field.") {
-        const customMessage = ErrorMessageConfig.getMessage('required');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("email") && 
-                 (originalText.toLowerCase().includes("valid") || originalText.toLowerCase().includes("format"))) {
-        const customMessage = ErrorMessageConfig.getMessage('email');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("must be formatted correctly") ||
-                 originalText.toLowerCase().includes("invalid format")) {
-        const customMessage = ErrorMessageConfig.getMessage('pattern');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("please enter a valid date") ||
-                 originalText.toLowerCase().includes("invalid date")) {
-        const customMessage = ErrorMessageConfig.getMessage('date');
-        if (customMessage) newText = customMessage;
-      } else if (originalText.toLowerCase().includes("phone number") && 
-                 (originalText.toLowerCase().includes("invalid") || originalText.toLowerCase().includes("wrong format"))) {
-        const customMessage = ErrorMessageConfig.getMessage('phone');
-        if (customMessage) newText = customMessage;
-      } else {
-        const customFileMessage = HubSpotFormValidator.getCustomFileErrorMessage(errorElement);
-        if (customFileMessage) {
-          newText = customFileMessage;
-        } else if (HubSpotFormValidator.isSelectionLimitErrorText(originalText)) {
-          const normalizedSelectionLimitText = originalText.replace(/Error:\s*/g, "Error: ");
-          const selectionLimitInterpolations = HubSpotFormValidator.getSelectionLimitInterpolations(originalText);
-          const customMessage = ErrorMessageConfig.hasExplicitMessage('selectionLimit')
-            ? ErrorMessageConfig.getMessage('selectionLimit', selectionLimitInterpolations)
-            : null;
-          newText = customMessage || normalizedSelectionLimitText;
-        } else if (originalText.toLowerCase().includes("url") || 
-                   originalText.toLowerCase().includes("website")) {
-          const customMessage = ErrorMessageConfig.getMessage('url');
-          if (customMessage) newText = customMessage;
-        } else if (originalText.toLowerCase().includes("number") || 
-                   originalText.toLowerCase().includes("numeric")) {
-          const customMessage = ErrorMessageConfig.getMessage('number');
-          if (customMessage) newText = customMessage;
-        } else if (originalText.toLowerCase().includes("confirmation") || 
-                   originalText.toLowerCase().includes("match")) {
-          const customMessage = ErrorMessageConfig.getMessage('confirmation');
-          if (customMessage) newText = customMessage;
-        } else if (originalText.toLowerCase().includes("captcha") || 
-                   originalText.toLowerCase().includes("verification")) {
-          const customMessage = ErrorMessageConfig.getMessage('captcha');
-          if (customMessage) newText = customMessage;
-        } else if ((originalText.toLowerCase().includes("submit") ||
-                    originalText.toLowerCase().includes("submission")) &&
-                   (originalText.toLowerCase().includes("fail") ||
-                    originalText.toLowerCase().includes("error") ||
-                    originalText.toLowerCase().includes("unable") ||
-                    originalText.toLowerCase().includes("problem"))) {
-          const customMessage = ErrorMessageConfig.getMessage('submission');
-          if (customMessage) newText = customMessage;
-        } else if (originalText.toLowerCase().includes("connection") || 
-                   originalText.toLowerCase().includes("network")) {
-          const customMessage = ErrorMessageConfig.getMessage('network');
-          if (customMessage) newText = customMessage;
-        }
-      }
-
-      // Only update if we have a replacement
       if (newText !== originalText) {
         errorElement.textContent = newText;
+      }
+
+      if (HubSpotFormValidator.isSubmissionOrNetworkError(originalText)) {
+        const cleared = this.clearFilesOnSubmissionFailure(formContainer);
+        if (cleared) {
+          const currentStep = cleanup.getVisibleStep();
+          if (currentStep) HubSpotFormValidator.showValidationError(currentStep, formContainer);
+        }
       }
     };
 
@@ -2367,6 +2327,43 @@ const HubSpotFormManager = {
     cleanup.observers.push(errorObserver);
   },
 
+  clearFilesOnSubmissionFailure(container) {
+    const fileInputs = container.querySelectorAll('input[type="file"]');
+    if (fileInputs.length === 0) return false;
+
+    const allSteps = Array.from(container.querySelectorAll('.hsfc-Step'));
+    const isMultiStep = allSteps.length > 1;
+
+    let clearedAny = false;
+    fileInputs.forEach(fileInput => {
+      const hasFiles = fileInput.files && fileInput.files.length > 0;
+      const acceptedEl = fileInput.parentElement?.querySelector('.hsfc-AcceptedFiles');
+      const hasAcceptedDisplay = !!(acceptedEl && acceptedEl.textContent.trim().length > 0);
+      if (!hasFiles && !hasAcceptedDisplay) return;
+      clearedAny = true;
+
+      let reuploadMessage;
+      if (isMultiStep) {
+        const parentStep = fileInput.closest('.hsfc-Step');
+        const stepNumber = parentStep ? allSteps.indexOf(parentStep) + 1 : null;
+        reuploadMessage = stepNumber
+          ? (ErrorMessageConfig.getMessage('fileReuploadStep', { step: stepNumber }) ||
+             `Please re-upload your file on step ${stepNumber} to resubmit the form.`)
+          : (ErrorMessageConfig.getMessage('fileReupload') ||
+             'Please re-upload your file to resubmit the form.');
+      } else {
+        reuploadMessage = ErrorMessageConfig.getMessage('fileReupload') ||
+          'Please re-upload your file to resubmit the form.';
+      }
+
+      fileInput.value = '';
+      FileUploadValidator.hideAcceptedFiles(fileInput);
+      FileUploadValidator.showError(fileInput, [reuploadMessage], [{ type: 'fileReupload' }]);
+    });
+
+    return clearedAny;
+  },
+
   // Initialize Next button state
   initializeButtonState(formContainer, cleanup = null) {
     // Use cached visible step if cleanup is available, otherwise fall back to direct query
@@ -2379,9 +2376,7 @@ const HubSpotFormManager = {
     const navigationButtons = visibleStep
       ? [HubSpotFormValidator.findNavigationButton(visibleStep)].filter(Boolean)
       : Array.from(
-          formContainer.querySelectorAll(
-            '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]',
-          ),
+          formContainer.querySelectorAll(NAVIGATION_BUTTON_SELECTOR),
         ).filter((button) => {
           const buttonText = button.textContent.trim().toLowerCase();
           return !buttonText.includes("previous") && !buttonText.includes("back");
@@ -2404,9 +2399,7 @@ const HubSpotFormManager = {
   // Add all event listeners
   addEventListeners(formContainer, validator, cleanup) {
     // Navigation button handlers
-    const navigationButtons = formContainer.querySelectorAll(
-      '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]',
-    );
+    const navigationButtons = formContainer.querySelectorAll(NAVIGATION_BUTTON_SELECTOR);
 
     navigationButtons.forEach((button, index) => {
       const buttonText = button.textContent.trim().toLowerCase();
@@ -2536,8 +2529,11 @@ const HubSpotFormManager = {
       // Trigger individual field validations to show HubSpot's built-in error messages
       this.triggerFieldValidations(stepToValidate);
 
+      // Clear any uploaded files across all steps — state is uncertain on a failed submit
+      this.clearFilesOnSubmissionFailure(formContainer);
+
       // Show custom error message
-      HubSpotFormValidator.showValidationError(stepToValidate);
+      HubSpotFormValidator.showValidationError(stepToValidate, formContainer);
 
       return false;
     }
@@ -2694,9 +2690,7 @@ const HubSpotFormManager = {
           mutation.type === "attributes" &&
           (mutation.attributeName === "disabled" ||
             mutation.attributeName === "aria-disabled") &&
-          mutation.target.matches?.(
-            '.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]',
-          )
+          mutation.target.matches?.(NAVIGATION_BUTTON_SELECTOR)
         ) {
           this.initializeButtonState(formContainer, cleanup);
         }
@@ -2719,8 +2713,8 @@ const HubSpotFormManager = {
           [...mutation.addedNodes].some(
             (node) =>
               node.nodeType === Node.ELEMENT_NODE &&
-              (node.matches?.('.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]') ||
-                node.querySelector?.('.hsfc-NavigationRow button[type="button"], .hsfc-NavigationRow button[type="submit"]')),
+              (node.matches?.(NAVIGATION_BUTTON_SELECTOR) ||
+                node.querySelector?.(NAVIGATION_BUTTON_SELECTOR)),
           )
         ) {
           shouldRefreshNavigation = true;
