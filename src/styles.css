@@ -510,7 +510,21 @@ div[data-hsfc-id=Renderer] {
         font-size:var(--font-hs-form-description-size); color:var(--color-hs-form-label-description-text); font-weight:bold;
       }
       & .hsfc-AcceptedFiles {
-        margin-top:0.5rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-success-box-bg); font-size:var(--font-hs-form-fileinput-size); color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border); 
+        margin-top:0.5rem; padding:0.5rem 0.75rem; background-color:var(--color-hs-form-success-box-bg); font-size:var(--font-hs-form-fileinput-size); color:var(--color-hs-form-success-box-text); border:1px solid var(--color-hs-form-success-box-border);
+        & .hsfc-AcceptedFiles__List {
+          list-style:none; margin:0.25rem 0 0; padding:0;
+        }
+        & .hsfc-AcceptedFile {
+          display:flex; align-items:center; gap:0.5rem; padding:0.125rem 0;
+        }
+        & .hsfc-AcceptedFile__Name {
+          flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+        }
+        & .hsfc-AcceptedFile__Remove {
+          flex-shrink:0; background:none; border:none; cursor:pointer; color:currentColor; font-size:1.1rem; line-height:1; padding:0 0.2rem; opacity:0.6;
+          &:hover { opacity:1; }
+          &:focus-visible { outline:2px solid currentColor; border-radius:2px; }
+        }
       }
     }
     

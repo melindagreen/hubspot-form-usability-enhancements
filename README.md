@@ -629,6 +629,42 @@ Remove HubSpot's default form styles.
 - `isFieldInvalid(field, container)`
 - `needsValidation(field, container)`
 
+## File upload behaviour and security
+
+### How HubSpot handles file uploads
+
+HubSpot uploads a file to its own CDN **immediately when the user selects it** via the file picker, before the form is submitted. This is HubSpot's built-in behaviour and cannot be intercepted by client-side JavaScript.
+
+This means:
+
+- A file lands on HubSpot's CDN at the moment of selection, regardless of whether the user completes or submits the form.
+- **Client-side validation** (extension checks, size limits) provided by this package is UX-only. It controls what gets attached to the form submission, not what gets uploaded to the CDN. An invalid file will be rejected and removed from the submission, but the upload to HubSpot has already occurred.
+- Any file selected — even one later rejected by this package's validation — will exist as an orphaned object on HubSpot's CDN. It will not be associated with any contact record or submission, but it is stored there.
+
+### Client-side validation is not a security control
+
+You cannot rely on browser-side file type or size checks to prevent malicious or unwanted files from reaching HubSpot's servers. Anyone can bypass JavaScript validation using browser developer tools.
+
+**Real enforcement must happen server-side.** For HubSpot Developer Code forms, this means:
+
+1. **HubSpot's own CDN security** — HubSpot scans uploaded files for malware on their end.
+2. **Downstream handling** — Treat any file received from a form submission as untrusted. Do not open, execute, or serve files without scanning them independently.
+3. **Informing users** — If your use case requires strict control over what is uploaded, consider whether a HubSpot form file field is the right tool, or whether you need a custom backend upload endpoint with server-side validation.
+
+### What this package does control
+
+When this package rejects a file (wrong extension or size), it:
+
+1. Shows the user a clear error message.
+2. Removes the rejected file from `fileInput.files` so it is **not included in the form submission**.
+3. Suppresses HubSpot's "Upload complete" confirmation so users are not confused by a success message appearing alongside a rejection error.
+
+The file may already be on HubSpot's CDN, but it will not be attached to any CRM record or deal.
+
+### Disclaimer for implementers
+
+> **This package provides client-side UX enhancements only.** File type and size restrictions shown to users are for guidance and usability — they are not security boundaries. Do not rely on this package to prevent unwanted content from being uploaded to HubSpot's servers. Implement server-side validation and file scanning appropriate to your threat model.
+
 ## Troubleshooting
 
 ### React hydration conflicts (Error #418/#422)

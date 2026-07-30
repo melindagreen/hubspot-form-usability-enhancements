@@ -271,6 +271,10 @@ export function applyConfiguration(options = {}) {
   if (options.maxFileSize) {
     FileUploadValidator.maxFileSize = options.maxFileSize;
   }
+
+  if (options.maxFiles != null) {
+    FileUploadValidator.maxFiles = options.maxFiles;
+  }
   
   if (options.errorMessages) {
     ErrorMessageConfig.messages = options.errorMessages;

@@ -656,7 +656,11 @@ const FileUploadValidator = {
   _config: {
     allowedExtensions: null,
     maxFileSize: null,
+    maxFiles: null,
   },
+
+  DEFAULT_MAX_FILES: 5,
+  _accumulatedFiles: new WeakMap(),
 
   // Default max file size (10 MB) used only when no site-level override is provided
   DEFAULT_MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024,
@@ -766,13 +770,35 @@ const FileUploadValidator = {
     this._config.maxFileSize = parsedSize || null;
   },
 
-  // Validate a file input
+  get maxFiles() {
+    if (this._config.maxFiles != null) return this._config.maxFiles;
+    if (typeof window !== 'undefined' && window.HUBSPOT_FORMS_MAX_FILES != null) {
+      const n = parseInt(window.HUBSPOT_FORMS_MAX_FILES, 10);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    return this.DEFAULT_MAX_FILES;
+  },
+
+  set maxFiles(value) {
+    const n = parseInt(value, 10);
+    this._config.maxFiles = (Number.isFinite(n) && n > 0) ? n : null;
+  },
   validateFile(fileInput) {
     if (!fileInput.files || fileInput.files.length === 0) {
       return { valid: true, errors: [], errorDetails: [] };
     }
 
     const errorDetails = [];
+
+    if (fileInput.files.length > this.maxFiles) {
+      errorDetails.push({
+        type: 'fileCount',
+        message: ErrorMessageConfig.getMessage('fileCount', { max: this.maxFiles }) ||
+          `Maximum ${this.maxFiles} files allowed.`,
+      });
+      const errors = errorDetails.map(d => d.message);
+      return { valid: false, errors, errorDetails };
+    }
 
     // Validate each selected file
     for (let i = 0; i < fileInput.files.length; i++) {
@@ -782,7 +808,8 @@ const FileUploadValidator = {
       if (file.size > this.maxFileSize) {
         errorDetails.push({
           type: "fileSize",
-          message: `File "${file.name}" size exceeds ${this.formatFileSize(this.maxFileSize)} limit`,
+          message: ErrorMessageConfig.getMessage('fileSize', { maxSize: this.formatFileSize(this.maxFileSize) }) ||
+            `File "${file.name}" size exceeds ${this.formatFileSize(this.maxFileSize)} limit`,
         });
       }
 
@@ -791,7 +818,9 @@ const FileUploadValidator = {
       if (!this.allowedExtensions.includes(extension)) {
         errorDetails.push({
           type: "fileType",
-          message: `File "${file.name}" type ".${extension}" is not allowed. Allowed types: ${this.allowedExtensions.map((ext) => "." + ext).join(", ")}`,
+          message: ErrorMessageConfig.getMessage('fileType', {
+            allowedTypes: this.allowedExtensions.map((ext) => "." + ext).join(", "),
+          }) || `File "${file.name}" type ".${extension}" is not allowed.`,
         });
       }
     }
@@ -848,42 +877,68 @@ const FileUploadValidator = {
   showAcceptedFiles(fileInput) {
     this.hideAcceptedFiles(fileInput);
 
-    if (!fileInput.files || fileInput.files.length === 0) {
-      return;
-    }
+    // Use _accumulatedFiles as source of truth — fileInput.files can be cleared by HubSpot's own handlers
+    const accumulated = this._accumulatedFiles.get(fileInput) || [];
+    if (accumulated.length === 0) return;
 
-    const acceptedFiles = [];
-    const rejectedFiles = [];
+    const acceptedFiles = accumulated
+      .filter((file) => {
+        const extension = file.name.split(".").pop().toLowerCase();
+        return file.size <= this.maxFileSize && this.allowedExtensions.includes(extension);
+      })
+      .map((file) => file.name);
 
-    // Categorize files
-    for (let i = 0; i < fileInput.files.length; i++) {
-      const file = fileInput.files[i];
-      const extension = file.name.split(".").pop().toLowerCase();
-      const isValidSize = file.size <= this.maxFileSize;
-      const isValidType = this.allowedExtensions.includes(extension);
+    if (acceptedFiles.length === 0) return;
 
-      if (isValidSize && isValidType) {
-        acceptedFiles.push(file.name);
-      } else {
-        rejectedFiles.push(file.name);
-      }
-    }
+    const acceptedDiv = document.createElement("div");
+    acceptedDiv.className = "hsfc-AcceptedFiles";
 
-    // Show accepted files if any
-    if (acceptedFiles.length > 0) {
-      const acceptedDiv = document.createElement("div");
-      acceptedDiv.className = "hsfc-AcceptedFiles";
+    const label = document.createElement("span");
+    label.className = "hsfc-AcceptedFiles__Label";
+    label.textContent = acceptedFiles.length === 1
+      ? "✓ Accepted:"
+      : `✓ Accepted files (${acceptedFiles.length}):`;
+    acceptedDiv.appendChild(label);
 
-      if (acceptedFiles.length === 1) {
-        acceptedDiv.textContent = `✓ Accepted: ${acceptedFiles[0]}`;
-      } else {
-        acceptedDiv.innerHTML =
-          `✓ Accepted files (${acceptedFiles.length}):<br>` +
-          acceptedFiles.map((name) => `• ${name}`).join("<br>");
-      }
+    const list = document.createElement("ul");
+    list.className = "hsfc-AcceptedFiles__List";
 
-      fileInput.parentElement.appendChild(acceptedDiv);
-    }
+    acceptedFiles.forEach((name) => {
+      const item = document.createElement("li");
+      item.className = "hsfc-AcceptedFile";
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "hsfc-AcceptedFile__Name";
+      nameSpan.textContent = name;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "hsfc-AcceptedFile__Remove";
+      removeBtn.setAttribute("aria-label", `Remove ${name}`);
+      removeBtn.textContent = "×";
+
+      removeBtn.addEventListener("click", () => {
+        this.removeFileFromInput(fileInput, name);
+        this.showAcceptedFiles(fileInput);
+        if (!fileInput.files || fileInput.files.length === 0) {
+          this.hideError(fileInput);
+        } else {
+          const validation = this.validateFile(fileInput);
+          if (validation.valid) {
+            this.hideError(fileInput);
+          } else {
+            this.showError(fileInput, validation.errors, validation.errorDetails);
+          }
+        }
+      });
+
+      item.appendChild(nameSpan);
+      item.appendChild(removeBtn);
+      list.appendChild(item);
+    });
+
+    acceptedDiv.appendChild(list);
+    fileInput.parentElement.appendChild(acceptedDiv);
   },
 
   // Hide accepted files list
@@ -896,7 +951,46 @@ const FileUploadValidator = {
     }
   },
 
+  // Remove a single file from the input by name using DataTransfer
+  removeFileFromInput(fileInput, fileName) {
+    const existing = this._accumulatedFiles.get(fileInput) || Array.from(fileInput.files || []);
+    const updated = existing.filter(f => f.name !== fileName);
+    const dt = new DataTransfer();
+    updated.forEach(f => dt.items.add(f));
+    fileInput.files = dt.files;
+    this._accumulatedFiles.set(fileInput, updated);
+  },
+
+  clearFileInput(fileInput) {
+    fileInput.value = '';
+    this._accumulatedFiles.set(fileInput, []);
+  },
+
   // Show max file size note near the file input
+  showAllowedFormatsNote(fileInput) {
+    if (fileInput.parentElement.querySelector('[data-hsfc-allowed-formats="true"]')) return;
+
+    const fieldContainer = fileInput.closest(
+      '.hsfc-FileField, .hs-fieldtype-file, .hsfc-FormField, .hs-form-field, [data-hsfc-id$="Field"]',
+    );
+    const fieldLabel = fieldContainer?.querySelector(
+      '[data-hsfc-id="FieldLabel"], .hsfc-FieldLabel, label',
+    );
+    if (!fieldLabel) return;
+
+    const desc = document.createElement('div');
+    desc.className = 'hsfc-FieldDescription';
+    desc.setAttribute('data-hsfc-id', 'FieldDescription');
+    desc.setAttribute('data-hsfc-allowed-formats', 'true');
+    desc.setAttribute('lang', document.documentElement.lang || 'en');
+
+    const span = document.createElement('span');
+    span.textContent = `Allowed formats: ${this.allowedExtensions.map(e => '.' + e).join(', ')}`;
+    desc.appendChild(span);
+
+    fieldLabel.insertAdjacentElement('afterend', desc);
+  },
+
   showFileSizeNote(fileInput) {
     const existingNote = fileInput.parentElement.querySelector(
       '[data-hsfc-file-size-note="true"]',
@@ -922,22 +1016,58 @@ const FileUploadValidator = {
     const fileInputs = formContainer.querySelectorAll('input[type="file"]');
 
     fileInputs.forEach((fileInput, index) => {
+      // HubSpot doesn't forward its "allow multiple files" setting to the DOM attribute
+      fileInput.setAttribute('multiple', 'multiple');
+      this.showAllowedFormatsNote(fileInput);
       this.showFileSizeNote(fileInput);
 
       fileInput.addEventListener("change", () => {
-        const validation = this.validateFile(fileInput);
+        const existing = this._accumulatedFiles.get(fileInput) || [];
+        const incoming = Array.from(fileInput.files || []);
 
-        // Always show accepted files (if any)
+        const errorDetails = [];
+        const validIncoming = [];
+
+        for (const file of incoming) {
+          if (existing.some(f => f.name === file.name)) continue;
+          const ext = file.name.split('.').pop().toLowerCase();
+          let fileValid = true;
+          if (file.size > this.maxFileSize) {
+            errorDetails.push({ type: 'fileSize', message: ErrorMessageConfig.getMessage('fileSize', { maxSize: this.formatFileSize(this.maxFileSize) }) || `"${file.name}" exceeds ${this.formatFileSize(this.maxFileSize)}` });
+            fileValid = false;
+          }
+          if (!this.allowedExtensions.includes(ext)) {
+            errorDetails.push({ type: 'fileType', message: ErrorMessageConfig.getMessage('fileType', { allowedTypes: this.allowedExtensions.map(e => '.' + e).join(', ') }) || `"${file.name}" type not allowed` });
+            fileValid = false;
+          }
+          if (fileValid) validIncoming.push(file);
+        }
+
+        const merged = [...existing, ...validIncoming];
+
+        if (merged.length > this.maxFiles) {
+          const allowed = Math.max(0, this.maxFiles - existing.length);
+          const trimmed = [...existing, ...validIncoming.slice(0, allowed)];
+          errorDetails.push({ type: 'fileCount', message: ErrorMessageConfig.getMessage('fileCount', { max: this.maxFiles }) || `Maximum ${this.maxFiles} files allowed.` });
+          const dt = new DataTransfer();
+          trimmed.forEach(f => dt.items.add(f));
+          fileInput.files = dt.files;
+          this._accumulatedFiles.set(fileInput, trimmed);
+          this.showAcceptedFiles(fileInput);
+          this.showError(fileInput, errorDetails.map(d => d.message), errorDetails);
+          return;
+        }
+
+        const dt = new DataTransfer();
+        merged.forEach(f => dt.items.add(f));
+        fileInput.files = dt.files;
+        this._accumulatedFiles.set(fileInput, merged);
         this.showAcceptedFiles(fileInput);
 
-        if (validation.valid) {
-          this.hideError(fileInput);
+        if (errorDetails.length > 0) {
+          this.showError(fileInput, errorDetails.map(d => d.message), errorDetails);
         } else {
-          this.showError(fileInput, validation.errors, validation.errorDetails);
-          // Clear the file input if invalid (reject selection)
-          fileInput.value = "";
-          // Also hide accepted files list since nothing is selected now
-          this.hideAcceptedFiles(fileInput);
+          this.hideError(fileInput);
         }
       });
     });
@@ -962,8 +1092,9 @@ const ErrorMessageConfig = {
       file: "📎 File type not allowed. Please select a different file.",
       fileSize: "📁 File size exceeds {maxSize} limit",
       fileType: "📄 File type not allowed. Allowed types: {allowedTypes}",
-      fileReupload: "🔄 Please re-upload your file to resubmit the form.",
-      fileReuploadStep: "🔄 Please re-upload your file on step {step} to resubmit the form.",
+      fileReupload: "🔄 Please re-upload your file(s) to resubmit the form.",
+      fileReuploadStep: "🔄 Please re-upload your file(s) on step {step} to resubmit the form.",
+      fileCount: "📎 Maximum {max} files allowed.",
       url: "🔗 Please enter a valid URL",
       number: "🔢 Please enter a valid number",
       selectionLimit: "Please choose fewer options.",
@@ -2268,6 +2399,7 @@ const HubSpotFormManager = {
     // Function to replace error text in native HubSpot error elements
     const replaceNativeErrorText = (errorElement) => {
       if (errorElement.classList.contains('hsfc-CustomValidationError')) return;
+      if (errorElement.classList.contains('hsfc-FileError')) return;
 
       const originalText = errorElement.textContent.trim();
       const newText = HubSpotFormValidator.resolveErrorText(originalText, errorElement);
@@ -2289,6 +2421,33 @@ const HubSpotFormManager = {
     const existingErrors = formContainer.querySelectorAll('.hsfc-ErrorAlert');
     existingErrors.forEach(replaceNativeErrorText);
 
+    // Fade out HubSpot's native "Upload complete" status (.hsfc-InfoAlert inside .hsfc-FileField) after 2s.
+    // Suppress it immediately if our validation has already rejected the file.
+    const scheduleInfoAlertDismiss = (el) => {
+      if (el._hsfcDismissed) return;
+      el._hsfcDismissed = true;
+      const fileField = el.closest('.hsfc-FileField');
+      const hasFileError = () => !!(fileField && fileField.querySelector('.hsfc-FileError'));
+      if (hasFileError()) { el.style.display = 'none'; return; }
+      setTimeout(() => {
+        if (hasFileError()) { el.style.display = 'none'; return; }
+        el.style.transition = 'opacity 0.4s ease';
+        el.style.opacity = '0';
+        const hide = () => { el.style.display = 'none'; };
+        el.addEventListener('transitionend', hide, { once: true });
+        setTimeout(hide, 500);
+      }, 2000);
+    };
+    const dismissUploadComplete = (root) => {
+      if (root.classList && root.classList.contains('hsfc-InfoAlert') && root.closest('.hsfc-FileField')) {
+        scheduleInfoAlertDismiss(root);
+      }
+      root.querySelectorAll && root.querySelectorAll('.hsfc-FileField .hsfc-InfoAlert').forEach(scheduleInfoAlertDismiss);
+    };
+
+    // Catch any already-present upload alerts
+    formContainer.querySelectorAll('.hsfc-FileField .hsfc-InfoAlert').forEach(scheduleInfoAlertDismiss);
+
     // Set up observer to catch new error messages as they appear
     const errorObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -2305,6 +2464,8 @@ const HubSpotFormManager = {
             if (errorElements) {
               errorElements.forEach(replaceNativeErrorText);
             }
+
+            dismissUploadComplete(node);
           }
         });
 
@@ -2320,7 +2481,6 @@ const HubSpotFormManager = {
     errorObserver.observe(formContainer, {
       childList: true,
       subtree: true,
-      characterData: true
     });
 
     // Track observer for cleanup
@@ -2356,7 +2516,7 @@ const HubSpotFormManager = {
           'Please re-upload your file to resubmit the form.';
       }
 
-      fileInput.value = '';
+      FileUploadValidator.clearFileInput(fileInput);
       FileUploadValidator.hideAcceptedFiles(fileInput);
       FileUploadValidator.showError(fileInput, [reuploadMessage], [{ type: 'fileReupload' }]);
     });
@@ -2529,8 +2689,10 @@ const HubSpotFormManager = {
       // Trigger individual field validations to show HubSpot's built-in error messages
       this.triggerFieldValidations(stepToValidate);
 
-      // Clear any uploaded files across all steps — state is uncertain on a failed submit
-      this.clearFilesOnSubmissionFailure(formContainer);
+      // Only clear uploaded files on a failed final submission, not on failed Next-step navigation
+      if (event.target.type === 'submit') {
+        this.clearFilesOnSubmissionFailure(formContainer);
+      }
 
       // Show custom error message
       HubSpotFormValidator.showValidationError(stepToValidate, formContainer);
