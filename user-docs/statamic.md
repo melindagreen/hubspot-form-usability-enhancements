@@ -20,6 +20,13 @@ window.HUBSPOT_FORMS_MAX_FILE_SIZE = "4MB";
 window.HUBSPOT_FORMS_ERROR_MESSAGES = {
   fileSize: "File exceeds maximum size of {maxSize}",
 };
+window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
+  enabled: true,
+  breakpoint: 768,
+  onlyWhenFormTopAboveViewport: true,
+  behavior: "smooth",
+  respectReducedMotion: true,
+};
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -30,6 +37,7 @@ setTimeout(async () => {
     allowedExtensions: window.HUBSPOT_FORMS_ALLOWED_EXTENSIONS,
     maxFileSize: window.HUBSPOT_FORMS_MAX_FILE_SIZE,
     errorMessages: window.HUBSPOT_FORMS_ERROR_MESSAGES,
+    mobileStepScrollReset: window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET,
   });
 }, 500);
 ```
@@ -48,3 +56,4 @@ setTimeout(async () => {
 - Messages not overridden: set HUBSPOT_FORMS_ERROR_MESSAGES before init.
 - Wrong file-size placeholder value: set HUBSPOT_FORMS_MAX_FILE_SIZE explicitly.
 - No enhancements: verify form markup includes hsfc-Form.
+- Mobile step scroll reset not applying: verify viewport width and breakpoint configuration.

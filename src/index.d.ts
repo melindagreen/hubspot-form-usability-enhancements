@@ -39,6 +39,19 @@ export interface ErrorMessages {
   network?: string;
 }
 
+export interface MobileStepScrollResetConfig {
+  /** Enable or disable mobile step-change scroll reset behavior */
+  enabled?: boolean;
+  /** Max viewport width (px) where behavior is active */
+  breakpoint?: number;
+  /** Only reset when the form top is above the viewport */
+  onlyWhenFormTopAboveViewport?: boolean;
+  /** Preferred scroll behavior when reduced motion is not active */
+  behavior?: 'smooth' | 'auto';
+  /** Force non-animated scrolling when reduced motion is preferred */
+  respectReducedMotion?: boolean;
+}
+
 // Configuration options for initialization
 export interface HubSpotFormsConfig {
   /** Default character limit for textarea fields (default: 500) */
@@ -51,6 +64,8 @@ export interface HubSpotFormsConfig {
   errorMessages?: ErrorMessages;
   /** Enable strict visual ordering for error summary rows */
   strictErrorSummaryOrdering?: boolean;
+  /** Mobile step-change scroll reset behavior config */
+  mobileStepScrollReset?: boolean | MobileStepScrollResetConfig;
 }
 
 // Validation result interface

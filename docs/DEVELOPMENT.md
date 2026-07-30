@@ -28,6 +28,7 @@ If you change src, run npm run build in this repo before testing in a consumer a
 2. In hsforms-sbx, keep dependency as file:../hubspot-form-usability-enhancements.
 3. In hsforms-sbx, run npm install and npm run build.
 4. Verify behavior in browser.
+5. On a mobile-sized viewport, verify multi-step navigation resets to form top when the current step change occurs while the form top is above the viewport.
 
 ## Publish workflow
 

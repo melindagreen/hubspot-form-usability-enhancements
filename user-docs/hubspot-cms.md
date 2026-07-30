@@ -15,6 +15,13 @@ Add in Site Header HTML.
     fileSize: "Max file size is {maxSize}",
     fileType: "Allowed types: {allowedTypes}",
   };
+  window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
+    enabled: true,
+    breakpoint: 768,
+    onlyWhenFormTopAboveViewport: true,
+    behavior: "smooth",
+    respectReducedMotion: true,
+  };
 </script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@fahlgren-mortine/hubspot-form-usability-enhancements@1/dist/index.cdn.js"></script>
 ```
@@ -49,3 +56,4 @@ Override CSS variables in a global style block.
 - Forms are not enhanced: confirm rendered markup contains hsfc-Form.
 - Custom messages not used: define globals before loading index.cdn.js.
 - Wrong file size in message: set HUBSPOT_FORMS_MAX_FILE_SIZE explicitly, for example 4MB.
+- Mobile step scroll reset not applying: confirm viewport is below the configured breakpoint and the form is multi-step.
