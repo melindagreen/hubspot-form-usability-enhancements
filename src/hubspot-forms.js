@@ -1222,6 +1222,15 @@ const HubSpotFormValidator = {
       .filter(Boolean);
   },
 
+  // Size / count / type file errors are informational: the file input already
+  // rejects those files, so a valid selection can still proceed. These must not
+  // block navigation or appear in the error summary. fileReupload is excluded
+  // here on purpose — it still blocks and is still summarized.
+  isSuppressibleFileError(errorElement) {
+    const types = this.getFileErrorTypes(errorElement);
+    return types.length > 0 && !types.includes("fileReupload");
+  },
+
   getFileErrorInterpolationValues() {
     const maxSize = FileUploadValidator.getResolvedMaxFileSizeLabel();
     const allowedTypes = FileUploadValidator.allowedExtensions
@@ -1430,7 +1439,9 @@ const HubSpotFormValidator = {
       const errorElements = visibleStep.querySelectorAll(".hsfc-ErrorAlert");
       const hasVisibleErrors = Array.from(errorElements).some(
         (errorEl) =>
-          this.isElementVisible(errorEl) && errorEl.textContent.trim() !== "",
+          this.isElementVisible(errorEl) &&
+          errorEl.textContent.trim() !== "" &&
+          !this.isSuppressibleFileError(errorEl),
       );
 
       if (hasVisibleErrors) {
@@ -1686,6 +1697,8 @@ const HubSpotFormValidator = {
     );
 
     for (const errorEl of errorElements) {
+      // Size/count/type file errors are informational — keep them out of the summary.
+      if (this.isSuppressibleFileError(errorEl)) continue;
       if (this.isElementVisible(errorEl) && errorEl.textContent.trim() !== "") {
         // Find the associated field
         const field = this.findFieldForError(errorEl);
@@ -2223,7 +2236,9 @@ const HubSpotFormValidator = {
     );
     const hasVisibleErrors = Array.from(remainingErrors).some(
       (errorEl) =>
-        this.isElementVisible(errorEl) && errorEl.textContent.trim() !== "",
+        this.isElementVisible(errorEl) &&
+        errorEl.textContent.trim() !== "" &&
+        !this.isSuppressibleFileError(errorEl),
     );
 
     // Check for empty required fields using field-type-aware logic
