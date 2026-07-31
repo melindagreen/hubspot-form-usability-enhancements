@@ -17,7 +17,6 @@ Add in Site Header HTML.
   };
   window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
     enabled: true,
-    breakpoint: 768,
     onlyWhenFormTopAboveViewport: true,
     behavior: "smooth",
     respectReducedMotion: true,

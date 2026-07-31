@@ -2300,7 +2300,7 @@ const HubSpotFormManager = {
   // Configuration for mobile step-change scroll behavior
   mobileStepScrollResetConfig: {
     enabled: true,
-    breakpoint: 768,
+    breakpoint: Infinity,
     onlyWhenFormTopAboveViewport: true,
     behavior: "smooth",
     respectReducedMotion: true,
@@ -2309,7 +2309,7 @@ const HubSpotFormManager = {
   configureMobileStepScrollReset(configOption) {
     const defaults = {
       enabled: true,
-      breakpoint: 768,
+      breakpoint: Infinity,
       onlyWhenFormTopAboveViewport: true,
       behavior: "smooth",
       respectReducedMotion: true,
@@ -2711,6 +2711,11 @@ const HubSpotFormManager = {
       return false;
     }
 
+    // No width restriction when breakpoint is not a finite number
+    if (!Number.isFinite(config.breakpoint)) {
+      return true;
+    }
+
     if (typeof window.matchMedia === "function") {
       return window.matchMedia(`(max-width: ${config.breakpoint}px)`).matches;
     }
@@ -2776,20 +2781,22 @@ const HubSpotFormManager = {
   handleVisibleStepChange(formContainer, cleanup) {
     const currentVisibleStep = cleanup.getVisibleStep();
 
+    // Step is mid-transition (old hidden, new not yet shown) — preserve state and wait.
+    if (!currentVisibleStep) {
+      return;
+    }
+
     if (!cleanup._hasTrackedVisibleStep) {
-      cleanup._lastVisibleStep = currentVisibleStep || null;
-      cleanup._hasTrackedVisibleStep = !!currentVisibleStep;
+      cleanup._lastVisibleStep = currentVisibleStep;
+      cleanup._hasTrackedVisibleStep = true;
       return;
     }
 
     const previousVisibleStep = cleanup._lastVisibleStep;
-    const didStepChange =
-      !!previousVisibleStep &&
-      !!currentVisibleStep &&
-      previousVisibleStep !== currentVisibleStep;
+    const didStepChange = !!previousVisibleStep && previousVisibleStep !== currentVisibleStep;
 
-    cleanup._lastVisibleStep = currentVisibleStep || null;
-    cleanup._hasTrackedVisibleStep = !!currentVisibleStep;
+    cleanup._lastVisibleStep = currentVisibleStep;
+    cleanup._hasTrackedVisibleStep = true;
 
     if (didStepChange) {
       if (this.mobileStepScrollResetConfig.enabled) {

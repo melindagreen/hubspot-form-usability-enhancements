@@ -41,7 +41,6 @@ init();
   };
   window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
     enabled: true,
-    breakpoint: 768,
     onlyWhenFormTopAboveViewport: true,
     behavior: "smooth",
     respectReducedMotion: true,
@@ -69,7 +68,6 @@ init({
   maxFileSize: "5MB",
   mobileStepScrollReset: {
     enabled: true,
-    breakpoint: 768,
     onlyWhenFormTopAboveViewport: true,
     behavior: "smooth",
     respectReducedMotion: true,
@@ -91,7 +89,6 @@ window.HUBSPOT_FORMS_ERROR_MESSAGES = {
 };
 window.HUBSPOT_FORMS_MOBILE_STEP_SCROLL_RESET = {
   enabled: true,
-  breakpoint: 768,
   onlyWhenFormTopAboveViewport: true,
   behavior: "smooth",
   respectReducedMotion: true,
@@ -105,7 +102,7 @@ For multi-step forms on small screens, this option resets scroll to the form top
 If `enabled` is set to `false`, the package does not force any step-change repositioning and suppresses HubSpot renderer auto-jumps, so the browser keeps the natural scroll offset.
 
 - `enabled` default: `true`
-- `breakpoint` default: `768`
+- `breakpoint` default: none (applies at all viewport widths; set a px value to restrict to narrow screens only)
 - `onlyWhenFormTopAboveViewport` default: `true`
 - `behavior` default: `"smooth"`
 - `respectReducedMotion` default: `true` (uses non-animated scroll when `prefers-reduced-motion: reduce` is set)
